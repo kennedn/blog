@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.102.0-DEV" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Kindlepass&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/css/core.min.b04132309574ddbbc44add0918c6785fdde660fdb2a1ad20b0f7cb38958c271e26ba5d93832e37adacff0bad9ff5cb04.css" integrity="sha384-sEEyMJV03bvESt0JGMZ4X93mYP2yoa0gsPfLOJWMJx4mul2Tgy43raz/C62f9csE"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Kindlepass" /><body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/"><img class="site logo" src="/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/categories/">Categories</a><a class="nav item" href="/tags/">Tags</a><a class="nav item" href="/about">About</a><a class="nav item" href="https://gohugo%2eio/"target="_blank" rel="noopener noreferrer">Hugo</a></nav></div></span></div><div class="site slogan"><span class="title">100% monkey-free</span></div></section><section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Kindlepass</h1><p class="article date">Tuesday, August 2, 2022</p></section><article class="article markdown-body"><h1 id="kindlepass">kindlepass</h1>
+<p>Audible devices/apps require that a license file be present to allow the playback of audible content.</p>
+<p>As it stands, the Audible/Amazon login flow has changed so much that older Kindle models (1, 2, DX &amp; 3), can no longer log in and retrieve this license by themselves.</p>
+<p><strong>kindlepass</strong> is designed to streamline the retrieval of licenses for these devices.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Windows / Linux Support</li>
+<li>Auto-detection of plugged-in Kindles on Linux</li>
+<li>Full CLI wizard</li>
+<li>Install licenses directly to device</li>
+<li>Generate activation bytes, allowing native playback</li>
+</ul>
+<h2 id="how-to-run">How to run</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>Python &gt;=3.6</li>
+</ul>
+<p>Download this project by either running <code>git clone git@github.com:kennedn/kindlepass.git</code>
+or downloading the tarball <a href="https://github.com/kennedn/kindlepass/archive/master.zip"target="_blank" rel="noopener noreferrer">here</a>
+.</p>
+<p>You can then run pip install from within the project directory to install kindlepass and dependancies:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 -m pip install .
+</span></span></code></pre></div><p>Then run the wizard:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kindlepass
+</span></span></code></pre></div><p>If you encounter errors you may need to install some user level packages to resolve dependancies:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 -m pip -U Pillow psutil
+</span></span></code></pre></div><h3 id="serial">Serial</h3>
+<p>If prompted, you can find your Devices serial by Navigating to
+Menu &ndash;&gt; Settings &ndash;&gt; Device Info &ndash;&gt; Serial Number:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">kindlepass</th>
+<th style="text-align:center">On Device</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="images/serial_script.png" width="400"/></td>
+<td style="text-align:center"><img src="images/serial_device.png" width="400"/></td>
+</tr>
+</tbody>
+</table>
+<h3 id="usage">Usage</h3>
+<p>The tool will present a list of options once auto-detection / serial input is complete:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#  ACTION                                        </span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span>  Activate device <span class="o">(</span>Will require login to Amazon<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="m">2</span>  Save to Device                                
+</span></span><span class="line"><span class="cl"><span class="m">3</span>  Save to file                                  
+</span></span><span class="line"><span class="cl"><span class="m">4</span>  Print activation bytes                        
+</span></span><span class="line"><span class="cl"><span class="m">5</span>  Exit Program
+</span></span></code></pre></div><h4 id="activate-device">Activate device</h4>
+<p>This option will take you through a list of prompts to login to Amazon. After a successful login, activation will
+be retrieved and processed.</p>
+<h4 id="save-to-device-linux-only">Save to Device (Linux Only)</h4>
+<p>This option will allow you to save the <code>AudibleActivation.sys</code> file directly to your kindle.</p>
+<h4 id="save-to-file">Save to File</h4>
+<p>This option will allow you to save the <code>AudibleActivation.sys</code> file to a specific location. This will then need placed
+manually on the Kindle device at <code>ROOT:/system/AudibleActivation.sys</code>.</p>
+<h4 id="print-activation-bytes">Print activation bytes</h4>
+<p>Activation bytes can be used to play .aax files natively or convert to other formats, example commands:</p>
+<p>Play Natively:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mpv --demuxer-lavf-o<span class="o">=</span><span class="nv">activation_bytes</span><span class="o">=</span>XXXXXXXX audiobook.aax
+</span></span></code></pre></div><p>Convert to MP3:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffmpeg -activation_bytes XXXXXXXX -i audiobook.aax -c copy audiobook.m4b
+</span></span></code></pre></div><h3 id="transferring-audiobooks">Transferring Audiobooks</h3>
+<p>There is no direct way to obtain audiobooks from audible on older kindles. You must instead download and then transfer the .aax files to your kindle manually following these steps:</p>
+<ul>
+<li>Navigate to your audible library, <a href="https://www.audible.co.uk/library/titles"target="_blank" rel="noopener noreferrer">here</a>
+.</li>
+<li>Download the relevant titles in .aax format</li>
+<li>Plug-in and transfer the files to your Kindle under <code>ROOT:/audible/</code>. Create this folder if required.</li>
+</ul>
+<h3 id="additional-notes">Additional Notes</h3>
+<p>Kindle auto-detection will not function on Windows and Mac OS systems.</p>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/posts/test/"><span class="iconfont icon-article"></span>Test</a></p></section><section class="article discussion"><script 
+            src="https://utteranc.es/client.js" 
+            repo="kennedn/blog-comments"
+            issue-term="pathname"
+            label=""
+            theme="photon-dark"
+            crossorigin="anonymous" async>
+        </script></section></div></section><section id="footer"><div class="footer-wrap">
+    <p class="copyright">©2022 kennedn</p>
+    <p class="powerby"><span>Powered&nbsp;by&nbsp;</span><a href="https://gohugo.io" 
+        target="_blank" rel="noopener noreferrer">Hugo</a><span>&nbsp;&amp;&nbsp;</span><a href="https://themes.gohugo.io/hugo-notepadium/" 
+        target="_blank" rel="noopener noreferrer">Notepadium</a></p></div>
+</section></body>
+
+</html>

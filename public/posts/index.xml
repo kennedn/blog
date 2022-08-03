@@ -1,0 +1,26 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Kennedn&#39;s Blog</title>
+    <link>https://kennedn.com/posts/</link>
+    <description>Recent content in Posts on Kennedn&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-gb</language>
+    <copyright>©2022 kennedn</copyright>
+    <lastBuildDate>Tue, 02 Aug 2022 22:47:11 +0100</lastBuildDate>
+    
+        <atom:link href="https://kennedn.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Test</title>
+      <link>https://kennedn.com/posts/test/</link>
+      <pubDate>Tue, 02 Aug 2022 22:47:11 +0100</pubDate>
+      
+      <guid>https://kennedn.com/posts/test/</guid>
+      <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello world&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; monkey
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
