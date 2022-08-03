@@ -1,25 +1,41 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kennedn&#39;s Blog</title>
-    <link>https://kennedn.com/</link>
+    <link>/blog/</link>
     <description>Recent content on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <copyright>©2022 kennedn</copyright>
-    <lastBuildDate>Tue, 02 Aug 2022 22:47:11 +0100</lastBuildDate>
     
-        <atom:link href="https://kennedn.com/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Test</title>
-      <link>https://kennedn.com/posts/test/</link>
-      <pubDate>Tue, 02 Aug 2022 22:47:11 +0100</pubDate>
+      <title>About</title>
+      <link>/blog/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://kennedn.com/posts/test/</guid>
-      <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello world&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; monkey
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+      <guid>/blog/about/</guid>
+      <description>&lt;h3 align=&#34;center&#34;&gt;🧑‍💻 Who am I&lt;/h3&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;samp&gt;My name is Josh and I like cooking up spicy code with spicier humans.&lt;/samp&gt;
+&lt;/p&gt;
+&lt;hr /&gt;
+&lt;!-- PROGRAMMING LANGUAGES --&gt;
+&lt;h3 align=&#34;center&#34;&gt;💬 Programming Languages&lt;/h3&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;python&#34; src=&#34;https://img.shields.io/badge/python-3670A0?style=for-the-badge&amp;logo=python&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;javascript&#34; src=&#34;https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&amp;logo=javascript&amp;logoColor=black&#34; /&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;c&#34; src=&#34;https://img.shields.io/badge/c-993399.svg?style=for-the-badge&amp;logo=c&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;golang&#34; src=&#34;https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&amp;logo=goland&amp;logoColor=black&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;bash&#34; src=&#34;https://img.shields.io/badge/bash-%23121011.svg?style=for-the-badge&amp;logo=gnu-bash&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+&lt;p&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;a href=&#34;#gh-dark-mode-only&#34; style=&#39;cursor: default&#39;&gt;&lt;img width=&#34;50%&#34; src=&#34;https://github-readme-stats.vercel.app/api?username=Kennedn&amp;show_icons=true&amp;count_private=true&amp;theme=github_dark&amp;disable_animations=true&#34; /&gt;&lt;/a&gt;
+  &lt;a href=&#34;#gh-dark-mode-only&#34; style=&#39;cursor: default&#39;&gt;&lt;img width=&#34;49.5%&#34; src=&#34;https://github-readme-stats.vercel.app/api/top-langs/?username=Kennedn&amp;layout=compact&amp;count_private=true&amp;theme=github_dark&amp;langs_count=4&#34; /&gt;&lt;/a&gt;
+&lt;/p&gt;
+&lt;div id=pins&gt;&lt;/div&gt;
+</description>
     </item>
     
   </channel>

@@ -1,4 +1,4 @@
-baseURL = "https://kennedn.com"
+baseURL = "/blog"
 title = "Kennedn's Blog"
 theme = "notepadium"
 copyright = "©2022 kennedn"
@@ -24,8 +24,8 @@ unsafe = true  # enable raw HTML in Markdown
 [params]
 style = "dark"  # default: auto. light: light theme, dark: dark theme, auto: based on system.
 dateFormat = "Monday, January 2, 2006"  # if unset, default is "2006-01-02"
-logo = "/img/logo.png"  # if you have a logo png
-slogan = "100% monkey-free"
+logo = "/images/icon/logo.png"  # if you have a logo png
+slogan = ""
 license = ""  # CC License
 fullRss = true # Puts entire HTML post into rss 'description' tag. If unset, default is false.
 ipv6ready = false # Show IPV6Ready logo on footer.
@@ -52,18 +52,18 @@ addThisId = ""
 inlineToolId = ""
 
 [params.nav]
-showCategories = true       # /categories/
-showTags = true             # /tags/
+showCategories = false       # /categories/
+showTags = false             # /tags/
 
 # custom navigation items
 
 [[params.nav.custom]]
-title = "About"
-url = "/about"
+title = "Home"
+url = "/"
 
 [[params.nav.custom]]
-title = "Hugo"
-url = "https://gohugo.io/"
+title = "About"
+url = "/blog/about"
 
 # for chinese
 [params.beian]
