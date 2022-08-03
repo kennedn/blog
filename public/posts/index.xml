@@ -5,109 +5,16 @@
     <description>Recent content in Posts on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <copyright>©2022 kennedn</copyright>
-    <lastBuildDate>Wed, 03 Aug 2022 12:26:43 +0100</lastBuildDate>
+    <copyright>© Joshua Kennedy 2022</copyright>
+    <lastBuildDate>Wed, 03 Aug 2022 16:09:45 +0100</lastBuildDate>
     
         <atom:link href="/blog/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Kindlepass</title>
-      <link>/blog/posts/kindlepass/</link>
-      <pubDate>Wed, 03 Aug 2022 12:26:43 +0100</pubDate>
-      
-      <guid>/blog/posts/kindlepass/</guid>
-      <description>&lt;h1 id=&#34;kindlepass&#34;&gt;kindlepass&lt;/h1&gt;
-&lt;p&gt;Audible devices/apps require that a license file be present to allow the playback of audible content.&lt;/p&gt;
-&lt;p&gt;As it stands, the Audible/Amazon login flow has changed so much that older Kindle models (1, 2, DX &amp;amp; 3), can no longer log in and retrieve this license by themselves.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;kindlepass&lt;/strong&gt; is designed to streamline the retrieval of licenses for these devices.&lt;/p&gt;
-&lt;h2 id=&#34;features&#34;&gt;Features&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Windows / Linux Support&lt;/li&gt;
-&lt;li&gt;Auto-detection of plugged-in Kindles on Linux&lt;/li&gt;
-&lt;li&gt;Full CLI wizard&lt;/li&gt;
-&lt;li&gt;Install licenses directly to device&lt;/li&gt;
-&lt;li&gt;Generate activation bytes, allowing native playback&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;how-to-run&#34;&gt;How to run&lt;/h2&gt;
-&lt;h3 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Python &amp;gt;=3.6&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Download this project by either running &lt;code&gt;git clone git@github.com:kennedn/kindlepass.git&lt;/code&gt;
-or downloading the tarball &lt;a href=&#34;https://github.com/kennedn/kindlepass/archive/master.zip&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;
-.&lt;/p&gt;
-&lt;p&gt;You can then run pip install from within the project directory to install kindlepass and dependancies:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python3 -m pip install .
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then run the wizard:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kindlepass
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you encounter errors you may need to install some user level packages to resolve dependancies:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;python3 -m pip -U Pillow psutil
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;serial&#34;&gt;Serial&lt;/h3&gt;
-&lt;p&gt;If prompted, you can find your Devices serial by Navigating to
-Menu &amp;ndash;&amp;gt; Settings &amp;ndash;&amp;gt; Device Info &amp;ndash;&amp;gt; Serial Number:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;kindlepass&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;On Device&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;img src=&#34;images/serial_script.png&#34; width=&#34;400&#34;/&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;img src=&#34;images/serial_device.png&#34; width=&#34;400&#34;/&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3 id=&#34;usage&#34;&gt;Usage&lt;/h3&gt;
-&lt;p&gt;The tool will present a list of options once auto-detection / serial input is complete:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#  ACTION                                        &lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;  Activate device &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Will require login to Amazon&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;  Save to Device                                
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;  Save to file                                  
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;  Print activation bytes                        
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;  Exit Program
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;activate-device&#34;&gt;Activate device&lt;/h4&gt;
-&lt;p&gt;This option will take you through a list of prompts to login to Amazon. After a successful login, activation will
-be retrieved and processed.&lt;/p&gt;
-&lt;h4 id=&#34;save-to-device-linux-only&#34;&gt;Save to Device (Linux Only)&lt;/h4&gt;
-&lt;p&gt;This option will allow you to save the &lt;code&gt;AudibleActivation.sys&lt;/code&gt; file directly to your kindle.&lt;/p&gt;
-&lt;h4 id=&#34;save-to-file&#34;&gt;Save to File&lt;/h4&gt;
-&lt;p&gt;This option will allow you to save the &lt;code&gt;AudibleActivation.sys&lt;/code&gt; file to a specific location. This will then need placed
-manually on the Kindle device at &lt;code&gt;ROOT:/system/AudibleActivation.sys&lt;/code&gt;.&lt;/p&gt;
-&lt;h4 id=&#34;print-activation-bytes&#34;&gt;Print activation bytes&lt;/h4&gt;
-&lt;p&gt;Activation bytes can be used to play .aax files natively or convert to other formats, example commands:&lt;/p&gt;
-&lt;p&gt;Play Natively:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mpv --demuxer-lavf-o&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;activation_bytes&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;XXXXXXXX audiobook.aax
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Convert to MP3:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ffmpeg -activation_bytes XXXXXXXX -i audiobook.aax -c copy audiobook.m4b
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;transferring-audiobooks&#34;&gt;Transferring Audiobooks&lt;/h3&gt;
-&lt;p&gt;There is no direct way to obtain audiobooks from audible on older kindles. You must instead download and then transfer the .aax files to your kindle manually following these steps:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Navigate to your audible library, &lt;a href=&#34;https://www.audible.co.uk/library/titles&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;
-.&lt;/li&gt;
-&lt;li&gt;Download the relevant titles in .aax format&lt;/li&gt;
-&lt;li&gt;Plug-in and transfer the files to your Kindle under &lt;code&gt;ROOT:/audible/&lt;/code&gt;. Create this folder if required.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;additional-notes&#34;&gt;Additional Notes&lt;/h3&gt;
-&lt;p&gt;Kindle auto-detection will not function on Windows and Mac OS systems.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Test5</title>
-      <link>/blog/posts/test5/</link>
-      <pubDate>Wed, 03 Aug 2022 09:36:08 +0100</pubDate>
-      
-      <guid>/blog/posts/test5/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Test4</title>
       <link>/blog/posts/test4/</link>
-      <pubDate>Wed, 03 Aug 2022 09:36:06 +0100</pubDate>
+      <pubDate>Wed, 03 Aug 2022 16:09:45 +0100</pubDate>
       
       <guid>/blog/posts/test4/</guid>
       <description></description>
@@ -116,7 +23,7 @@ manually on the Kindle device at &lt;code&gt;ROOT:/system/AudibleActivation.sys&
     <item>
       <title>Test3</title>
       <link>/blog/posts/test3/</link>
-      <pubDate>Wed, 03 Aug 2022 09:36:03 +0100</pubDate>
+      <pubDate>Wed, 03 Aug 2022 16:09:44 +0100</pubDate>
       
       <guid>/blog/posts/test3/</guid>
       <description></description>
@@ -125,49 +32,37 @@ manually on the Kindle device at &lt;code&gt;ROOT:/system/AudibleActivation.sys&
     <item>
       <title>Test2</title>
       <link>/blog/posts/test2/</link>
-      <pubDate>Wed, 03 Aug 2022 09:36:01 +0100</pubDate>
+      <pubDate>Wed, 03 Aug 2022 16:09:42 +0100</pubDate>
       
       <guid>/blog/posts/test2/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Test</title>
-      <link>/blog/posts/test/</link>
-      <pubDate>Tue, 02 Aug 2022 22:47:11 +0100</pubDate>
-      
-      <guid>/blog/posts/test/</guid>
-      <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello world&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; monkey
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
-    </item>
-    
-    <item>
       <title>About</title>
       <link>/blog/about/</link>
-      <pubDate>Thu, 28 Feb 2019 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/blog/about/</guid>
-      <description>&lt;p&gt;Written in Go, Hugo is an open source static site generator available under the &lt;a href=&#34;https://github.com/gohugoio/hugo/blob/master/LICENSE&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Apache Licence 2.0.&lt;/a&gt;
- Hugo supports TOML, YAML and JSON data file types, Markdown and HTML content files and uses shortcodes to add rich content. Other notable features are taxonomies, multilingual mode, image processing, custom output formats, HTML/CSS/JS minification and support for Sass SCSS workflows.&lt;/p&gt;
-&lt;p&gt;Hugo makes use of a variety of open source projects including:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/yuin/goldmark&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/yuin/goldmark&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/alecthomas/chroma&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/alecthomas/chroma&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/muesli/smartcrop&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/muesli/smartcrop&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/cobra&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/spf13/cobra&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/spf13/viper&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/spf13/viper&lt;/a&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Hugo is ideal for blogs, corporate websites, creative portfolios, online magazines, single page applications or even a website with thousands of pages.&lt;/p&gt;
-&lt;p&gt;Hugo is for people who want to hand code their own website without worrying about setting up complicated runtimes, dependencies and databases.&lt;/p&gt;
-&lt;p&gt;Websites built with Hugo are extremelly fast, secure and can be deployed anywhere including, AWS, GitHub Pages, Heroku, Netlify and any other hosting provider.&lt;/p&gt;
-&lt;p&gt;Learn more and contribute on &lt;a href=&#34;https://github.com/gohugoio&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;
-.&lt;/p&gt;
+      <description>&lt;h3 align=&#34;center&#34;&gt;🧑‍💻 Who am I&lt;/h3&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;samp&gt;My name is Josh and I like cooking up spicy code with spicier humans.&lt;/samp&gt;
+&lt;/p&gt;
+&lt;hr /&gt;
+&lt;!-- PROGRAMMING LANGUAGES --&gt;
+&lt;h3 align=&#34;center&#34;&gt;💬 Programming Languages&lt;/h3&gt;
+&lt;p align=&#34;center&#34;&gt;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;python&#34; src=&#34;https://img.shields.io/badge/python-3670A0?style=for-the-badge&amp;logo=python&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;javascript&#34; src=&#34;https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&amp;logo=javascript&amp;logoColor=black&#34; /&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;c&#34; src=&#34;https://img.shields.io/badge/c-993399.svg?style=for-the-badge&amp;logo=c&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;golang&#34; src=&#34;https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&amp;logo=goland&amp;logoColor=black&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+   &lt;a href=&#34;#pins&#34;&gt;&lt;img alt=&#34;bash&#34; src=&#34;https://img.shields.io/badge/bash-%23121011.svg?style=for-the-badge&amp;logo=gnu-bash&amp;logoColor=white&#34;&gt;&lt;/a&gt;&amp;nbsp;&amp;nbsp;
+&lt;p&gt;
+&lt;p align=&#34;center&#34;&gt;
+  &lt;a href=&#34;#gh-dark-mode-only&#34; style=&#39;cursor: default&#39;&gt;&lt;img width=&#34;50%&#34; src=&#34;https://github-readme-stats.vercel.app/api?username=Kennedn&amp;show_icons=true&amp;count_private=true&amp;theme=github_dark&amp;disable_animations=true&#34; /&gt;&lt;/a&gt;
+  &lt;a href=&#34;#gh-dark-mode-only&#34; style=&#39;cursor: default&#39;&gt;&lt;img width=&#34;49.5%&#34; src=&#34;https://github-readme-stats.vercel.app/api/top-langs/?username=Kennedn&amp;layout=compact&amp;count_private=true&amp;theme=github_dark&amp;langs_count=4&#34; /&gt;&lt;/a&gt;
+&lt;/p&gt;
+&lt;div id=pins&gt;&lt;/div&gt;
 </description>
     </item>
     

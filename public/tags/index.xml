@@ -5,10 +5,37 @@
     <description>Recent content in Tags on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
-    <copyright>©2022 kennedn</copyright>
+    <copyright>© Joshua Kennedy 2022</copyright>
     
         <atom:link href="/blog/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Test4</title>
+      <link>/blog/posts/test4/</link>
+      <pubDate>Wed, 03 Aug 2022 16:09:45 +0100</pubDate>
+      
+      <guid>/blog/posts/test4/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Test3</title>
+      <link>/blog/posts/test3/</link>
+      <pubDate>Wed, 03 Aug 2022 16:09:44 +0100</pubDate>
+      
+      <guid>/blog/posts/test3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Test2</title>
+      <link>/blog/posts/test2/</link>
+      <pubDate>Wed, 03 Aug 2022 16:09:42 +0100</pubDate>
+      
+      <guid>/blog/posts/test2/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>About</title>

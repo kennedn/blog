@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (uls.length == 0) {return;}
   var ul = uls[0];
   ul.addEventListener('click', e => { 
-    var li = e.target.closest('li');
-    sessionStorage.setItem('lastColor', getComputedStyle(e.target.closest('li')).getPropertyValue('background-color'));
+    var liColor = getComputedStyle(e.target.closest('li')).getPropertyValue('background-color');
+    sessionStorage.setItem('lastColor', liColor);
+    localStorage.setItem('lastColor', liColor);
   }); 
 });
  
