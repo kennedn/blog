@@ -63,7 +63,7 @@ url = "/"
 
 [[params.nav.custom]]
 title = "About"
-url = "/blog/about"
+url = "about"
 
 # for chinese
 [params.beian]
