@@ -1,7 +1,8 @@
-baseURL = "/blog"
+baseURL = "blog/"
 title = "Kennedn's Blog"
 theme = "notepadium"
 copyright = "© Joshua Kennedy 2022"
+summaryLength = 50
 
 languageCode = "en-gb"
 hasCJKLanguage = true
