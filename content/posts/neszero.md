@@ -1,7 +1,7 @@
 ---
 title: "NESZero: NES Controller + Raspberry Pi Zero"
 date: 2022-08-10T10:19:40+01:00
-draft: true
+draft: false
 imgs: 
     - full_wiring_carpet.JPG
 ---

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.102.0-DEV" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>NESZero: NES Controller &#43; Raspberry Pi Zero&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.0515287ff7a2e005f9cd7e56aea5e9dae0ecdf0675f951d8f95f3bb8fae93cc78672582dea3e4f7335fc98909bdff708.css" integrity="sha384-BRUof/ei4AX5zX5WrqXp2uDs3wZ1&#43;VHY&#43;V87uPrpPMeGclgt6j5PczX8mJCb3/cI"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="NESZero: NES Controller &#43; Raspberry Pi Zero" /><meta name="twitter:image" content="blog/posts/neszero/full_wiring_carpet.jpg" /><body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/images/icon/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a><a class="nav item" href="about">About</a></nav></div></span></div></section>
+<script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+
+<section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">NESZero: NES Controller + Raspberry Pi Zero</h1><p class="article date">Wednesday, August 10, 2022</p></section><article class="article markdown-body"><p align="center">
+    <img src="case_closed_connected_front.JPG" width="300px"/>
+    <img src="case_closed_connected_back.JPG" width="300px"/>
+</p>
+<p>This project began more or less because I wanted to play EarthBound on a CRT TV. The TV itself only supports one connection type, a single scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to approaching a problem like this.
+I had a few options that I soon exhausted:</p>
+<ul>
+<li><del>Playstation 2&rsquo;s Homebrew Scene</del> - Despite there being a few SNES emulators available, the performance was abysmal</li>
+<li><del>HDMI to Composite adapter</del> - Only supports a subset of the PAL standards, displays incorrectly (in black and white) on my CRT TV.</li>
+</ul>
+<p>So lets build something new.</p>
+<h1 id="build-requirements">Build Requirements</h1>
+<ul>
+<li>Full speed SNES games</li>
+<li>CRT TV Friendly</li>
+</ul>
+<p>Settled on using a Raspberry Pi since they have RetroPie nicely packaged up, flocked to thingiverse for insperation and stumbled upon a NES controller project.
+This seemed liked perfect fodder to fuel this project, and a few more requirements were drawn out of this decision:</p>
+<ul>
+<li>NES controller can be used as a functional controller</li>
+<li>Toggle the power on the console with a combination of NES Controller buttons</li>
+<li>Cram an RCA composite connection into the small form factor</li>
+<li>Add an Indicator LED</li>
+</ul>
+<h1 id="wiretapping-the-nes-controller">Wiretapping the NES controller</h1>
+<p>We want to be able to use the controller functionally but also read a button combination from it to toggle the Rapsberry Pi Zero&rsquo;s power state.</p>
+<p>To understand if this is even possible we first need to understand two things a little better:</p>
+<ul>
+<li>Raspberry Pi Zero power options</li>
+<li>NES Controller functionality</li>
+</ul>
+<h2 id="raspberry-pi-zero-power-options">Raspberry Pi Zero Power Options</h2>
+<p>Raspberry Pi makes use of a feature called device tree overlays. Among other things it allows for kernel modules to be enabled / disabled at boot time. Raspberry Pi devices come by default with a plethora of built in dtoverlays that can be used to modify behaviour at boot.</p>
+<p>The documentation for the overlays can be found on your Raspberry Pi device under /boot/overlay/README, or over on the <a href="https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README"target="_blank" rel="noopener noreferrer">Raspberrypi firmware github page</a>
+. One such overlay stands out as a very good candidate for achieving the power control we want:</p>
+<details>
+  <summary>README</summary>
+<pre tabindex="0"><code>Name:   gpio-shutdown
+Info:   Initiates a shutdown when GPIO pin changes. The given GPIO pin
+        is configured as an input key that generates KEY_POWER events.
+...
+        This overlay only handles shutdown. After shutdown, the system
+        can be powered up again by driving GPIO3 low. The default
+        configuration uses GPIO3 with a pullup, so if you connect a
+        button between GPIO3 and GND (pin 5 and 6 on the 40-pin header),
+        you get a shutdown and power-up button. Please note that
+        Raspberry Pi 1 Model B rev 1 uses GPIO1 instead of GPIO3.
+Load:   dtoverlay=gpio-shutdown,&lt;param&gt;=&lt;val&gt;
+Params: gpio_pin                GPIO pin to trigger on (default 3)
+                                For Raspberry Pi 1 Model B rev 1 set this
+                                explicitly to value 1, e.g.:
+
+                                    dtoverlay=gpio-shutdown,gpio_pin=1
+
+        active_low              When this is 1 (active low), a falling
+                                edge generates a key down event and a
+                                rising edge generates a key up event.
+                                When this is 0 (active high), this is
+                                reversed. The default is 1 (active low).
+
+        gpio_pull               Desired pull-up/down state (off, down, up)
+                                Default is &#34;up&#34;.
+
+                                Note that the default pin (GPIO3) has an
+                                external pullup. Same applies for GPIO1
+                                on Raspberry Pi 1 Model B rev 1.
+
+        debounce                Specify the debounce interval in milliseconds
+                                (default 100)
+</code></pre></details>
+<blockquote>
+<p><code>The default configuration uses GPIO3 with a pullup, so if you connect a button between GPIO3 and GND, you get a shutdown and power-up button</code></p>
+</blockquote>
+<p>This sounds like the exact behaviour we are looking for. So now that we know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.</p>
+<h2 id="nes-controller-functionality">NES Controller Functionality</h2>
+<p>NES Controller&rsquo;s are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and outputs them serially over a single pin. You can see from this diagram that each parallel input pin (<code>P1-8</code>) is wired to a button on the controller:</p>
+<p><a name="nes004-diagram"></a></p>
+<p align="center">
+    <img src="nes004-diagram.png" width="600px"/>
+</p>
+<p>The other pins of note here are <code>CK</code> <code>P/S</code>, <code>DS</code> and <code>O8</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CK</code></td>
+<td>Clock pin</td>
+</tr>
+<tr>
+<td><code>P/S</code></td>
+<td>Parallel or Serial select pin</td>
+</tr>
+<tr>
+<td><code>O8</code></td>
+<td>Serial Output</td>
+</tr>
+<tr>
+<td><code>DS</code></td>
+<td>Serial input, tied LOW</td>
+</tr>
+</tbody>
+</table>
+<p>When the Console want&rsquo;s to know which buttons are are being pressed, it will do the following:</p>
+<ul>
+<li>Set <code>P/S</code> LOW, we are now in Parallel in, serial out mode. On each clock pulse, the 4021 will store the state of the 8 connected buttons in parallel</li>
+<li>Send 1 clock pulse on the <code>CK</code> pin.</li>
+<li>Set <code>P/S</code> HIGH, we are now in serial in, parallel out mode. On each clock pulse, the 4021 will read a new value in from <code>DS</code> and shift all registers to the right</li>
+<li>Loop 8 times:
+<ul>
+<li>Read the value of <code>O8</code></li>
+<li>Send 1 clock pulse on the <code>CK</code> pin. The next value becomes available on <code>O8</code></li>
+</ul>
+</li>
+</ul>
+<p>By stepping through this process, the Console can extract each button&rsquo;s state from the NES controller using only 3 wires.</p>
+<p>RetroPie actually had a driver that does this for us so we can wire the NES controller directly on to our GPIO to get full controller support.</p>
+<p>Theory over, lets build something.</p>
+<h2 id="using-an-attiny-to-bridge-the-gap">Using an ATTiny to bridge the gap</h2>
+<img align="right" style="margin: 0 0 0 5px;" src="attiny45.png" width=60px/>
+<p>We need a man in the middle to be able to drive GPIO 3 LOW when certain buttons are pressed on the NES Controller. This is because the Pi cannot do the work for us when it is powered off. For this project I decided to use an AATiny45 microcontroller for the job since I had a few lying around.</p>
+<p>One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both <code>CK</code> and <code>P/S</code> need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on <code>P1-8</code>. So all we need to do is decide on a combination now and hard wire connections from those pins to our ATTiny as inputs.</p>
+<p>We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on <code>P8</code> when we press the <code>A</code> button:</p>
+<p align="center">
+    <img src="nes004-oscilloscope-hook.JPG" height=120px/><img src="4021_button_test.gif" height=120px/>
+</p>
+<blockquote>
+<p>Pressing the <code>A</code> button pulls the voltage LOW, returns to HIGH when released</p>
+</blockquote>
+<p>Looking good. I opted to use buttons <code>start</code> + <code>select</code> as my combination.</p>
+<p>Let&rsquo;s get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATTiny45:</p>
+<p align="center">
+   <img src="4021_pin_assignment.png" height=200px/><img src="attiny45_pin_assignment.png" height=200px/>
+</p>
+<p>Comparing the <code>Parallel In</code> pins with the <a href="#nes004-diagram">nes004 diagram</a>
+, we have enough information to wire this up now:</p>
+<table align="center">
+    <tr>
+        <th>4021</td>
+        <th>Attiny45</td>
+        <td rowspan="5"> 
+        <div style="max-width:400px">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 280 201"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 24,16 L 40,16' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 L 88,16' fill='none' stroke='currentColor'></path>
+<path d='M 136,16 L 264,16' fill='none' stroke='currentColor'></path>
+<path d='M 16,32 L 24,32' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 16,48 L 24,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,48 L 96,48' fill='none' stroke='currentColor'></path>
+<path d='M 144,48 L 224,48' fill='none' stroke='currentColor'></path>
+<path d='M 16,64 L 24,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,64 L 120,64' fill='none' stroke='currentColor'></path>
+<path d='M 136,64 L 144,64' fill='none' stroke='currentColor'></path>
+<path d='M 224,64 L 248,64' fill='none' stroke='currentColor'></path>
+<path d='M 16,80 L 24,80' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 112,80' fill='none' stroke='currentColor'></path>
+<path d='M 120,80 L 144,80' fill='none' stroke='currentColor'></path>
+<path d='M 224,80 L 232,80' fill='none' stroke='currentColor'></path>
+<path d='M 16,96 L 24,96' fill='none' stroke='currentColor'></path>
+<path d='M 88,96 L 96,96' fill='none' stroke='currentColor'></path>
+<path d='M 112,96 L 144,96' fill='none' stroke='currentColor'></path>
+<path d='M 224,96 L 232,96' fill='none' stroke='currentColor'></path>
+<path d='M 16,112 L 24,112' fill='none' stroke='currentColor'></path>
+<path d='M 88,112 L 96,112' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 144,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,112 L 232,112' fill='none' stroke='currentColor'></path>
+<path d='M 16,128 L 24,128' fill='none' stroke='currentColor'></path>
+<path d='M 88,128 L 96,128' fill='none' stroke='currentColor'></path>
+<path d='M 8,144 L 24,144' fill='none' stroke='currentColor'></path>
+<path d='M 88,144 L 96,144' fill='none' stroke='currentColor'></path>
+<path d='M 144,144 L 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 200,144 L 224,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,160 L 88,160' fill='none' stroke='currentColor'></path>
+<path d='M 128,160 L 248,160' fill='none' stroke='currentColor'></path>
+<path d='M 248,160 L 264,160' fill='none' stroke='currentColor'></path>
+<path d='M 8,176 L 248,176' fill='none' stroke='currentColor'></path>
+<path d='M 8,144 L 8,176' fill='none' stroke='currentColor'></path>
+<path d='M 24,16 L 24,32' fill='none' stroke='currentColor'></path>
+<path d='M 24,32 L 24,48' fill='none' stroke='currentColor'></path>
+<path d='M 24,48 L 24,64' fill='none' stroke='currentColor'></path>
+<path d='M 24,64 L 24,80' fill='none' stroke='currentColor'></path>
+<path d='M 24,80 L 24,96' fill='none' stroke='currentColor'></path>
+<path d='M 24,96 L 24,112' fill='none' stroke='currentColor'></path>
+<path d='M 24,112 L 24,128' fill='none' stroke='currentColor'></path>
+<path d='M 24,128 L 24,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,144 L 24,160' fill='none' stroke='currentColor'></path>
+<path d='M 88,16 L 88,32' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,48 L 88,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,64 L 88,80' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 88,96' fill='none' stroke='currentColor'></path>
+<path d='M 88,96 L 88,112' fill='none' stroke='currentColor'></path>
+<path d='M 88,112 L 88,128' fill='none' stroke='currentColor'></path>
+<path d='M 88,128 L 88,144' fill='none' stroke='currentColor'></path>
+<path d='M 88,144 L 88,160' fill='none' stroke='currentColor'></path>
+<path d='M 112,80 L 112,96' fill='none' stroke='currentColor'></path>
+<path d='M 120,64 L 120,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 128,160' fill='none' stroke='currentColor'></path>
+<path d='M 136,16 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 144,48 L 144,64' fill='none' stroke='currentColor'></path>
+<path d='M 144,64 L 144,80' fill='none' stroke='currentColor'></path>
+<path d='M 144,80 L 144,96' fill='none' stroke='currentColor'></path>
+<path d='M 144,96 L 144,112' fill='none' stroke='currentColor'></path>
+<path d='M 144,112 L 144,144' fill='none' stroke='currentColor'></path>
+<path d='M 224,48 L 224,64' fill='none' stroke='currentColor'></path>
+<path d='M 224,64 L 224,80' fill='none' stroke='currentColor'></path>
+<path d='M 224,80 L 224,96' fill='none' stroke='currentColor'></path>
+<path d='M 224,96 L 224,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,112 L 224,144' fill='none' stroke='currentColor'></path>
+<path d='M 248,64 L 248,160' fill='none' stroke='currentColor'></path>
+<path d='M 248,160 L 248,176' fill='none' stroke='currentColor'></path>
+<path d='M 264,16 L 264,160' fill='none' stroke='currentColor'></path>
+<path d='M 40,16 A 16,16 0 0,0 56,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 A 16,16 0 0,1 56,32' fill='none' stroke='currentColor'></path>
+<path d='M 184,128 A 16,16 0 0,0 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 184,128 A 16,16 0 0,1 200,144' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='40' y='148' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='48' y='148' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='56' y='4' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='56' y='148' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='64' y='4' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='64' y='68' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='72' y='68' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='104' y='20' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='112' y='20' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='120' y='20' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='116' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='168' y='36' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='168' y='68' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='84' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='100' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='116' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='176' y='68' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='176' y='100' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='176' y='116' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='192' y='68' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='116' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='200' y='36' fill='currentColor' style='font-size:1em'>y</text>
+<text text-anchor='middle' x='200' y='68' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='200' y='84' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='200' y='100' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='200' y='116' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='208' y='36' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='208' y='68' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='208' y='84' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='208' y='100' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='208' y='116' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='216' y='36' fill='currentColor' style='font-size:1em'>5</text>
+</g>
+
+    </svg>
+  
+</div>
+</div>
+    </td>
+    </tr>
+    <tr>
+        <td>14</td>
+        <td>PB1</td>
+    </tr>
+    <tr>
+        <td>13</td>
+        <td>PB2</td>
+    </tr>
+    <tr>
+        <td>3v3</td>
+        <td>3v3</td>
+    </tr>
+    <tr>
+        <td>GND</td>
+        <td>GND</td>
+    </tr>
+    <tr>
+        <td colspan="2"><img src="shift_register_connections.JPG" height=220px/></td>
+        <td><img src="attiny_breadboard.JPG" height=220px/></td>
+    </tr>
+</table>
+<p>Now that we have our hardware setup we need to start writing some software. All Raspberry Pi&rsquo;s come with on-board SPI and we can leverage this to write directly to our ATTIny45 using AVRDude.</p>
+<h3 id="avrdude-breadboard-setup">AVRDude Breadboard Setup</h3>
+<p>To make this a little easier you can build up a very simple breadboard circuit for seating your ATTiny when you want to flash to it.</p>
+<blockquote>
+<p>Resistors aren&rsquo;t required if you are using the 3v3 pin to power the ATTiny</p>
+</blockquote>
+<table>
+    <tr>
+        <td>
+            <p align="center">
+            <img src="attiny_flash_beside_pi.JPG" height=230px/>
+            </p>
+        </td>
+        <td>
+<div style="max-width:400px">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 304 153"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,16 L 72,16' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 208,16' fill='none' stroke='currentColor'></path>
+<path d='M 72,32 L 128,32' fill='none' stroke='currentColor'></path>
+<path d='M 208,32 L 232,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,48 L 128,48' fill='none' stroke='currentColor'></path>
+<path d='M 208,48 L 216,48' fill='none' stroke='currentColor'></path>
+<path d='M 72,64 L 128,64' fill='none' stroke='currentColor'></path>
+<path d='M 208,64 L 216,64' fill='none' stroke='currentColor'></path>
+<path d='M 72,80 L 128,80' fill='none' stroke='currentColor'></path>
+<path d='M 208,80 L 232,80' fill='none' stroke='currentColor'></path>
+<path d='M 72,96 L 104,96' fill='none' stroke='currentColor'></path>
+<path d='M 0,112 L 72,112' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 152,112' fill='none' stroke='currentColor'></path>
+<path d='M 184,112 L 208,112' fill='none' stroke='currentColor'></path>
+<path d='M 104,128 L 232,128' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 L 72,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,32 L 72,48' fill='none' stroke='currentColor'></path>
+<path d='M 72,48 L 72,64' fill='none' stroke='currentColor'></path>
+<path d='M 72,64 L 72,80' fill='none' stroke='currentColor'></path>
+<path d='M 72,80 L 72,96' fill='none' stroke='currentColor'></path>
+<path d='M 72,96 L 72,112' fill='none' stroke='currentColor'></path>
+<path d='M 104,96 L 104,128' fill='none' stroke='currentColor'></path>
+<path d='M 128,16 L 128,32' fill='none' stroke='currentColor'></path>
+<path d='M 128,32 L 128,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,48 L 128,64' fill='none' stroke='currentColor'></path>
+<path d='M 128,64 L 128,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,80 L 128,112' fill='none' stroke='currentColor'></path>
+<path d='M 208,16 L 208,32' fill='none' stroke='currentColor'></path>
+<path d='M 208,32 L 208,48' fill='none' stroke='currentColor'></path>
+<path d='M 208,48 L 208,64' fill='none' stroke='currentColor'></path>
+<path d='M 208,64 L 208,80' fill='none' stroke='currentColor'></path>
+<path d='M 208,80 L 208,112' fill='none' stroke='currentColor'></path>
+<path d='M 232,32 L 232,80' fill='none' stroke='currentColor'></path>
+<path d='M 232,80 L 232,128' fill='none' stroke='currentColor'></path>
+<path d='M 168,96 A 16,16 0 0,0 152,112' fill='none' stroke='currentColor'></path>
+<path d='M 168,96 A 16,16 0 0,1 184,112' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='8' y='36' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='52' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='68' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='84' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='8' y='100' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='132' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='16' y='36' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='52' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='84' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='16' y='100' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='16' y='132' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='24' y='36' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='52' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='68' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='84' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='24' y='100' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='24' y='132' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='32' y='52' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='32' y='68' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='32' y='132' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='48' y='36' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='48' y='52' fill='currentColor' style='font-size:1em'>9</text>
+<text text-anchor='middle' x='48' y='68' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='48' y='132' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='56' y='68' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='56' y='132' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='144' y='52' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='144' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='144' y='84' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='152' y='52' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='152' y='68' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='152' y='84' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='160' y='4' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='160' y='52' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='168' y='4' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='176' y='4' fill='currentColor' style='font-size:1em'>y</text>
+<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='176' y='52' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='176' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='184' y='52' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='184' y='68' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='184' y='84' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='192' y='4' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='192' y='52' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='192' y='68' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>5</text>
+</g>
+
+    </svg>
+  
+</div>
+</div>
+        </td>
+    <tr>
+</table>
+<p>As seen in the picture, you can optionally connect <code>PB5</code> to an additional GPIO on the Raspberry Pi, Pulling <code>PB5</code> LOW puts the ATTiny into flash mode so realistically you can just tie this to <code>GND</code>.</p>
+<h3 id="avrdude-setup">AVRDude Setup</h3>
+<p>Login to your Raspberry Pi of choice and do the following steps.</p>
+<p>Install dependencies:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt update <span class="o">&amp;&amp;</span> sudo apt upgrade -y
+</span></span><span class="line"><span class="cl">sudo apt install bison automake autoconf flex gcc-avr binutils-avr avr-libc -y
+</span></span></code></pre></div><p>Clone a copy of AVRDude from github:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/kcuzner/avrdude
+</span></span></code></pre></div><p>cd to the directory and compile AVRDude:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> avrdude/avrdude
+</span></span><span class="line"><span class="cl">./bootstrap
+</span></span><span class="line"><span class="cl">./configure
+</span></span><span class="line"><span class="cl">sudo make install
+</span></span></code></pre></div><p>Now lets test the connection, connect your ATTiny up to the SPI pins on your Raspberry Pi and run the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span>
+</span></span></code></pre></div><details>
+  <summary>Output</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pi@raspberrypi:~ $ sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: AVR device initialized and ready to accept instructions
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Reading <span class="p">|</span> <span class="c1">################################################## | 100% 0.01s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: Device <span class="nv">signature</span> <span class="o">=</span> 0x1e9206
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: safemode: Fuses OK <span class="o">(</span>E:FF, H:DF, L:62<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude <span class="k">done</span>.  Thank you.
+</span></span><span class="line"><span class="cl">pi@raspberrypi:~ $ 
+</span></span></code></pre></div></details>
+<p>If you get a similar output then your Pi can now communicate with the ATTiny!</p>
+<p>You can see the fuse settings listed above. The fuse values are defaults and looking specifically at the LOW fuse settings, <code>0x62</code> means <code>Use the internal 8Mhz RC clock source and divide by 8</code>.</p>
+<p>So out of the box the ATTiny is only clocked at 1Mhz. We can change this to use the 16Mhz PLL clock by modifying the LOW fuse to a value of <code>0xF1</code>. There is a <a href="https://www.engbedded.com/fusecalc/"target="_blank" rel="noopener noreferrer">great online calculator</a>
+ that is useful for understanding the fuses in more detail.</p>
+<blockquote>
+<p>Please note that modifying fuse values is a potentially dangerous activity, please make sure you understand the fuse values you are modifying before running the command</p>
+</blockquote>
+<p>Let&rsquo;s change the LOW fuse to use a 16MHz clock</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span> -U lfuse:w:0xf1:m
+</span></span></code></pre></div><details>
+  <summary>Output</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pi@raspberrypi:~ $ sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span> -U lfuse:w:0xf1:m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: AVR device initialized and ready to accept instructions
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Reading <span class="p">|</span> <span class="c1">################################################## | 100% 0.01s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: Device <span class="nv">signature</span> <span class="o">=</span> 0x1e9206
+</span></span><span class="line"><span class="cl">avrdude: reading input file <span class="s2">&#34;0xf1&#34;</span>
+</span></span><span class="line"><span class="cl">avrdude: writing lfuse <span class="o">(</span><span class="m">1</span> bytes<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Writing <span class="p">|</span> <span class="c1">################################################## | 100% 0.02s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: <span class="m">1</span> bytes of lfuse written
+</span></span><span class="line"><span class="cl">avrdude: verifying lfuse memory against 0xf1:
+</span></span><span class="line"><span class="cl">avrdude: load data lfuse data from input file 0xf1:
+</span></span><span class="line"><span class="cl">avrdude: input file 0xf1 contains <span class="m">1</span> bytes
+</span></span><span class="line"><span class="cl">avrdude: reading on-chip lfuse data:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Reading <span class="p">|</span> <span class="c1">################################################## | 100% 0.00s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: verifying ...
+</span></span><span class="line"><span class="cl">avrdude: <span class="m">1</span> bytes of lfuse verified
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: safemode: Fuses OK <span class="o">(</span>E:FF, H:DF, L:F1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude <span class="k">done</span>.  Thank you.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">pi@raspberrypi:~ $
+</span></span></code></pre></div></details>
+<p>Great, you can see the fuse value has now changed. We should be running at 16Mhz now when it comes to runtime.</p>
+<p>The code that I eventually used in this project is available <a href="https://github.com/kennedn/nes-zero/blob/main/code/attiny/main.c"target="_blank" rel="noopener noreferrer">here</a>
+.</p>
+<p>It uses the Interrupt and Timer features of the ATTiny45 to essentially say:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">OUT_PIN</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">IN_PIN_1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">IN_PIN_2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sleep</span><span class="p">(</span><span class="mf">1.2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">IN_PIN_1</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">IN_PIN_2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">OUT_PIN</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span></code></pre></div><p>You can compile this code and push it to your ATTiny by running the following commands:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">avr-gcc main.c -mmcu<span class="o">=</span>attiny45 -Os -o main.bin
+</span></span><span class="line"><span class="cl">avr-objcopy -O ihex main.bin main.hex
+</span></span><span class="line"><span class="cl">sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span> -U flash:w:main.hex
+</span></span></code></pre></div><details>
+  <summary>Output</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pi@raspberrypi:~/attiny$ avr-gcc main.c -mmcu<span class="o">=</span>attiny45 -Os -S -o main.S
+</span></span><span class="line"><span class="cl">pi@raspberrypi:~/attiny$ avr-objcopy -O ihex main.bin main.hex
+</span></span><span class="line"><span class="cl">pi@raspberrypi:~/attiny$ sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="m">0000</span> -U flash:w:main.hex
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: AVR device initialized and ready to accept instructions
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Reading <span class="p">|</span> <span class="c1">################################################## | 100% 0.01s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: Device <span class="nv">signature</span> <span class="o">=</span> 0x1e9206
+</span></span><span class="line"><span class="cl">avrdude: NOTE: <span class="s2">&#34;flash&#34;</span> memory has been specified, an erase cycle will be performed
+</span></span><span class="line"><span class="cl">         To disable this feature, specify the -D option.
+</span></span><span class="line"><span class="cl">avrdude: erasing chip
+</span></span><span class="line"><span class="cl">avrdude: reading input file <span class="s2">&#34;main.hex&#34;</span>
+</span></span><span class="line"><span class="cl">avrdude: input file main.hex auto detected as Intel Hex
+</span></span><span class="line"><span class="cl">avrdude: writing flash <span class="o">(</span><span class="m">230</span> bytes<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Writing <span class="p">|</span> <span class="c1">################################################## | 100% 0.98s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: <span class="m">230</span> bytes of flash written
+</span></span><span class="line"><span class="cl">avrdude: verifying flash memory against main.hex:
+</span></span><span class="line"><span class="cl">avrdude: load data flash data from input file main.hex:
+</span></span><span class="line"><span class="cl">avrdude: input file main.hex auto detected as Intel Hex
+</span></span><span class="line"><span class="cl">avrdude: input file main.hex contains <span class="m">230</span> bytes
+</span></span><span class="line"><span class="cl">avrdude: reading on-chip flash data:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Reading <span class="p">|</span> <span class="c1">################################################## | 100% 1.79s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: verifying ...
+</span></span><span class="line"><span class="cl">avrdude: <span class="m">230</span> bytes of flash verified
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude: safemode: Fuses OK <span class="o">(</span>E:FF, H:DF, L:F1<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avrdude <span class="k">done</span>.  Thank you.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">pi@raspberrypi:~/attiny$
+</span></span></code></pre></div></details>
+<p>We can now test the chip in on our breadboard:</p>
+<p align="center">
+    <img src="attiny_button_test.gif" width="600px"/>
+</p>
+<p>And finally solder the ATTiny onto some strip board, the module itself will be seated between two pillars in the case bottom:</p>
+<p align="center">
+    <img src="full_wiring_attiny_highlight.JPG" width="600px"/>
+</p>
+<p>This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the piece to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:</p>
+<p align="center">
+    <img src="attiny_stripboard.png" width="220px"/>
+    <img src="attiny_stripboard_empty.png" width="220px"/>
+</p>
+<p>Onto the next circuit.</p>
+</article>
+</div>
+<div class="article bottom"><section class="article discussion"><script 
+            src="https://utteranc.es/client.js" 
+            repo="kennedn/blog-comments"
+            issue-term="pathname"
+            label=""
+            theme="photon-dark"
+            crossorigin="anonymous" async>
+        </script></section></div></section><section id="footer"><div class="footer-wrap">
+    <p class="copyright">© Joshua Kennedy 2022</p>
+    <p class="powerby">
+      Site code is open source 🔓︎ and can be found 
+      <a target="_blank" href="https://github.com/kennedn/kennedn.github.io">here</a></div>
+</section></body>
+
+</html>
