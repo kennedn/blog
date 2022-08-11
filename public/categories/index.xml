@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Kennedn&#39;s Blog</title>
-    <link>blog/categories/</link>
+    <link>/blog/categories/</link>
     <description>Recent content in Categories on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <copyright>© Joshua Kennedy 2022</copyright>
     
-        <atom:link href="blog/categories/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/blog/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>NESZero: NES Controller &#43; Raspberry Pi Zero</title>
-      <link>blog/posts/neszero/</link>
+      <link>/blog/posts/neszero/</link>
       <pubDate>Wed, 10 Aug 2022 10:19:40 +0100</pubDate>
       
-      <guid>blog/posts/neszero/</guid>
+      <guid>/blog/posts/neszero/</guid>
       <description>&lt;p align=&#34;center&#34;&gt;
     &lt;img src=&#34;case_closed_connected_front.JPG&#34; width=&#34;300px&#34;/&gt;
     &lt;img src=&#34;case_closed_connected_back.JPG&#34; width=&#34;300px&#34;/&gt;
@@ -598,10 +598,10 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
     
     <item>
       <title>About</title>
-      <link>blog/about/</link>
+      <link>/blog/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>blog/about/</guid>
+      <guid>/blog/about/</guid>
       <description>&lt;h3 align=&#34;center&#34;&gt;🧑‍💻 Who am I&lt;/h3&gt;
 &lt;p align=&#34;center&#34;&gt;
   &lt;samp&gt;My name is Josh and I like cooking up spicy code with spicier humans.&lt;/samp&gt;

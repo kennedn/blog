@@ -1,4 +1,4 @@
-baseURL = "blog/"
+baseURL = "/blog"
 title = "Kennedn's Blog"
 theme = "notepadium"
 copyright = "© Joshua Kennedy 2022"
