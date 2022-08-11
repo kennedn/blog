@@ -88,10 +88,12 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 > `The default configuration uses GPIO3 with a pullup, so if you connect a button between GPIO3 and GND, you get a shutdown and power-up button`
 
-This sounds like the exact behaviour we are looking for. So now that we know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.
-## NES Controller Functionality
+This sounds like the exact behaviour we are looking for. Pull `GPIO3` low and we get a power toggle pin. 
 
-NES Controller's are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and outputs them serially over a single pin. You can see from this diagram that each parallel input pin (`P1-8`) is wired to a button on the controller:
+We will enable this dtoverlay later on in the software section. Since we now know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.
+## How NES Controllers Work
+
+NES Controller's are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and can output them serially over a single pin. You can see from this diagram that each parallel input pin (`P1-8`) is wired to a button on the controller:
 
 <a name="nes004-diagram"></a>
 <p align="center">
@@ -110,7 +112,7 @@ The other pins of note here are `CK` `P/S`, `DS` and `O8`.
 
 When the Console want's to know which buttons are are being pressed, it will do the following:
 
- - Set `P/S` LOW, we are now in Parallel in, serial out mode. On each clock pulse, the 4021 will store the state of the 8 connected buttons in parallel
+ - Set `P/S` LOW, we are now in Parallel in, serial out mode. On each clock pulse, the 4021 will capture the state of the 8 connected buttons in parallel
  - Send 1 clock pulse on the `CK` pin. 
  - Set `P/S` HIGH, we are now in serial in, parallel out mode. On each clock pulse, the 4021 will read a new value in from `DS` and shift all registers to the right 
  - Loop 8 times:
@@ -122,28 +124,62 @@ By stepping through this process, the Console can extract each button's state fr
 RetroPie actually had a driver that does this for us so we can wire the NES controller directly on to our GPIO to get full controller support.
 
 Theory over, lets build something.
-## Using an ATTiny to bridge the gap
+## Using An ATtiny To Bridge The Gap
 
 <img align="right" style="margin: 0 0 0 5px;" src="attiny45.png" width=60px/>
 
 We need a man in the middle to be able to drive GPIO 3 LOW when certain buttons are pressed on the NES Controller. This is because the Pi cannot do the work for us when it is powered off. For this project I decided to use an AATiny45 microcontroller for the job since I had a few lying around.
 
-One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both `CK` and `P/S` need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on `P1-8`. So all we need to do is decide on a combination now and hard wire connections from those pins to our ATTiny as inputs. 
+One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both `CK` and `P/S` need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on `P1-8`. So all we need to do is decide on a combination now and 'wiretap' connections from those pins to our ATtiny as inputs. 
 
-We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on `P8` when we press the `A` button:
+We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on one of the 8 'Parallel In' pins, lets use `P8`. `P8`'s voltage level shifts when we press the `A` button:
 
 <p align="center">
     <img src="nes004-oscilloscope-hook.JPG" height=120px/><img src="4021_button_test.gif" height=120px/>
 </p>
 
-> Pressing the `A` button pulls the voltage LOW, returns to HIGH when released
+> Pressing the `A` button pulls the voltage LOW, returning to HIGH when released
 
 Looking good. I opted to use buttons `start` + `select` as my combination. 
 
-Let's get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATTiny45:
-<p align="center">
-   <img src="4021_pin_assignment.png" height=200px/><img src="attiny45_pin_assignment.png" height=200px/>
-</p>
+Let's get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATtiny45:
+<table>
+    <tr>
+        <td>
+<div style="max-width:400px">
+
+```goat
+            .-+   +-. 
+ Par In P8 -+  '-'  +- 3v3
+Buf Out O6 -+       +- P7 Par In
+Buf Out O8 -+       +- P6 Par In
+ Par In P4 -+       +- P5 Par In
+ Par In P3 -+       +- O7 Buf Out
+ Par In P2 -+       +- DS Ser In
+ Par In P1 -+       +- CK Clock
+       GND -+       +- P/S Par/Ser
+            '-------'
+              4021
+```
+</div>
+        </td>
+        <td>
+<div style="max-width:400px">
+
+```goat
+     .-+   +-. 
+PB5 -+  '-'  +- 3v3
+PB3 -+       +- PB2
+PB4 -+       +- PB1
+GND -+       +- PB0
+     '-------'
+      ATtiny45
+
+```
+</div>
+        </td>
+    <tr>
+</table>
 
 
 Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we have enough information to wire this up now:
@@ -158,27 +194,26 @@ Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we 
 ```goat
      4021
    .-+   +-. 3v3 .---------------.
-  -+  '-'  +-----'  ATTiny45     |
-  -+       +-     .---------.    |
-  -+    14 +---. -+ PB0 GND +--. |
-  -+    13 +--.'--+ PB1 PB4 +- | |
-  -+       +- '---+ PB2 PB3 +- | |
-  -+       +-   .-+ 3v3 PB5 +- | |
-  -+       +-   | |   .-.   |  | |
- .-+ GND   +-   | '--+   +--'  | |
- | '-------'    '--------------+-'
- '-----------------------------'
-
+  -+  '-'  +-----'  ATtiny45     |    LED
+  -+       +-     .---------.    |    .-.
+  -+    P6 +---. -+ PB0 GND +--. | .-+ 𝚡 |
+  -+    P5 +--.'--+ PB1 PB4 +- | | |  '+'
+  -+       +- '---+ PB2 PB3 +--)-)-'   |
+  -+       +-   .-+ 3v3 PB5 +- | |    .-.
+  -+       +-   | |   .-.   |  | |220Ω| |
+ .-+ GND   +-   | '--+   +--'  | |    '-'
+ | '-------'    '--------------)-'     |
+ +-----------------------------'-------'
 ```
 </div>
     </td>
     </tr>
     <tr>
-        <td>14</td>
+        <td>P6 (select)</td>
         <td>PB1</td>
     </tr>
     <tr>
-        <td>13</td>
+        <td>P5 (start)</td>
         <td>PB2</td>
     </tr>
     <tr>
@@ -198,11 +233,11 @@ Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we 
 
 Now that we have our hardware setup we need to start writing some software. All Raspberry Pi's come with on-board SPI and we can leverage this to write directly to our ATTIny45 using AVRDude.
 
-### AVRDude Breadboard Setup
+### AVRDude Setup
 
-To make this a little easier you can build up a very simple breadboard circuit for seating your ATTiny when you want to flash to it. 
+To make this a little easier you can build up a very simple breadboard circuit for seating your ATtiny when you want to flash to it. 
 
-> Resistors aren't required if you are using the 3v3 pin to power the ATTiny
+> Resistors aren't required if you are using the 3v3 pin to power the ATtiny
 
 <table>
     <tr>
@@ -215,7 +250,7 @@ To make this a little easier you can build up a very simple breadboard circuit f
 <div style="max-width:400px">
 
 ```goat
-                 ATtiny45            
+                 ATtiny45   
 ---------.      .---------.
  GPIO 10 +------+ PB0 GND +--.
  GPIO 9  +------+ PB1 PB4 +- |
@@ -230,9 +265,8 @@ To make this a little easier you can build up a very simple breadboard circuit f
     <tr>
 </table>
 
-As seen in the picture, you can optionally connect `PB5` to an additional GPIO on the Raspberry Pi, Pulling `PB5` LOW puts the ATTiny into flash mode so realistically you can just tie this to `GND`.
+As seen in the picture, you can optionally connect `PB5` to an additional GPIO on the Raspberry Pi, Pulling `PB5` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`.
 
-### AVRDude Setup
 
 Login to your Raspberry Pi of choice and do the following steps.
 
@@ -247,7 +281,7 @@ Clone a copy of AVRDude from github:
 git clone https://github.com/kcuzner/avrdude
 ```
 
-cd to the directory and compile AVRDude:
+cd to the directory and compile AVRDude, go get a coffee because this step will take a while:
 ```bash
 cd avrdude/avrdude
 ./bootstrap
@@ -255,7 +289,7 @@ cd avrdude/avrdude
 sudo make install
 ```
 
-Now lets test the connection, connect your ATTiny up to the SPI pins on your Raspberry Pi and run the following:
+Now lets test the connection, connect your ATtiny up to the SPI pins on your Raspberry Pi and run the following:
 
 ```bash
 sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b 10000
@@ -280,15 +314,15 @@ pi@raspberrypi:~ $
 ```
 </details>
 
-If you get a similar output then your Pi can now communicate with the ATTiny! 
+If you get a similar output then your Pi can now communicate with the ATtiny! 
 
-You can see the fuse settings listed above. The fuse values are defaults and looking specifically at the LOW fuse settings, `0x62` means `Use the internal 8Mhz RC clock source and divide by 8`.
+You can see the fuse settings listed in the output. The ATtiny45 usually comes with these values as defaults and looking specifically at the LOW fuse setting, `0x62` means `Use the internal 8Mhz RC clock source and divide by 8`.
  
-So out of the box the ATTiny is only clocked at 1Mhz. We can change this to use the 16Mhz PLL clock by modifying the LOW fuse to a value of `0xF1`. There is a [great online calculator](https://www.engbedded.com/fusecalc/) that is useful for understanding the fuses in more detail.
+So out of the box the ATtiny is only clocked at 1Mhz. We can change this to use the 16Mhz PLL clock by modifying the LOW fuse to a value of `0xF1`. There is a [great online calculator](https://www.engbedded.com/fusecalc/) that is useful for understanding the fuses in more detail.
 
 > Please note that modifying fuse values is a potentially dangerous activity, please make sure you understand the fuse values you are modifying before running the command
 
-Let's change the LOW fuse to use a 16MHz clock
+Let's change the LOW fuse to use a 16MHz clock, our code will be designed with the 16Mhz clock speed in mind:
 
 ```bash
 sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b 10000 -U lfuse:w:0xf1:m
@@ -333,18 +367,21 @@ Great, you can see the fuse value has now changed. We should be running at 16Mhz
 
 The code that I eventually used in this project is available [here](https://github.com/kennedn/nes-zero/blob/main/code/attiny/main.c). 
 
-It uses the Interrupt and Timer features of the ATTiny45 to essentially say:
+It uses the Interrupt and Timer features of the ATtiny45 to essentially say:
 
 ```python
 while True:
-    OUT_PIN = 1
     if IN_PIN_1 == 0 and IN_PIN_2 == 0:
         sleep(1.2)
         if IN_PIN_1 == 0 and IN_PIN_2 == 0:
             OUT_PIN = 0
+        else:
+            OUT_PIN = 1
+    else: 
+        OUT_PIN = 1
 ```
 
-You can compile this code and push it to your ATTiny by running the following commands:
+You can compile this code and push it to your ATtiny by running the following commands:
 
 ```bash
 avr-gcc main.c -mmcu=attiny45 -Os -o main.bin
@@ -400,13 +437,13 @@ We can now test the chip in on our breadboard:
     <img src="attiny_button_test.gif" width="600px"/>
 </p>
 
-And finally solder the ATTiny onto some strip board, the module itself will be seated between two pillars in the case bottom:
+And finally solder the ATtiny onto some strip board, the module itself will be seated between two pillars in the case bottom:
 
 <p align="center">
     <img src="full_wiring_attiny_highlight.JPG" width="600px"/>
 </p>
 
-This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the piece to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:
+This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the edges to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:
 
 <p align="center">
     <img src="attiny_stripboard.png" width="220px"/>
@@ -415,3 +452,40 @@ This equated to a stripboard piece with 11 x 6 holes for me. You can sand down t
 
 Onto the next circuit.
 
+# Hack The Jack Back
+
+Most full sized Raspberry Pi models have an on-board 4 pole TRRS jack that consists of 2 audio channels and a composite video channel. However to conserve space on the Zero, most I/O ports have either been minimized or removed completely:
+
+<p align="center">
+    <img src="raspberry_pi_zero_board.svg" width="600px"/>
+</p>
+
+Not all hope is lost however. The composite pin is still exposed as the `TV` header on the board:
+
+<p align="center">
+    <img src="raspberry_pi_zero_board.svg#svgView(viewBox(185, 30, 12, 15))" width=200; />
+</p>
+
+And as it turns out we can actually just re-purpose two PWM pins from the main 40 pin GPIO block. As of Raspbian Buster (10), the standard way of doing this is by using a dtoverlay called audremap. This overlay allows you to choose a pin set to remap and will make an audio device available at runtime using these pins.
+
+<details>
+<summary>README</summary>
+
+```
+Name:   audremap
+Info:   Switches PWM sound output to GPIOs on the 40-pin header
+Load:   dtoverlay=audremap,<param>=<val>
+Params: swap_lr                 Reverse the channel allocation, which will also
+                                swap the audio jack outputs (default off)
+        enable_jack             Don't switch off the audio jack output
+                                (default off)
+        pins_12_13              Select GPIOs 12 & 13 (default)
+        pins_18_19              Select GPIOs 18 & 19
+```
+</details>
+
+There is a catch however. The TRRS jack of a fully fledged Raspberry Pi has a low pass filter circuit that reduces noise on each audio channel. This is something that is missing on the raw PWM pins and we are going to have to add it back to get the crisp audio we are seeking.
+
+So what is a low pass filter anyway and can we build it?
+
+A PWM signal is really just an alternating current
