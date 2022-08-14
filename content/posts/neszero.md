@@ -2,12 +2,13 @@
 title: "NESZero: NES Controller + Raspberry Pi Zero"
 date: 2022-08-10T10:19:40+01:00
 draft: false
+math: true
 imgs: 
     - full_wiring_carpet.JPG
 ---
 <p align="center">
-    <img src="case_closed_connected_front.JPG" width="300px"/>
-    <img src="case_closed_connected_back.JPG" width="300px"/>
+    <img src="case_closed_connected_front.JPG" width="400px"/>
+    <img src="case_closed_connected_back.JPG" width="400px"/>
 </p>
 
 This project began more or less because I wanted to play EarthBound on a CRT TV. The TV itself only supports one connection type, a single scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to approaching a problem like this.
@@ -97,7 +98,7 @@ NES Controller's are surprisingly simple. They consist of a single 4021 8-bit sh
 
 <a name="nes004-diagram"></a>
 <p align="center">
-    <img src="nes004-diagram.png" width="600px"/>
+    <img src="nes004-diagram.png" width="800px"/>
 </p>
 
 The other pins of note here are `CK` `P/S`, `DS` and `O8`.
@@ -135,7 +136,7 @@ One problem we need to address is that two devices cannot interface with the 8 b
 We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on one of the 8 'Parallel In' pins, lets use `P8`. `P8`'s voltage level shifts when we press the `A` button:
 
 <p align="center">
-    <img src="nes004-oscilloscope-hook.JPG" height=120px/><img src="4021_button_test.gif" height=120px/>
+    <img src="nes004-oscilloscope-hook.JPG" width=300px/><img src="4021_button_test.gif" width=800px/>
 </p>
 
 > Pressing the `A` button pulls the voltage LOW, returning to HIGH when released
@@ -143,10 +144,8 @@ We can prove this works by providing power to the 8-bit shift register and check
 Looking good. I opted to use buttons `start` + `select` as my combination. 
 
 Let's get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATtiny45:
-<table>
-    <tr>
-        <td>
-<div style="max-width:400px">
+<table style="width: 100%;">
+<tr><td style="width:50%;">
 
 ```goat
             .-+   +-. 
@@ -161,14 +160,12 @@ Buf Out O8 -+       +- P6 Par In
             '-------'
               4021
 ```
-</div>
-        </td>
-        <td>
-<div style="max-width:400px">
+</td>
+<td style="width:50%;">
 
 ```goat
      .-+   +-. 
-PB5 -+  '-'  +- 3v3
+RST -+  '-'  +- 3v3
 PB3 -+       +- PB2
 PB4 -+       +- PB1
 GND -+       +- PB0
@@ -176,20 +173,25 @@ GND -+       +- PB0
       ATtiny45
 
 ```
-</div>
-        </td>
-    <tr>
+</td><tr>
 </table>
 
 
 Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we have enough information to wire this up now:
 
-<table align="center">
+<table style="width: 100%;">
+    <tr>
+        <td colspan="2">
+            <img src="shift_register_connections.JPG" width=400px/>
+        </td>
+        <td>
+            <img src="attiny_breadboard.JPG" width=400px/>
+        </td>
+    </tr>
     <tr>
         <th>4021</td>
         <th>Attiny45</td>
-        <td rowspan="5"> 
-        <div style="max-width:400px">
+        <td rowspan="5" style="width:50%;"> 
 
 ```goat
      4021
@@ -199,14 +201,13 @@ Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we 
   -+    P6 +---. -+ PB0 GND +--. | .-+ 𝚡 |
   -+    P5 +--.'--+ PB1 PB4 +- | | |  '+'
   -+       +- '---+ PB2 PB3 +--)-)-'   |
-  -+       +-   .-+ 3v3 PB5 +- | |    .-.
+  -+       +-   .-+ 3v3 RST +- | |    .-.
   -+       +-   | |   .-.   |  | |220Ω| |
  .-+ GND   +-   | '--+   +--'  | |    '-'
  | '-------'    '--------------)-'     |
  +-----------------------------'-------'
 ```
-</div>
-    </td>
+   </td>
     </tr>
     <tr>
         <td>P6 (select)</td>
@@ -224,10 +225,6 @@ Comparing the `Parallel In` pins with the [nes004 diagram](#nes004-diagram), we 
         <td>GND</td>
         <td>GND</td>
     </tr>
-    <tr>
-        <td colspan="2"><img src="shift_register_connections.JPG" height=220px/></td>
-        <td><img src="attiny_breadboard.JPG" height=220px/></td>
-    </tr>
 </table>
 
 
@@ -239,15 +236,15 @@ To make this a little easier you can build up a very simple breadboard circuit f
 
 > Resistors aren't required if you are using the 3v3 pin to power the ATtiny
 
-<table>
-    <tr>
-        <td>
-            <p align="center">
-            <img src="attiny_flash_beside_pi.JPG" height=230px/>
-            </p>
-        </td>
-        <td>
-<div style="max-width:400px">
+
+<table style="width:100%;">
+<tr><td style="width:50%;">
+
+<p align="center">
+    <img src="attiny_flash_beside_pi.JPG" width=400px/>
+</p>
+</td>
+<td style="width:50%;">
 
 ```goat
                  ATtiny45   
@@ -255,17 +252,14 @@ To make this a little easier you can build up a very simple breadboard circuit f
  GPIO 10 +------+ PB0 GND +--.
  GPIO 9  +------+ PB1 PB4 +- |
  GPIO 11 +------+ PB2 PB3 +- |
- 3v3     +------+ 3v3 PB5 +--+
+ 3v3     +------+ 3v3 RST +--+
  GND     +---.  |   .-.   |  |
 ---------'   |  '--+   +--'  |
  Rasp Pi     '---------------'
 ```
-</div>
-        </td>
-    <tr>
+</td><tr>
 </table>
-
-As seen in the picture, you can optionally connect `PB5` to an additional GPIO on the Raspberry Pi, Pulling `PB5` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`.
+As seen in the picture, you can optionally connect `RST` (reset pin) to an additional GPIO on the Raspberry Pi, Pulling `RST` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`.
 
 
 Login to your Raspberry Pi of choice and do the following steps.
@@ -434,20 +428,20 @@ pi@raspberrypi:~/attiny$
 We can now test the chip in on our breadboard:
 
 <p align="center">
-    <img src="attiny_button_test.gif" width="600px"/>
+    <img src="attiny_button_test.gif" width="500px"/>
 </p>
 
 And finally solder the ATtiny onto some strip board, the module itself will be seated between two pillars in the case bottom:
 
 <p align="center">
-    <img src="full_wiring_attiny_highlight.JPG" width="600px"/>
+    <img src="full_wiring_attiny_highlight.JPG" width="500px"/>
 </p>
 
 This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the edges to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:
 
 <p align="center">
-    <img src="attiny_stripboard.png" width="220px"/>
-    <img src="attiny_stripboard_empty.png" width="220px"/>
+    <img src="attiny_stripboard.png" width="240px"/>
+    <img src="attiny_stripboard_empty.png" width="240px"/>
 </p>
 
 Onto the next circuit.
@@ -457,7 +451,7 @@ Onto the next circuit.
 Most full sized Raspberry Pi models have an on-board 4 pole TRRS jack that consists of 2 audio channels and a composite video channel. However to conserve space on the Zero, most I/O ports have either been minimized or removed completely:
 
 <p align="center">
-    <img src="raspberry_pi_zero_board.svg" width="600px"/>
+    <img src="raspberry_pi_zero_board.svg" width="400px"/>
 </p>
 
 Not all hope is lost however. The composite pin is still exposed as the `TV` header on the board:
@@ -486,6 +480,85 @@ Params: swap_lr                 Reverse the channel allocation, which will also
 
 There is a catch however. The TRRS jack of a fully fledged Raspberry Pi has a low pass filter circuit that reduces noise on each audio channel. This is something that is missing on the raw PWM pins and we are going to have to add it back to get the crisp audio we are seeking.
 
-So what is a low pass filter anyway and can we build it?
+## What is a low pass filter?
 
-A PWM signal is really just an alternating current
+A low pass filter is a circuit that essentially places an upper bound on the output frequency of a signal. In respect to our audio channels, this means we can eliminate high frequency noise that might interfere with our signal. We know that the 'good' part of the signal is going to be within the human hearing range (20hz - 20,000hz), so we can design a circuit with a cut off frequency close to 20,000hz. 
+
+To understand how this kind of circuit works it can be useful to see it in action. Let's look at a simple low-pass filter circuit, and see what happens to the output signal (<b><mark style="background-color: #fff; color: green">green</mark></b>) when we increase the frequency of the input signal (<b><mark style="background-color: #fff; color: red">red</mark></b>). 
+
+<p align="center">
+    <img src="10hz_lowpass.gif" width="50%"/>
+</p>
+
+The cut-off frequency for this circuit is 26.79Hz. This can be calculated with the following formula:
+$$f = {1 / 2\Pi rc}$$
+
+Substituting our values:
+<br>
+$${ r} = 270Ω$$
+<br>
+$${ c} = 22\mathrm{e}{-6}F$$
+<br>
+$${1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}} = 26.793761463282046$$
+
+You can see in the above GIF that there is a `phase` difference between the output and the input, the output voltage takes some time before it reflects the input voltage. This is caused by the capacitor charging and discharging at a specific rate. At 10Hz we are below the cut off frequency and the output is able to reflect the input voltage in time before the next signal edge. However what happens when we approach the cut-off frequency (26Hz) and then move beyond to 100Hz:
+
+<table style="width:100%;">
+<tr><td style="width:50%; padding: 1px;">
+
+<p align="center">
+    <img src="26hz_lowpass.gif" width="100%"/>
+</p>
+</td>
+<td style="width:50%; padding: 1px;">
+<p align="center">
+    <img src="100hz_lowpass.gif" width="100%"/>
+</p>
+</td><tr>
+</table>
+
+The signal starts to `attenuate` (weaken) as we move beyond the cut-off frequency and that is the trick to the low-pass filter. If the frequency of the input signal at a given point in time is too fast for the capacitor to keep up, that part of the signal is essentially eliminated.
+
+There are a few additional complications that we must solve for in our circuit. The output voltage of our PWM pins is `3.3v`. The standard audio line-level in consumer products has a peak voltage of around `1.5v` so we need to reduce our PWM signal down to this level to be within spec. We can create a voltage divider to achieve this and it only requires one additional resistor per channel.
+
+We should also place a DC filter capacitor just before our output, this only permits AC and stops DC voltage from making its way to our speakers.
+
+This is our final circuit:
+
+<table style="width:100%;">
+<tr><td style="width:50%; padding: 1px;">
+
+```goat
+ PWM in ___             audio out
+>------|___|--+---+--||---------->
+   270Ω       |   |    10uF
+             _+_ .-. 
+             --- | |150Ω
+         22nF |  '-'
+              |   | 
+              '-+-'
+           GND _|_
+```
+</td>
+<td style="width:50%; padding: 1px;">
+</td>
+</tr>
+</table>
+
+The 270Ω resistor is 're-used' in our circuit as one half of the voltage divider. The second 150Ω resistor makes up the second part and together they reduce the voltage to approx `1.18v`. This can be calculated using the voltage divider formula:
+
+$$V_{out} = \frac{R_b}{R_a+R_b} \times V_{in}$$
+
+Substituting our values:
+<br>
+$${R_a} = 270Ω$$
+<br>
+$${R_b} = 150Ω$$
+<br>
+$$V_{in} = 3.3V$$
+<br>
+$$\frac{150}{270+150} \times 3.3 = 1.1785714285714286V$$
+
+<p align="center">
+    <img src="low_pass_filter_v1_bb.png" width="80%"/>
+</p>
