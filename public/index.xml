@@ -1,25 +1,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Kennedn&#39;s Blog</title>
-    <link>/blog/</link>
+    <link>https://kennedn.com/blog/</link>
     <description>Recent content on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <copyright>© Joshua Kennedy 2022</copyright>
     <lastBuildDate>Wed, 10 Aug 2022 10:19:40 +0100</lastBuildDate>
     
-        <atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://kennedn.com/blog/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>NESZero: NES Controller &#43; Raspberry Pi Zero</title>
-      <link>/blog/posts/neszero/</link>
+      <link>https://kennedn.com/blog/posts/neszero/</link>
       <pubDate>Wed, 10 Aug 2022 10:19:40 +0100</pubDate>
       
-      <guid>/blog/posts/neszero/</guid>
+      <guid>https://kennedn.com/blog/posts/neszero/</guid>
       <description>&lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;case_closed_connected_front.JPG&#34; width=&#34;300px&#34;/&gt;
-    &lt;img src=&#34;case_closed_connected_back.JPG&#34; width=&#34;300px&#34;/&gt;
+    &lt;img src=&#34;case_closed_connected_front.JPG&#34; width=&#34;400px&#34;/&gt;
+    &lt;img src=&#34;case_closed_connected_back.JPG&#34; width=&#34;400px&#34;/&gt;
 &lt;/p&gt;
 &lt;p&gt;This project began more or less because I wanted to play EarthBound on a CRT TV. The TV itself only supports one connection type, a single scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to approaching a problem like this.
 I had a few options that I soon exhausted:&lt;/p&gt;
@@ -90,12 +90,13 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;blockquote&gt;
 &lt;p&gt;&lt;code&gt;The default configuration uses GPIO3 with a pullup, so if you connect a button between GPIO3 and GND, you get a shutdown and power-up button&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;This sounds like the exact behaviour we are looking for. So now that we know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.&lt;/p&gt;
-&lt;h2 id=&#34;nes-controller-functionality&#34;&gt;NES Controller Functionality&lt;/h2&gt;
-&lt;p&gt;NES Controller&amp;rsquo;s are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and outputs them serially over a single pin. You can see from this diagram that each parallel input pin (&lt;code&gt;P1-8&lt;/code&gt;) is wired to a button on the controller:&lt;/p&gt;
+&lt;p&gt;This sounds like the exact behaviour we are looking for. Pull &lt;code&gt;GPIO3&lt;/code&gt; low and we get a power toggle pin.&lt;/p&gt;
+&lt;p&gt;We will enable this dtoverlay later on in the software section. Since we now know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.&lt;/p&gt;
+&lt;h2 id=&#34;how-nes-controllers-work&#34;&gt;How NES Controllers Work&lt;/h2&gt;
+&lt;p&gt;NES Controller&amp;rsquo;s are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and can output them serially over a single pin. You can see from this diagram that each parallel input pin (&lt;code&gt;P1-8&lt;/code&gt;) is wired to a button on the controller:&lt;/p&gt;
 &lt;p&gt;&lt;a name=&#34;nes004-diagram&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;nes004-diagram.png&#34; width=&#34;600px&#34;/&gt;
+    &lt;img src=&#34;nes004-diagram.png&#34; width=&#34;800px&#34;/&gt;
 &lt;/p&gt;
 &lt;p&gt;The other pins of note here are &lt;code&gt;CK&lt;/code&gt; &lt;code&gt;P/S&lt;/code&gt;, &lt;code&gt;DS&lt;/code&gt; and &lt;code&gt;O8&lt;/code&gt;.&lt;/p&gt;
 &lt;table&gt;
@@ -126,7 +127,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;/table&gt;
 &lt;p&gt;When the Console want&amp;rsquo;s to know which buttons are are being pressed, it will do the following:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Set &lt;code&gt;P/S&lt;/code&gt; LOW, we are now in Parallel in, serial out mode. On each clock pulse, the 4021 will store the state of the 8 connected buttons in parallel&lt;/li&gt;
+&lt;li&gt;Set &lt;code&gt;P/S&lt;/code&gt; LOW, we are now in Parallel in, serial out mode. On each clock pulse, the 4021 will capture the state of the 8 connected buttons in parallel&lt;/li&gt;
 &lt;li&gt;Send 1 clock pulse on the &lt;code&gt;CK&lt;/code&gt; pin.&lt;/li&gt;
 &lt;li&gt;Set &lt;code&gt;P/S&lt;/code&gt; HIGH, we are now in serial in, parallel out mode. On each clock pulse, the 4021 will read a new value in from &lt;code&gt;DS&lt;/code&gt; and shift all registers to the right&lt;/li&gt;
 &lt;li&gt;Loop 8 times:
@@ -139,30 +140,21 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;p&gt;By stepping through this process, the Console can extract each button&amp;rsquo;s state from the NES controller using only 3 wires.&lt;/p&gt;
 &lt;p&gt;RetroPie actually had a driver that does this for us so we can wire the NES controller directly on to our GPIO to get full controller support.&lt;/p&gt;
 &lt;p&gt;Theory over, lets build something.&lt;/p&gt;
-&lt;h2 id=&#34;using-an-attiny-to-bridge-the-gap&#34;&gt;Using an ATTiny to bridge the gap&lt;/h2&gt;
+&lt;h2 id=&#34;using-an-attiny-to-bridge-the-gap&#34;&gt;Using An ATtiny To Bridge The Gap&lt;/h2&gt;
 &lt;img align=&#34;right&#34; style=&#34;margin: 0 0 0 5px;&#34; src=&#34;attiny45.png&#34; width=60px/&gt;
 &lt;p&gt;We need a man in the middle to be able to drive GPIO 3 LOW when certain buttons are pressed on the NES Controller. This is because the Pi cannot do the work for us when it is powered off. For this project I decided to use an AATiny45 microcontroller for the job since I had a few lying around.&lt;/p&gt;
-&lt;p&gt;One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both &lt;code&gt;CK&lt;/code&gt; and &lt;code&gt;P/S&lt;/code&gt; need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on &lt;code&gt;P1-8&lt;/code&gt;. So all we need to do is decide on a combination now and hard wire connections from those pins to our ATTiny as inputs.&lt;/p&gt;
-&lt;p&gt;We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on &lt;code&gt;P8&lt;/code&gt; when we press the &lt;code&gt;A&lt;/code&gt; button:&lt;/p&gt;
+&lt;p&gt;One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both &lt;code&gt;CK&lt;/code&gt; and &lt;code&gt;P/S&lt;/code&gt; need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on &lt;code&gt;P1-8&lt;/code&gt;. So all we need to do is decide on a combination now and &amp;lsquo;wiretap&amp;rsquo; connections from those pins to our ATtiny as inputs.&lt;/p&gt;
+&lt;p&gt;We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on one of the 8 &amp;lsquo;Parallel In&amp;rsquo; pins, lets use &lt;code&gt;P8&lt;/code&gt;. &lt;code&gt;P8&lt;/code&gt;&amp;rsquo;s voltage level shifts when we press the &lt;code&gt;A&lt;/code&gt; button:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;nes004-oscilloscope-hook.JPG&#34; height=120px/&gt;&lt;img src=&#34;4021_button_test.gif&#34; height=120px/&gt;
+    &lt;img src=&#34;nes004-oscilloscope-hook.JPG&#34; width=300px/&gt;&lt;img src=&#34;4021_button_test.gif&#34; width=800px/&gt;
 &lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Pressing the &lt;code&gt;A&lt;/code&gt; button pulls the voltage LOW, returns to HIGH when released&lt;/p&gt;
+&lt;p&gt;Pressing the &lt;code&gt;A&lt;/code&gt; button pulls the voltage LOW, returning to HIGH when released&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Looking good. I opted to use buttons &lt;code&gt;start&lt;/code&gt; + &lt;code&gt;select&lt;/code&gt; as my combination.&lt;/p&gt;
-&lt;p&gt;Let&amp;rsquo;s get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATTiny45:&lt;/p&gt;
-&lt;p align=&#34;center&#34;&gt;
-   &lt;img src=&#34;4021_pin_assignment.png&#34; height=200px/&gt;&lt;img src=&#34;attiny45_pin_assignment.png&#34; height=200px/&gt;
-&lt;/p&gt;
-&lt;p&gt;Comparing the &lt;code&gt;Parallel In&lt;/code&gt; pins with the &lt;a href=&#34;#nes004-diagram&#34;&gt;nes004 diagram&lt;/a&gt;
-, we have enough information to wire this up now:&lt;/p&gt;
-&lt;table align=&#34;center&#34;&gt;
-    &lt;tr&gt;
-        &lt;th&gt;4021&lt;/td&gt;
-        &lt;th&gt;Attiny45&lt;/td&gt;
-        &lt;td rowspan=&#34;5&#34;&gt; 
-        &lt;div style=&#34;max-width:400px&#34;&gt;
+&lt;p&gt;Let&amp;rsquo;s get a breadboard set up and start trying to implement this. My NES controller has a CD4021BC IC, below is the pinout for this IC and the ATtiny45:&lt;/p&gt;
+&lt;table style=&#34;width: 100%;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:50%;&#34;&gt;
 
 
 
@@ -172,7 +164,268 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
       xmlns=&#34;http://www.w3.org/2000/svg&#34;
       font-family=&#34;Menlo,Lucida Console,monospace&#34;
       
-        viewBox=&#34;0 0 280 201&#34;
+        viewBox=&#34;0 0 280 185&#34;
+      &gt;
+      &lt;g transform=&#39;translate(8,16)&#39;&gt;
+&lt;path d=&#39;M 96,0 L 112,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,0 L 160,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,16 L 96,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,16 L 168,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,32 L 96,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,32 L 168,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,48 L 96,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,48 L 168,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,64 L 96,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,64 L 168,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,80 L 96,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,80 L 168,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,96 L 96,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,96 L 168,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,112 L 96,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,112 L 168,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,128 L 96,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,128 L 168,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,144 L 160,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,0 L 96,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,16 L 96,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,32 L 96,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,48 L 96,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,64 L 96,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,80 L 96,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,96 L 96,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,112 L 96,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,128 L 96,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,0 L 160,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,16 L 160,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,32 L 160,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,48 L 160,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,64 L 160,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,80 L 160,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,96 L 160,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,112 L 160,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 160,128 L 160,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,0 A 16,16 0 0,0 128,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,0 A 16,16 0 0,1 128,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;f&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;f&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;32&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;32&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;N&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;8&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;6&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;8&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;112&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;120&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;136&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;C&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;7&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;6&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;7&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;K&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;/&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;C&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;f&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;232&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;232&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;I&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;k&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;/&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;256&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;256&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;264&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;/g&gt;
+
+    &lt;/svg&gt;
+  
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;td style=&#34;width:50%;&#34;&gt;
+
+
+
+&lt;div class=&#34;goat svg-container &#34;&gt;
+  
+    &lt;svg
+      xmlns=&#34;http://www.w3.org/2000/svg&#34;
+      font-family=&#34;Menlo,Lucida Console,monospace&#34;
+      
+        viewBox=&#34;0 0 160 121&#34;
+      &gt;
+      &lt;g transform=&#39;translate(8,16)&#39;&gt;
+&lt;path d=&#39;M 40,0 L 56,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,0 L 104,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 32,16 L 40,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,16 L 112,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 32,32 L 40,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,32 L 112,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 32,48 L 40,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,48 L 112,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 32,64 L 40,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,64 L 112,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,80 L 104,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,0 L 40,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,16 L 40,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,32 L 40,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,48 L 40,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,64 L 40,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,0 L 104,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,16 L 104,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,32 L 104,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,48 L 104,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,64 L 104,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 56,0 A 16,16 0 0,0 72,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,0 A 16,16 0 0,1 72,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;R&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;0&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;N&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;T&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;A&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;T&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;80&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;88&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;y&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;96&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;104&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;136&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;136&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;136&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;136&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;144&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;144&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;144&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;144&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;/g&gt;
+
+    &lt;/svg&gt;
+  
+&lt;/div&gt;
+&lt;/td&gt;&lt;tr&gt;
+&lt;/table&gt;
+&lt;p&gt;Comparing the &lt;code&gt;Parallel In&lt;/code&gt; pins with the &lt;a href=&#34;#nes004-diagram&#34;&gt;nes004 diagram&lt;/a&gt;
+, we have enough information to wire this up now:&lt;/p&gt;
+&lt;table style=&#34;width: 100%;&#34;&gt;
+    &lt;tr&gt;
+        &lt;td colspan=&#34;2&#34;&gt;
+            &lt;img src=&#34;shift_register_connections.JPG&#34; width=400px/&gt;
+        &lt;/td&gt;
+        &lt;td&gt;
+            &lt;img src=&#34;attiny_breadboard.JPG&#34; width=400px/&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;th&gt;4021&lt;/td&gt;
+        &lt;th&gt;Attiny45&lt;/td&gt;
+        &lt;td rowspan=&#34;5&#34; style=&#34;width:50%;&#34;&gt; 
+
+
+
+&lt;div class=&#34;goat svg-container &#34;&gt;
+  
+    &lt;svg
+      xmlns=&#34;http://www.w3.org/2000/svg&#34;
+      font-family=&#34;Menlo,Lucida Console,monospace&#34;
+      
+        viewBox=&#34;0 0 344 201&#34;
       &gt;
       &lt;g transform=&#39;translate(8,16)&#39;&gt;
 &lt;path d=&#39;M 24,16 L 40,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
@@ -187,6 +440,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;path d=&#39;M 88,64 L 120,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 136,64 L 144,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 224,64 L 248,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 280,64 L 296,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 16,80 L 24,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 88,80 L 112,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 120,80 L 144,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
@@ -194,21 +448,26 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;path d=&#39;M 16,96 L 24,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 88,96 L 96,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 112,96 L 144,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
-&lt;path d=&#39;M 224,96 L 232,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 224,96 L 248,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,96 L 264,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,96 L 280,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 16,112 L 24,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 88,112 L 96,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 128,112 L 144,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 224,112 L 232,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 304,112 L 320,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 16,128 L 24,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 88,128 L 96,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 8,144 L 24,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 88,144 L 96,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 144,144 L 168,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 200,144 L 224,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 304,144 L 320,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 24,160 L 88,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 128,160 L 248,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 248,160 L 264,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 8,176 L 248,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,176 L 312,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 8,144 L 8,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 24,16 L 24,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 24,32 L 24,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
@@ -242,13 +501,34 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;path d=&#39;M 224,80 L 224,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 224,96 L 224,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 224,112 L 224,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
-&lt;path d=&#39;M 248,64 L 248,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
-&lt;path d=&#39;M 248,160 L 248,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
-&lt;path d=&#39;M 264,16 L 264,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,64 L 248,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,112 L 248,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,16 L 264,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,112 L 264,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 280,64 L 280,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 304,112 L 304,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,80 L 312,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,160 L 312,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 320,112 L 320,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,96 L 312,104&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,152 L 312,160&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 40,16 A 16,16 0 0,0 56,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 72,16 A 16,16 0 0,1 56,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,48 A 16,16 0 0,0 296,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 312,48 A 16,16 0 0,1 328,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 296,64 A 16,16 0 0,0 312,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 328,64 A 16,16 0 0,1 312,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 184,128 A 16,16 0 0,0 168,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;path d=&#39;M 184,128 A 16,16 0 0,1 200,144&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,80 L 248,88&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,104 L 248,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,88 A 9,9 0 0,1 248,104&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,80 L 264,88&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,104 L 264,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 264,88 A 9,9 0 0,1 264,104&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,144 L 248,152&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,168 L 248,176&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 248,152 A 9,9 0 0,1 248,168&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;148&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
@@ -256,10 +536,10 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;148&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;6&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;104&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;112&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;120&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
@@ -273,7 +553,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;text text-anchor=&#39;middle&#39; x=&#39;168&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;168&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;168&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;T&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
@@ -283,32 +563,39 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;R&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;y&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;N&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;100&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;T&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;272&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;280&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;288&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;296&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;Ω&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;304&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;L&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;312&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;E&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;312&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;𝚡&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;320&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
 &lt;/g&gt;
 
     &lt;/svg&gt;
   
 &lt;/div&gt;
-&lt;/div&gt;
-    &lt;/td&gt;
+   &lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-        &lt;td&gt;14&lt;/td&gt;
+        &lt;td&gt;P6 (select)&lt;/td&gt;
         &lt;td&gt;PB1&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-        &lt;td&gt;13&lt;/td&gt;
+        &lt;td&gt;P5 (start)&lt;/td&gt;
         &lt;td&gt;PB2&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
@@ -319,26 +606,20 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
         &lt;td&gt;GND&lt;/td&gt;
         &lt;td&gt;GND&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr&gt;
-        &lt;td colspan=&#34;2&#34;&gt;&lt;img src=&#34;shift_register_connections.JPG&#34; height=220px/&gt;&lt;/td&gt;
-        &lt;td&gt;&lt;img src=&#34;attiny_breadboard.JPG&#34; height=220px/&gt;&lt;/td&gt;
-    &lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;Now that we have our hardware setup we need to start writing some software. All Raspberry Pi&amp;rsquo;s come with on-board SPI and we can leverage this to write directly to our ATTIny45 using AVRDude.&lt;/p&gt;
-&lt;h3 id=&#34;avrdude-breadboard-setup&#34;&gt;AVRDude Breadboard Setup&lt;/h3&gt;
-&lt;p&gt;To make this a little easier you can build up a very simple breadboard circuit for seating your ATTiny when you want to flash to it.&lt;/p&gt;
+&lt;h3 id=&#34;avrdude-setup&#34;&gt;AVRDude Setup&lt;/h3&gt;
+&lt;p&gt;To make this a little easier you can build up a very simple breadboard circuit for seating your ATtiny when you want to flash to it.&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Resistors aren&amp;rsquo;t required if you are using the 3v3 pin to power the ATTiny&lt;/p&gt;
+&lt;p&gt;Resistors aren&amp;rsquo;t required if you are using the 3v3 pin to power the ATtiny&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;table&gt;
-    &lt;tr&gt;
-        &lt;td&gt;
-            &lt;p align=&#34;center&#34;&gt;
-            &lt;img src=&#34;attiny_flash_beside_pi.JPG&#34; height=230px/&gt;
-            &lt;/p&gt;
-        &lt;/td&gt;
-        &lt;td&gt;
-&lt;div style=&#34;max-width:400px&#34;&gt;
+&lt;table style=&#34;width:100%;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:50%;&#34;&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;attiny_flash_beside_pi.JPG&#34; width=400px/&gt;
+&lt;/p&gt;
+&lt;/td&gt;
+&lt;td style=&#34;width:50%;&#34;&gt;
 
 
 
@@ -348,7 +629,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
       xmlns=&#34;http://www.w3.org/2000/svg&#34;
       font-family=&#34;Menlo,Lucida Console,monospace&#34;
       
-        viewBox=&#34;0 0 304 153&#34;
+        viewBox=&#34;0 0 248 153&#34;
       &gt;
       &lt;g transform=&#39;translate(8,16)&#39;&gt;
 &lt;path d=&#39;M 0,16 L 72,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
@@ -437,40 +718,37 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;R&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;N&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;B&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;52&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;4&lt;/text&gt;
 &lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;3&lt;/text&gt;
-&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;T&lt;/text&gt;
 &lt;/g&gt;
 
     &lt;/svg&gt;
   
 &lt;/div&gt;
-&lt;/div&gt;
-        &lt;/td&gt;
-    &lt;tr&gt;
+&lt;/td&gt;&lt;tr&gt;
 &lt;/table&gt;
-&lt;p&gt;As seen in the picture, you can optionally connect &lt;code&gt;PB5&lt;/code&gt; to an additional GPIO on the Raspberry Pi, Pulling &lt;code&gt;PB5&lt;/code&gt; LOW puts the ATTiny into flash mode so realistically you can just tie this to &lt;code&gt;GND&lt;/code&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;avrdude-setup&#34;&gt;AVRDude Setup&lt;/h3&gt;
+As seen in the picture, you can optionally connect `RST` (reset pin) to an additional GPIO on the Raspberry Pi, Pulling `RST` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`.
 &lt;p&gt;Login to your Raspberry Pi of choice and do the following steps.&lt;/p&gt;
 &lt;p&gt;Install dependencies:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt update &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; sudo apt upgrade -y
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install bison automake autoconf flex gcc-avr binutils-avr avr-libc -y
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Clone a copy of AVRDude from github:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone https://github.com/kcuzner/avrdude
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;cd to the directory and compile AVRDude:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;cd to the directory and compile AVRDude, go get a coffee because this step will take a while:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; avrdude/avrdude
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;./bootstrap
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;./configure
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo make install
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now lets test the connection, connect your ATTiny up to the SPI pins on your Raspberry Pi and run the following:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now lets test the connection, connect your ATtiny up to the SPI pins on your Raspberry Pi and run the following:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b &lt;span class=&#34;m&#34;&gt;10000&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;details&gt;
   &lt;summary&gt;Output&lt;/summary&gt;
@@ -487,14 +765,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;avrdude &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;.  Thank you.
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pi@raspberrypi:~ $ 
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/details&gt;
-&lt;p&gt;If you get a similar output then your Pi can now communicate with the ATTiny!&lt;/p&gt;
-&lt;p&gt;You can see the fuse settings listed above. The fuse values are defaults and looking specifically at the LOW fuse settings, &lt;code&gt;0x62&lt;/code&gt; means &lt;code&gt;Use the internal 8Mhz RC clock source and divide by 8&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;So out of the box the ATTiny is only clocked at 1Mhz. We can change this to use the 16Mhz PLL clock by modifying the LOW fuse to a value of &lt;code&gt;0xF1&lt;/code&gt;. There is a &lt;a href=&#34;https://www.engbedded.com/fusecalc/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;great online calculator&lt;/a&gt;
+&lt;p&gt;If you get a similar output then your Pi can now communicate with the ATtiny!&lt;/p&gt;
+&lt;p&gt;You can see the fuse settings listed in the output. The ATtiny45 usually comes with these values as defaults and looking specifically at the LOW fuse setting, &lt;code&gt;0x62&lt;/code&gt; means &lt;code&gt;Use the internal 8Mhz RC clock source and divide by 8&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;So out of the box the ATtiny is only clocked at 1Mhz. We can change this to use the 16Mhz PLL clock by modifying the LOW fuse to a value of &lt;code&gt;0xF1&lt;/code&gt;. There is a &lt;a href=&#34;https://www.engbedded.com/fusecalc/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;great online calculator&lt;/a&gt;
  that is useful for understanding the fuses in more detail.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Please note that modifying fuse values is a potentially dangerous activity, please make sure you understand the fuse values you are modifying before running the command&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Let&amp;rsquo;s change the LOW fuse to use a 16MHz clock&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s change the LOW fuse to use a 16MHz clock, our code will be designed with the 16Mhz clock speed in mind:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b &lt;span class=&#34;m&#34;&gt;10000&lt;/span&gt; -U lfuse:w:0xf1:m
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;details&gt;
   &lt;summary&gt;Output&lt;/summary&gt;
@@ -530,14 +808,17 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;p&gt;Great, you can see the fuse value has now changed. We should be running at 16Mhz now when it comes to runtime.&lt;/p&gt;
 &lt;p&gt;The code that I eventually used in this project is available &lt;a href=&#34;https://github.com/kennedn/nes-zero/blob/main/code/attiny/main.c&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;
 .&lt;/p&gt;
-&lt;p&gt;It uses the Interrupt and Timer features of the ATTiny45 to essentially say:&lt;/p&gt;
+&lt;p&gt;It uses the Interrupt and Timer features of the ATtiny45 to essentially say:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;n&#34;&gt;OUT_PIN&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IN_PIN_1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;and&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IN_PIN_2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;sleep&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;1.2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IN_PIN_1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;and&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;IN_PIN_2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;OUT_PIN&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can compile this code and push it to your ATTiny by running the following commands:&lt;/p&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;n&#34;&gt;OUT_PIN&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;n&#34;&gt;OUT_PIN&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You can compile this code and push it to your ATtiny by running the following commands:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;avr-gcc main.c -mmcu&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;attiny45 -Os -o main.bin
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;avr-objcopy -O ihex main.bin main.hex
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b &lt;span class=&#34;m&#34;&gt;10000&lt;/span&gt; -U flash:w:main.hex
@@ -582,27 +863,187 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/details&gt;
 &lt;p&gt;We can now test the chip in on our breadboard:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;attiny_button_test.gif&#34; width=&#34;600px&#34;/&gt;
+    &lt;img src=&#34;attiny_button_test.gif&#34; width=&#34;500px&#34;/&gt;
 &lt;/p&gt;
-&lt;p&gt;And finally solder the ATTiny onto some strip board, the module itself will be seated between two pillars in the case bottom:&lt;/p&gt;
+&lt;p&gt;And finally solder the ATtiny onto some strip board, the module itself will be seated between two pillars in the case bottom:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;full_wiring_attiny_highlight.JPG&#34; width=&#34;600px&#34;/&gt;
+    &lt;img src=&#34;full_wiring_attiny_highlight.JPG&#34; width=&#34;500px&#34;/&gt;
 &lt;/p&gt;
-&lt;p&gt;This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the piece to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:&lt;/p&gt;
+&lt;p&gt;This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the edges to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
-    &lt;img src=&#34;attiny_stripboard.png&#34; width=&#34;220px&#34;/&gt;
-    &lt;img src=&#34;attiny_stripboard_empty.png&#34; width=&#34;220px&#34;/&gt;
+    &lt;img src=&#34;attiny_stripboard.png&#34; width=&#34;240px&#34;/&gt;
+    &lt;img src=&#34;attiny_stripboard_empty.png&#34; width=&#34;240px&#34;/&gt;
 &lt;/p&gt;
 &lt;p&gt;Onto the next circuit.&lt;/p&gt;
+&lt;h1 id=&#34;hack-the-jack-back&#34;&gt;Hack The Jack Back&lt;/h1&gt;
+&lt;p&gt;Most full sized Raspberry Pi models have an on-board 4 pole TRRS jack that consists of 2 audio channels and a composite video channel. However to conserve space on the Zero, most I/O ports have either been minimized or removed completely:&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;raspberry_pi_zero_board.svg&#34; width=&#34;400px&#34;/&gt;
+&lt;/p&gt;
+&lt;p&gt;Not all hope is lost however. The composite pin is still exposed as the &lt;code&gt;TV&lt;/code&gt; header on the board:&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;raspberry_pi_zero_board.svg#svgView(viewBox(185, 30, 12, 15))&#34; width=200; /&gt;
+&lt;/p&gt;
+&lt;p&gt;And as it turns out we can actually just re-purpose two PWM pins from the main 40 pin GPIO block. As of Raspbian Buster (10), the standard way of doing this is by using a dtoverlay called audremap. This overlay allows you to choose a pin set to remap and will make an audio device available at runtime using these pins.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;README&lt;/summary&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Name:   audremap
+Info:   Switches PWM sound output to GPIOs on the 40-pin header
+Load:   dtoverlay=audremap,&amp;lt;param&amp;gt;=&amp;lt;val&amp;gt;
+Params: swap_lr                 Reverse the channel allocation, which will also
+                                swap the audio jack outputs (default off)
+        enable_jack             Don&amp;#39;t switch off the audio jack output
+                                (default off)
+        pins_12_13              Select GPIOs 12 &amp;amp; 13 (default)
+        pins_18_19              Select GPIOs 18 &amp;amp; 19
+&lt;/code&gt;&lt;/pre&gt;&lt;/details&gt;
+&lt;p&gt;There is a catch however. The TRRS jack of a fully fledged Raspberry Pi has a low pass filter circuit that reduces noise on each audio channel. This is something that is missing on the raw PWM pins and we are going to have to add it back to get the crisp audio we are seeking.&lt;/p&gt;
+&lt;h2 id=&#34;what-is-a-low-pass-filter&#34;&gt;What is a low pass filter?&lt;/h2&gt;
+&lt;p&gt;A low pass filter is a circuit that essentially places an upper bound on the output frequency of a signal. In respect to our audio channels, this means we can eliminate high frequency noise that might interfere with our signal. We know that the &amp;lsquo;good&amp;rsquo; part of the signal is going to be within the human hearing range (20hz - 20,000hz), so we can design a circuit with a cut off frequency close to 20,000hz.&lt;/p&gt;
+&lt;p&gt;To understand how this kind of circuit works it can be useful to see it in action. Let&amp;rsquo;s look at a simple low-pass filter circuit, and see what happens to the output signal (&lt;b&gt;&lt;mark style=&#34;background-color: #fff; color: green&#34;&gt;green&lt;/mark&gt;&lt;/b&gt;) when we increase the frequency of the input signal (&lt;b&gt;&lt;mark style=&#34;background-color: #fff; color: red&#34;&gt;red&lt;/mark&gt;&lt;/b&gt;).&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;10hz_lowpass.gif&#34; width=&#34;50%&#34;/&gt;
+&lt;/p&gt;
+&lt;p&gt;The cut-off frequency for this circuit is 26.79Hz. This can be calculated with the following formula:
+$$f = {1 / 2\Pi rc}$$&lt;/p&gt;
+&lt;p&gt;Substituting our values:
+&lt;br&gt;
+$${ r} = 270Ω$$
+&lt;br&gt;
+$${ c} = 22\mathrm{e}{-6}F$$
+&lt;br&gt;
+$${1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}} = 26.793761463282046$$&lt;/p&gt;
+&lt;p&gt;You can see in the above GIF that there is a &lt;code&gt;phase&lt;/code&gt; difference between the output and the input, the output voltage takes some time before it reflects the input voltage. This is caused by the capacitor charging and discharging at a specific rate. At 10Hz we are below the cut off frequency and the output is able to reflect the input voltage in time before the next signal edge. However what happens when we approach the cut-off frequency (26Hz) and then move beyond to 100Hz:&lt;/p&gt;
+&lt;table style=&#34;width:100%;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;26hz_lowpass.gif&#34; width=&#34;100%&#34;/&gt;
+&lt;/p&gt;
+&lt;/td&gt;
+&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;100hz_lowpass.gif&#34; width=&#34;100%&#34;/&gt;
+&lt;/p&gt;
+&lt;/td&gt;&lt;tr&gt;
+&lt;/table&gt;
+&lt;p&gt;The signal starts to &lt;code&gt;attenuate&lt;/code&gt; (weaken) as we move beyond the cut-off frequency and that is the trick to the low-pass filter. If the frequency of the input signal at a given point in time is too fast for the capacitor to keep up, that part of the signal is essentially eliminated.&lt;/p&gt;
+&lt;p&gt;There are a few additional complications that we must solve for in our circuit. The output voltage of our PWM pins is &lt;code&gt;3.3v&lt;/code&gt;. The standard audio line-level in consumer products has a peak voltage of around &lt;code&gt;1.5v&lt;/code&gt; so we need to reduce our PWM signal down to this level to be within spec. We can create a voltage divider to achieve this and it only requires one additional resistor per channel.&lt;/p&gt;
+&lt;p&gt;We should also place a DC filter capacitor just before our output, this only permits AC and stops DC voltage from making its way to our speakers.&lt;/p&gt;
+&lt;p&gt;This is our final circuit:&lt;/p&gt;
+&lt;table style=&#34;width:100%;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+
+
+
+&lt;div class=&#34;goat svg-container &#34;&gt;
+  
+    &lt;svg
+      xmlns=&#34;http://www.w3.org/2000/svg&#34;
+      font-family=&#34;Menlo,Lucida Console,monospace&#34;
+      
+        viewBox=&#34;0 0 280 153&#34;
+      &gt;
+      &lt;g transform=&#39;translate(8,16)&#39;&gt;
+&lt;path d=&#39;M 0,16 L 48,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,16 L 112,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,16 L 144,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,16 L 160,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 184,16 L 264,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 136,48 L 152,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,64 L 120,64&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 136,80 L 152,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,112 L 128,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 128,112 L 144,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 56,8 L 88,8&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 56,24 L 88,24&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 104,56 L 112,56&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,56 L 120,56&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 120,136 L 128,136&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 128,136 L 136,136&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 56,8 L 56,24&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,8 L 88,24&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,16 L 112,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,80 L 112,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 128,112 L 128,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 136,48 L 136,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,16 L 144,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,96 L 144,112&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 152,48 L 152,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 168,8 L 168,24&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 176,8 L 176,24&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 56,8 L 56,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 88,8 L 88,16&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 112,72 L 112,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 128,128 L 128,136&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,32 L 144,40&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 144,88 L 144,96&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;polygon points=&#39;8.000000,16.000000 -4.000000,10.400000 -4.000000,21.600000&#39; fill=&#39;currentColor&#39; transform=&#39;rotate(0.000000, 0.000000, 16.000000)&#39;&gt;&lt;/polygon&gt;
+&lt;polygon points=&#39;272.000000,16.000000 260.000000,10.400000 260.000000,21.600000&#39; fill=&#39;currentColor&#39; transform=&#39;rotate(0.000000, 264.000000, 16.000000)&#39;&gt;&lt;/polygon&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;8&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;16&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;W&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;M&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;32&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;7&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;Ω&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;80&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;2&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;88&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;88&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;G&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;96&#39; y=&#39;84&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;F&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;96&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;N&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;104&#39; y=&#39;132&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;D&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;160&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;168&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;5&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;1&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;Ω&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;192&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;0&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;200&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;208&#39; y=&#39;36&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;F&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;216&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;224&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;256&#39; y=&#39;4&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;/g&gt;
+
+    &lt;/svg&gt;
+  
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;The 270Ω resistor is &amp;rsquo;re-used&amp;rsquo; in our circuit as one half of the voltage divider. The second 150Ω resistor makes up the second part and together they reduce the voltage to approx &lt;code&gt;1.18v&lt;/code&gt;. This can be calculated using the voltage divider formula:&lt;/p&gt;
+&lt;p&gt;$$V_{out} = \frac{R_b}{R_a+R_b} \times V_{in}$$&lt;/p&gt;
+&lt;p&gt;Substituting our values:
+&lt;br&gt;
+$${R_a} = 270Ω$$
+&lt;br&gt;
+$${R_b} = 150Ω$$
+&lt;br&gt;
+$$V_{in} = 3.3V$$
+&lt;br&gt;
+$$\frac{150}{270+150} \times 3.3 = 1.1785714285714286V$$&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+    &lt;img src=&#34;low_pass_filter_v1_bb.png&#34; width=&#34;80%&#34;/&gt;
+&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>About</title>
-      <link>/blog/about/</link>
+      <link>https://kennedn.com/blog/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>/blog/about/</guid>
+      <guid>https://kennedn.com/blog/about/</guid>
       <description>&lt;h3 align=&#34;center&#34;&gt;🧑‍💻 Who am I&lt;/h3&gt;
 &lt;p align=&#34;center&#34;&gt;
   &lt;samp&gt;My name is Josh and I like cooking up spicy code with spicier humans.&lt;/samp&gt;
