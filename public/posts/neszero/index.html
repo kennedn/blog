@@ -1,39 +1,193 @@
 <!DOCTYPE html>
 <html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.102.0-DEV" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>NESZero: NES Controller &#43; Raspberry Pi Zero&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.23f37f645ef8dec8e348f983afc0e2c0e4d8e63c0a14d32c55caf5fed270c819ed333b2724254879023c90b893942c4d.css" integrity="sha384-I/N/ZF743sjjSPmDr8DiwOTY5jwKFNMsVcr1/tJwyBntMzsnJCVIeQI8kLiTlCxN"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="NESZero: NES Controller &#43; Raspberry Pi Zero" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/neszero/full_wiring_carpet.jpg" /><body><section id="header">
-    <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/images/icon/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
+<meta name="supported-color-schemes" content="light dark"><title>NESZero: Building a Console for a Different Era&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.62890ff179269039558d6e56cd0f1fa29799d2e2b9f267bb098baaa92c0c4b6ecb9b44e33c0a67e6ad3bc9b438c92124.css" integrity="sha384-YokP8XkmkDlVjW5WzQ8fopeZ0uK58me7CYuqqSwMS27Lm0TjPApn5q07ybQ4ySEk"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="NESZero: Building a Console for a Different Era" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/neszero/full_wiring_carpet.jpg" /><body><section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/images/icon/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a><a class="nav item" href="about">About</a></nav></div></span></div></section>
 <script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">NESZero: NES Controller + Raspberry Pi Zero</h1><p class="article date">Wednesday, August 10, 2022</p></section><article class="article markdown-body"><p align="center">
-    <img src="case_closed_connected_front.JPG" width="400px"/>
-    <img src="case_closed_connected_back.JPG" width="400px"/>
+    <h1 class="article title">NESZero: Building a Console for a Different Era</h1><p class="article date">Wednesday, August 10, 2022</p></section><article class="article markdown-body"><p align="center">
+    <img src="case_closed_connected_front.JPG" width="45%"/>
+    <img src="case_closed_connected_back.JPG" width="45%"/>
 </p>
-<p>This project began more or less because I wanted to play EarthBound on a CRT TV. The TV itself only supports one connection type, a single scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to approaching a problem like this.
-I had a few options that I soon exhausted:</p>
+<p>I recently purchased a CRT TV in the hopes of reliving some of my childhood memories through some of the old games I used to play. This works great for devices that support composite video and I&rsquo;ve gotten some fairly decent mileage out of the consoles I still own from that era.</p>
+<p>But therein lies the problem. The TV is old enough to only support one external connection via a scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to interfacing with any device made after 2010.</p>
+<p align="center">
+    <img src="crt_back.JPG" width="60%"/>
+</p>
+<p>I had a few options that I explored before committing to this project but ran into brick walls with each one.</p>
+<p>I have a soft-modded PlayStation 2 already wired into the TV, and the homebrew scene has produced a couple of SNES emulators for the console. Each however suffered very poor frame rates for Earthbound so this was a non-starter.</p>
+<p>I then bought a cheap HDMI to composite adapter with the hopes of hooking something up with more oomph, maybe even a fully fledged computer. However despite advertising PAL support on the listing, the device only supported a subset of PAL formats and was incompatible with the CRT TV, displaying images in distorted black and white.</p>
+<p>I finally decided I could make something better myself.</p>
+<details>
+<summary>Table of Contents</summary>
 <ul>
-<li><del>Playstation 2&rsquo;s Homebrew Scene</del> - Despite there being a few SNES emulators available, the performance was abysmal</li>
-<li><del>HDMI to Composite adapter</del> - Only supports a subset of the PAL standards, displays incorrectly (in black and white) on my CRT TV.</li>
+<li><a href="#build-requirements">Build Requirements</a>
+</li>
+<li><a href="#wiretapping-the-nes-controller">Wiretapping the NES controller</a>
+
+<ul>
+<li><a href="#raspberry-pi-zero-power-options">Raspberry Pi Zero Power Options</a>
+</li>
+<li><a href="#how-nes-controllers-work">How NES Controllers Work</a>
+
+<ul>
+<li><a href="#nes-004-circuit-diagram">NES-004 Circuit Diagram</a>
+</li>
 </ul>
-<p>So lets build something new.</p>
+</li>
+<li><a href="#using-an-attiny-to-bridge-the-gap">Using An ATtiny To Bridge The Gap</a>
+
+<ul>
+<li><a href="#avrdude-setup">AVRDude Setup</a>
+</li>
+<li><a href="#attiny-circuit-diagram">ATtiny Circuit Diagram</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#hack-the-jack-back">Hack The Jack Back</a>
+
+<ul>
+<li><a href="#what-is-a-low-pass-filter">What is a low pass filter?</a>
+</li>
+<li><a href="#phono-jack-circuit-diagram">Phono Jack Circuit Diagram</a>
+</li>
+</ul>
+</li>
+<li><a href="#indicator-led">Indicator LED</a>
+
+<ul>
+<li><a href="#led-circuit-diagram">LED Circuit Diagram</a>
+</li>
+</ul>
+</li>
+<li><a href="#software-setup">Software Setup</a>
+
+<ul>
+<li><a href="#configtxt">config.txt</a>
+</li>
+<li><a href="#network-setup">Network setup</a>
+</li>
+<li><a href="#controller-setup">Controller setup</a>
+</li>
+</ul>
+</li>
+<li><a href="#finish">Finish</a>
+</li>
+</ul>
+</details>
 <h1 id="build-requirements">Build Requirements</h1>
+<p>If I was going to build something I not only wanted it to work well, I wanted it to look cool too. I had a peek around thingiverse for some inspiration and stumbled upon <a href="https://www.thingiverse.com/thing:1635363"target="_blank" rel="noopener noreferrer">a project</a>
+ that consisted of a custom base for an original NES controller that can house a Raspberry Pi Zero. Not only does it look cool but the NES buttons can actually be wired to the Pi, letting it double as a console and a controller!</p>
+<p>So we are going to use this as a starting point but add some of our own build requirements:</p>
 <ul>
-<li>Full speed SNES games</li>
-<li>CRT TV Friendly</li>
+<li><a href="#how-nes-controllers-work">Wire the NES buttons up to the Pi so it can be used as a controller</a>
+</li>
+<li><a href="#using-an-attiny-to-bridge-the-gap">Use the NES controller buttons to power toggle the console</a>
+</li>
+<li><a href="#hack-the-jack-back">Add composite video and audio to the Pi</a>
+</li>
+<li><a href="#indicator-led">Add a power indicator LED</a>
+</li>
 </ul>
-<p>Settled on using a Raspberry Pi since they have RetroPie nicely packaged up, flocked to thingiverse for insperation and stumbled upon a NES controller project.
-This seemed liked perfect fodder to fuel this project, and a few more requirements were drawn out of this decision:</p>
-<ul>
-<li>NES controller can be used as a functional controller</li>
-<li>Toggle the power on the console with a combination of NES Controller buttons</li>
-<li>Cram an RCA composite connection into the small form factor</li>
-<li>Add an Indicator LED</li>
-</ul>
+<details>
+<summary>Parts List</summary>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raspberry Pi Zero W</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>Raspberry Pi (Any model)</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>ATtiny45 Microcontroller</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>NES-004 Controller</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>MicroSD Card (8GB+)</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>Strip Board</td>
+<td>x3</td>
+</tr>
+<tr>
+<td><a href="https://www.ebay.co.uk/itm/261117837121"target="_blank" rel="noopener noreferrer">4 Pole Jack to RCA Cable</a>
+</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>Micro USB cable</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>M3 x 5mm mounting screws</td>
+<td>x4</td>
+</tr>
+<tr>
+<td>5mm Red LED</td>
+<td>x1</td>
+</tr>
+<tr>
+<td><a href="https://www.ebay.co.uk/itm/362819442997"target="_blank" rel="noopener noreferrer">TRRS Breakout Board</a>
+</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>270Ω Resistor</td>
+<td>x3</td>
+</tr>
+<tr>
+<td>150Ω Resistor</td>
+<td>x2</td>
+</tr>
+<tr>
+<td>22nF Capacitor</td>
+<td>x2</td>
+</tr>
+<tr>
+<td>10uF Capacitor</td>
+<td>x2</td>
+</tr>
+<tr>
+<td>3d Printer or Printing Service</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>Wire (<a href="https://www.ebay.co.uk/itm/203450617670?var=503793076451"target="_blank" rel="noopener noreferrer">22AWG Single Core</a>
+)</td>
+<td>x1 roll</td>
+</tr>
+<tr>
+<td>Soldering Iron</td>
+<td>x1</td>
+</tr>
+<tr>
+<td>Solder</td>
+<td>x1 roll</td>
+</tr>
+</tbody>
+</table>
+</details>
 <h1 id="wiretapping-the-nes-controller">Wiretapping the NES controller</h1>
-<p>We want to be able to use the controller functionally but also read a button combination from it to toggle the Rapsberry Pi Zero&rsquo;s power state.</p>
+<p>We want to be able to use the controller functionally but also read a button combination from it to toggle the Raspberry Pi Zero&rsquo;s power state.</p>
 <p>To understand if this is even possible we first need to understand two things a little better:</p>
 <ul>
 <li>Raspberry Pi Zero power options</li>
@@ -41,7 +195,7 @@ This seemed liked perfect fodder to fuel this project, and a few more requiremen
 </ul>
 <h2 id="raspberry-pi-zero-power-options">Raspberry Pi Zero Power Options</h2>
 <p>Raspberry Pi makes use of a feature called device tree overlays. Among other things it allows for kernel modules to be enabled / disabled at boot time. Raspberry Pi devices come by default with a plethora of built in dtoverlays that can be used to modify behaviour at boot.</p>
-<p>The documentation for the overlays can be found on your Raspberry Pi device under /boot/overlay/README, or over on the <a href="https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README"target="_blank" rel="noopener noreferrer">Raspberrypi firmware github page</a>
+<p>The documentation for the overlays can be found on your Raspberry Pi device under /boot/overlay/README, or over on the <a href="https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/overlays/README"target="_blank" rel="noopener noreferrer">Raspberry Pi firmware github page</a>
 . One such overlay stands out as a very good candidate for achieving the power control we want:</p>
 <details>
   <summary>README</summary>
@@ -82,12 +236,13 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <p><code>The default configuration uses GPIO3 with a pullup, so if you connect a button between GPIO3 and GND, you get a shutdown and power-up button</code></p>
 </blockquote>
 <p>This sounds like the exact behaviour we are looking for. Pull <code>GPIO3</code> low and we get a power toggle pin.</p>
-<p>We will enable this dtoverlay later on in the software section. Since we now know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.</p>
+<p>We will enable this dtoverlay later on in the <a href="#software-setup">Software Setup</a>
+ section. Since we now know the Pi is willing to play ball lets take a deeper dive in to how the NES controller works.</p>
 <h2 id="how-nes-controllers-work">How NES Controllers Work</h2>
 <p>NES Controller&rsquo;s are surprisingly simple. They consist of a single 4021 8-bit shift register. This little IC reads 8 separate inputs and can output them serially over a single pin. You can see from this diagram that each parallel input pin (<code>P1-8</code>) is wired to a button on the controller:</p>
 <p><a name="nes004-diagram"></a></p>
 <p align="center">
-    <img src="nes004-diagram.png" width="800px"/>
+    <img src="nes004-diagram.png" width="95%"/>
 </p>
 <p>The other pins of note here are <code>CK</code> <code>P/S</code>, <code>DS</code> and <code>O8</code>.</p>
 <table>
@@ -129,15 +284,182 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 </li>
 </ul>
 <p>By stepping through this process, the Console can extract each button&rsquo;s state from the NES controller using only 3 wires.</p>
-<p>RetroPie actually had a driver that does this for us so we can wire the NES controller directly on to our GPIO to get full controller support.</p>
-<p>Theory over, lets build something.</p>
+<p>RetroPie actually has a driver that does this for us, driver setup is covered in the <a href="#software-setup">Software Setup</a>
+ section. We can wire the NES controller directly on to our GPIO to make use of this driver, so lets do that.</p>
+<h3 id="nes-004-circuit-diagram">NES-004 Circuit Diagram</h3>
+<blockquote>
+<p>Wire coloring can vary between controllers and I would highly recommend double checking wire / pin mappings with a multimeter.</p>
+</blockquote>
+<table>
+    <tr>
+        <td>4021 pin</td>
+        <td>Wire Color</td>
+        <td>Raspberry Pi</td>
+    </tr>
+    <tr>
+        <td>3v3</td>
+        <td><mark style="background-color: #0005; color: green; font-weight: bold;">Green</mark> or <mark style="background-color: #0005; color: white; font-weight: bold;">White</mark></td>
+        <td>3v3</td>
+    </tr>
+    <tr>
+        <td>O8</td>
+        <td><mark style="background-color: #0005; color: yellow; font-weight: bold;">Yellow</mark></td>
+        <td>GPIO 4</td>
+    </tr>
+    <tr>
+        <td>CK</td>
+        <td><mark style="background-color: #0005; color: Red; font-weight: bold;">Red</mark></td>
+        <td>GPIO10</td>
+    </tr>
+    <tr>
+        <td>P/S</td>
+        <td><mark style="background-color: #0005; color: #FF4500; font-weight: bold;">Orange</mark></td>
+        <td>GPIO12</td>
+    </tr>
+    <tr>
+        <td>GND</td>
+        <td><mark style="background-color: #0005; color: #B22222; font-weight: bold;">Brown</mark></td>
+        <td>GND</td>
+    </tr>
+    <tr>
+        <td colspan=2 style="width: 50%;">
+        <p align="center">
+            <img src="NES_controller_wiring.JPG"/>
+        </p>
+        </td>
+<td colspan=2 style="width: 50%;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 264 265"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 32,32 L 56,32' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 L 112,32' fill='none' stroke='currentColor'></path>
+<path d='M 24,64 L 32,64' fill='none' stroke='currentColor'></path>
+<path d='M 112,64 L 136,64' fill='none' stroke='currentColor'></path>
+<path d='M 24,80 L 32,80' fill='none' stroke='currentColor'></path>
+<path d='M 112,80 L 120,80' fill='none' stroke='currentColor'></path>
+<path d='M 0,96 L 32,96' fill='none' stroke='currentColor'></path>
+<path d='M 112,96 L 120,96' fill='none' stroke='currentColor'></path>
+<path d='M 24,112 L 32,112' fill='none' stroke='currentColor'></path>
+<path d='M 112,112 L 120,112' fill='none' stroke='currentColor'></path>
+<path d='M 24,128 L 32,128' fill='none' stroke='currentColor'></path>
+<path d='M 112,128 L 120,128' fill='none' stroke='currentColor'></path>
+<path d='M 168,128 L 248,128' fill='none' stroke='currentColor'></path>
+<path d='M 24,144 L 32,144' fill='none' stroke='currentColor'></path>
+<path d='M 112,144 L 120,144' fill='none' stroke='currentColor'></path>
+<path d='M 136,144 L 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,160 L 32,160' fill='none' stroke='currentColor'></path>
+<path d='M 112,160 L 168,160' fill='none' stroke='currentColor'></path>
+<path d='M 16,176 L 32,176' fill='none' stroke='currentColor'></path>
+<path d='M 112,176 L 168,176' fill='none' stroke='currentColor'></path>
+<path d='M 32,192 L 112,192' fill='none' stroke='currentColor'></path>
+<path d='M 136,192 L 168,192' fill='none' stroke='currentColor'></path>
+<path d='M 16,208 L 136,208' fill='none' stroke='currentColor'></path>
+<path d='M 136,208 L 168,208' fill='none' stroke='currentColor'></path>
+<path d='M 0,224 L 136,224' fill='none' stroke='currentColor'></path>
+<path d='M 168,224 L 248,224' fill='none' stroke='currentColor'></path>
+<path d='M 0,96 L 0,224' fill='none' stroke='currentColor'></path>
+<path d='M 16,176 L 16,208' fill='none' stroke='currentColor'></path>
+<path d='M 32,32 L 32,64' fill='none' stroke='currentColor'></path>
+<path d='M 32,64 L 32,80' fill='none' stroke='currentColor'></path>
+<path d='M 32,80 L 32,96' fill='none' stroke='currentColor'></path>
+<path d='M 32,96 L 32,112' fill='none' stroke='currentColor'></path>
+<path d='M 32,112 L 32,128' fill='none' stroke='currentColor'></path>
+<path d='M 32,128 L 32,144' fill='none' stroke='currentColor'></path>
+<path d='M 32,144 L 32,160' fill='none' stroke='currentColor'></path>
+<path d='M 32,160 L 32,176' fill='none' stroke='currentColor'></path>
+<path d='M 32,176 L 32,192' fill='none' stroke='currentColor'></path>
+<path d='M 112,32 L 112,64' fill='none' stroke='currentColor'></path>
+<path d='M 112,64 L 112,80' fill='none' stroke='currentColor'></path>
+<path d='M 112,80 L 112,96' fill='none' stroke='currentColor'></path>
+<path d='M 112,96 L 112,112' fill='none' stroke='currentColor'></path>
+<path d='M 112,112 L 112,128' fill='none' stroke='currentColor'></path>
+<path d='M 112,128 L 112,144' fill='none' stroke='currentColor'></path>
+<path d='M 112,144 L 112,160' fill='none' stroke='currentColor'></path>
+<path d='M 112,160 L 112,176' fill='none' stroke='currentColor'></path>
+<path d='M 112,176 L 112,192' fill='none' stroke='currentColor'></path>
+<path d='M 136,64 L 136,144' fill='none' stroke='currentColor'></path>
+<path d='M 168,128 L 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 168,144 L 168,160' fill='none' stroke='currentColor'></path>
+<path d='M 168,160 L 168,176' fill='none' stroke='currentColor'></path>
+<path d='M 168,176 L 168,192' fill='none' stroke='currentColor'></path>
+<path d='M 168,192 L 168,208' fill='none' stroke='currentColor'></path>
+<path d='M 168,208 L 168,224' fill='none' stroke='currentColor'></path>
+<path d='M 56,32 A 16,16 0 0,0 72,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 A 16,16 0 0,1 72,48' fill='none' stroke='currentColor'></path>
+<path d='M 136,192 L 136,200' fill='none' stroke='currentColor'></path>
+<path d='M 136,216 L 136,224' fill='none' stroke='currentColor'></path>
+<path d='M 136,200 A 9,9 0 0,1 136,216' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='48' y='100' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='48' y='180' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='56' y='20' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>8</text>
+<text text-anchor='middle' x='56' y='180' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='64' y='20' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='64' y='180' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='72' y='20' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='80' y='20' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='80' y='68' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='80' y='180' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='88' y='68' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='88' y='164' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='88' y='180' fill='currentColor' style='font-size:1em'>/</text>
+<text text-anchor='middle' x='96' y='68' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='96' y='164' fill='currentColor' style='font-size:1em'>K</text>
+<text text-anchor='middle' x='96' y='180' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='176' y='244' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='184' y='148' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='184' y='164' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='184' y='180' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='184' y='196' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='184' y='212' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='184' y='244' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='192' y='148' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='192' y='164' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='180' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='196' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='212' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='192' y='244' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='200' y='148' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='200' y='164' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='200' y='180' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='200' y='196' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='200' y='212' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='200' y='244' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='208' y='164' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='208' y='180' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='208' y='196' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='216' y='244' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='224' y='164' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='224' y='180' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='224' y='196' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='224' y='244' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='232' y='164' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='232' y='180' fill='currentColor' style='font-size:1em'>2</text>
+</g>
+
+    </svg>
+  
+</div>
+</td>
+    </tr>
+</table>
 <h2 id="using-an-attiny-to-bridge-the-gap">Using An ATtiny To Bridge The Gap</h2>
-<img align="right" style="margin: 0 0 0 5px;" src="attiny45.png" width=60px/>
+<img align="right" style="margin: 0 0 0 5px;" src="attiny45.png" width=10%/>
 <p>We need a man in the middle to be able to drive GPIO 3 LOW when certain buttons are pressed on the NES Controller. This is because the Pi cannot do the work for us when it is powered off. For this project I decided to use an AATiny45 microcontroller for the job since I had a few lying around.</p>
-<p>One problem we need to address is that two devices cannot interface with the 8 bit shift register of the NES controller at the same time without interfering with each other, Both <code>CK</code> and <code>P/S</code> need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on <code>P1-8</code>. So all we need to do is decide on a combination now and &lsquo;wiretap&rsquo; connections from those pins to our ATtiny as inputs.</p>
+<p>One problem we need to address is that two devices cannot interface with the 8 bit shift register at the same time without interfering with each other, Both <code>CK</code> and <code>P/S</code> need a single controller to be deterministic. However, each of the 8 NES buttons has its own dedicated connection pin on <code>P1-8</code>. So all we need to do is decide on a combination now and &lsquo;wiretap&rsquo; connections from those pins to our ATtiny as inputs.</p>
 <p>We can prove this works by providing power to the 8-bit shift register and checking for a voltage shift on one of the 8 &lsquo;Parallel In&rsquo; pins, lets use <code>P8</code>. <code>P8</code>&rsquo;s voltage level shifts when we press the <code>A</code> button:</p>
 <p align="center">
-    <img src="nes004-oscilloscope-hook.JPG" width=300px/><img src="4021_button_test.gif" width=800px/>
+    <img src="nes004-oscilloscope-hook.JPG" width=45%/>
+    <img src="4021_button_test.gif" width=95%/>
 </p>
 <blockquote>
 <p>Pressing the <code>A</code> button pulls the voltage LOW, returning to HIGH when released</p>
@@ -396,11 +718,11 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 , we have enough information to wire this up now:</p>
 <table style="width: 100%;">
     <tr>
-        <td colspan="2">
-            <img src="shift_register_connections.JPG" width=400px/>
+        <td colspan="2" style="width: 50%">
+            <img src="shift_register_connections.JPG"/>
         </td>
-        <td>
-            <img src="attiny_breadboard.JPG" width=400px/>
+        <td style="width: 50%">
+            <img src="attiny_breadboard.JPG"/>
         </td>
     </tr>
     <tr>
@@ -607,7 +929,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <table style="width:100%;">
 <tr><td style="width:50%;">
 <p align="center">
-    <img src="attiny_flash_beside_pi.JPG" width=400px/>
+    <img src="attiny_flash_beside_pi.JPG"/>
 </p>
 </td>
 <td style="width:50%;">
@@ -727,7 +1049,7 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 </div>
 </td><tr>
 </table>
-As seen in the picture, you can optionally connect `RST` (reset pin) to an additional GPIO on the Raspberry Pi, Pulling `RST` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`.
+As seen in the picture, you can optionally connect `RST` (reset pin) to an additional GPIO on the Raspberry Pi, Pulling `RST` LOW puts the ATtiny into flash mode so realistically you can just tie this to `GND`, as shown in the circuit diagram.
 <p>Login to your Raspberry Pi of choice and do the following steps.</p>
 <p>Install dependencies:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt update <span class="o">&amp;&amp;</span> sudo apt upgrade -y
@@ -809,7 +1131,18 @@ As seen in the picture, you can optionally connect `RST` (reset pin) to an addit
 </span></span><span class="line"><span class="cl">            <span class="n">OUT_PIN</span> <span class="o">=</span> <span class="mi">1</span>
 </span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span> 
 </span></span><span class="line"><span class="cl">        <span class="n">OUT_PIN</span> <span class="o">=</span> <span class="mi">1</span>
-</span></span></code></pre></div><p>You can compile this code and push it to your ATtiny by running the following commands:</p>
+</span></span></code></pre></div><details>
+  <summary>Further Reading</summary>
+<ul>
+<li><a href="https://www.gadgetronicx.com/attiny85-timer-tutorial-generating-time-delay-interrupts/"target="_blank" rel="noopener noreferrer">Generating time delay interrupts</a>
+</li>
+<li><a href="https://www.gadgetronicx.com/attiny85-external-pin-change-interrupt/"target="_blank" rel="noopener noreferrer">External pin change interrupts</a>
+</li>
+<li><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-2586-AVR-8-bit-Microcontroller-ATtiny25-ATtiny45-ATtiny85_Datasheet.pdf"target="_blank" rel="noopener noreferrer"> ATtiny45 Datasheet</a>
+</li>
+</ul>
+</details>
+<p>You can compile this code and push it to your ATtiny by running the following commands:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">avr-gcc main.c -mmcu<span class="o">=</span>attiny45 -Os -o main.bin
 </span></span><span class="line"><span class="cl">avr-objcopy -O ihex main.bin main.hex
 </span></span><span class="line"><span class="cl">sudo avrdude -p t45 -c linuxspi -P /dev/spidev0.0 -b <span class="m">10000</span> -U flash:w:main.hex
@@ -854,26 +1187,206 @@ As seen in the picture, you can optionally connect `RST` (reset pin) to an addit
 </span></span></code></pre></div></details>
 <p>We can now test the chip in on our breadboard:</p>
 <p align="center">
-    <img src="attiny_button_test.gif" width="500px"/>
+    <img src="attiny_button_test.gif" width="70%"/>
 </p>
 <p>And finally solder the ATtiny onto some strip board, the module itself will be seated between two pillars in the case bottom:</p>
 <p align="center">
-    <img src="full_wiring_attiny_highlight.JPG" width="500px"/>
+    <img src="full_wiring_attiny_highlight.JPG" width="70%"/>
 </p>
-<p>This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the edges to fine tune the size so it fits in the cavity. The design for the board is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center:</p>
+<p>This equated to a stripboard piece with 11 x 6 holes for me. You can sand down the edges to fine tune the size so it fits in the cavity. The design for the board itself is very simple you just need to isolate the adjacent pins from each other by placing some holes in the center.</p>
+<h3 id="attiny-circuit-diagram">ATtiny Circuit Diagram</h3>
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 400 201"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 24,16 L 40,16' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 L 88,16' fill='none' stroke='currentColor'></path>
+<path d='M 136,16 L 264,16' fill='none' stroke='currentColor'></path>
+<path d='M 16,32 L 24,32' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 16,48 L 24,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,48 L 96,48' fill='none' stroke='currentColor'></path>
+<path d='M 144,48 L 224,48' fill='none' stroke='currentColor'></path>
+<path d='M 16,64 L 24,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,64 L 120,64' fill='none' stroke='currentColor'></path>
+<path d='M 136,64 L 144,64' fill='none' stroke='currentColor'></path>
+<path d='M 224,64 L 248,64' fill='none' stroke='currentColor'></path>
+<path d='M 16,80 L 24,80' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 112,80' fill='none' stroke='currentColor'></path>
+<path d='M 120,80 L 144,80' fill='none' stroke='currentColor'></path>
+<path d='M 224,80 L 232,80' fill='none' stroke='currentColor'></path>
+<path d='M 264,80 L 296,80' fill='none' stroke='currentColor'></path>
+<path d='M 312,80 L 384,80' fill='none' stroke='currentColor'></path>
+<path d='M 16,96 L 24,96' fill='none' stroke='currentColor'></path>
+<path d='M 88,96 L 96,96' fill='none' stroke='currentColor'></path>
+<path d='M 112,96 L 144,96' fill='none' stroke='currentColor'></path>
+<path d='M 224,96 L 248,96' fill='none' stroke='currentColor'></path>
+<path d='M 248,96 L 264,96' fill='none' stroke='currentColor'></path>
+<path d='M 264,96 L 288,96' fill='none' stroke='currentColor'></path>
+<path d='M 296,96 L 312,96' fill='none' stroke='currentColor'></path>
+<path d='M 16,112 L 24,112' fill='none' stroke='currentColor'></path>
+<path d='M 88,112 L 96,112' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 144,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,112 L 232,112' fill='none' stroke='currentColor'></path>
+<path d='M 288,112 L 312,112' fill='none' stroke='currentColor'></path>
+<path d='M 16,128 L 24,128' fill='none' stroke='currentColor'></path>
+<path d='M 88,128 L 96,128' fill='none' stroke='currentColor'></path>
+<path d='M 280,128 L 312,128' fill='none' stroke='currentColor'></path>
+<path d='M 8,144 L 24,144' fill='none' stroke='currentColor'></path>
+<path d='M 88,144 L 96,144' fill='none' stroke='currentColor'></path>
+<path d='M 144,144 L 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 200,144 L 224,144' fill='none' stroke='currentColor'></path>
+<path d='M 312,144 L 384,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,160 L 88,160' fill='none' stroke='currentColor'></path>
+<path d='M 128,160 L 248,160' fill='none' stroke='currentColor'></path>
+<path d='M 248,160 L 264,160' fill='none' stroke='currentColor'></path>
+<path d='M 8,176 L 248,176' fill='none' stroke='currentColor'></path>
+<path d='M 248,176 L 280,176' fill='none' stroke='currentColor'></path>
+<path d='M 8,144 L 8,176' fill='none' stroke='currentColor'></path>
+<path d='M 24,16 L 24,32' fill='none' stroke='currentColor'></path>
+<path d='M 24,32 L 24,48' fill='none' stroke='currentColor'></path>
+<path d='M 24,48 L 24,64' fill='none' stroke='currentColor'></path>
+<path d='M 24,64 L 24,80' fill='none' stroke='currentColor'></path>
+<path d='M 24,80 L 24,96' fill='none' stroke='currentColor'></path>
+<path d='M 24,96 L 24,112' fill='none' stroke='currentColor'></path>
+<path d='M 24,112 L 24,128' fill='none' stroke='currentColor'></path>
+<path d='M 24,128 L 24,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,144 L 24,160' fill='none' stroke='currentColor'></path>
+<path d='M 88,16 L 88,32' fill='none' stroke='currentColor'></path>
+<path d='M 88,32 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 88,48 L 88,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,64 L 88,80' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 88,96' fill='none' stroke='currentColor'></path>
+<path d='M 88,96 L 88,112' fill='none' stroke='currentColor'></path>
+<path d='M 88,112 L 88,128' fill='none' stroke='currentColor'></path>
+<path d='M 88,128 L 88,144' fill='none' stroke='currentColor'></path>
+<path d='M 88,144 L 88,160' fill='none' stroke='currentColor'></path>
+<path d='M 112,80 L 112,96' fill='none' stroke='currentColor'></path>
+<path d='M 120,64 L 120,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 128,160' fill='none' stroke='currentColor'></path>
+<path d='M 136,16 L 136,32' fill='none' stroke='currentColor'></path>
+<path d='M 144,48 L 144,64' fill='none' stroke='currentColor'></path>
+<path d='M 144,64 L 144,80' fill='none' stroke='currentColor'></path>
+<path d='M 144,80 L 144,96' fill='none' stroke='currentColor'></path>
+<path d='M 144,96 L 144,112' fill='none' stroke='currentColor'></path>
+<path d='M 144,112 L 144,144' fill='none' stroke='currentColor'></path>
+<path d='M 224,48 L 224,64' fill='none' stroke='currentColor'></path>
+<path d='M 224,64 L 224,80' fill='none' stroke='currentColor'></path>
+<path d='M 224,80 L 224,96' fill='none' stroke='currentColor'></path>
+<path d='M 224,96 L 224,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,112 L 224,144' fill='none' stroke='currentColor'></path>
+<path d='M 248,64 L 248,80' fill='none' stroke='currentColor'></path>
+<path d='M 248,112 L 248,144' fill='none' stroke='currentColor'></path>
+<path d='M 264,16 L 264,80' fill='none' stroke='currentColor'></path>
+<path d='M 264,112 L 264,160' fill='none' stroke='currentColor'></path>
+<path d='M 280,128 L 280,176' fill='none' stroke='currentColor'></path>
+<path d='M 288,96 L 288,112' fill='none' stroke='currentColor'></path>
+<path d='M 296,80 L 296,96' fill='none' stroke='currentColor'></path>
+<path d='M 312,80 L 312,96' fill='none' stroke='currentColor'></path>
+<path d='M 312,96 L 312,112' fill='none' stroke='currentColor'></path>
+<path d='M 312,112 L 312,128' fill='none' stroke='currentColor'></path>
+<path d='M 312,128 L 312,144' fill='none' stroke='currentColor'></path>
+<path d='M 384,80 L 384,144' fill='none' stroke='currentColor'></path>
+<path d='M 40,16 A 16,16 0 0,0 56,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 A 16,16 0 0,1 56,32' fill='none' stroke='currentColor'></path>
+<path d='M 184,128 A 16,16 0 0,0 168,144' fill='none' stroke='currentColor'></path>
+<path d='M 184,128 A 16,16 0 0,1 200,144' fill='none' stroke='currentColor'></path>
+<path d='M 248,80 L 248,88' fill='none' stroke='currentColor'></path>
+<path d='M 248,104 L 248,112' fill='none' stroke='currentColor'></path>
+<path d='M 248,88 A 9,9 0 0,1 248,104' fill='none' stroke='currentColor'></path>
+<path d='M 264,80 L 264,88' fill='none' stroke='currentColor'></path>
+<path d='M 264,104 L 264,112' fill='none' stroke='currentColor'></path>
+<path d='M 264,88 A 9,9 0 0,1 264,104' fill='none' stroke='currentColor'></path>
+<path d='M 248,144 L 248,152' fill='none' stroke='currentColor'></path>
+<path d='M 248,168 L 248,176' fill='none' stroke='currentColor'></path>
+<path d='M 248,152 A 9,9 0 0,1 248,168' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='40' y='148' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='48' y='148' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='56' y='4' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='56' y='148' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='64' y='4' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='64' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='72' y='68' fill='currentColor' style='font-size:1em'>6</text>
+<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='104' y='20' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='112' y='20' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='120' y='20' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='160' y='116' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='168' y='36' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='168' y='68' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='84' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='100' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='168' y='116' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='176' y='68' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='176' y='100' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='176' y='116' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='192' y='68' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='192' y='116' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='200' y='36' fill='currentColor' style='font-size:1em'>y</text>
+<text text-anchor='middle' x='200' y='68' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='200' y='84' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='200' y='100' fill='currentColor' style='font-size:1em'>B</text>
+<text text-anchor='middle' x='200' y='116' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='208' y='36' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='208' y='68' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='208' y='84' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='208' y='100' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='208' y='116' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='216' y='36' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='320' y='164' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='328' y='100' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='328' y='116' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='328' y='132' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='328' y='164' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='336' y='100' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='336' y='116' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='336' y='132' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='336' y='164' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='344' y='100' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='344' y='116' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='344' y='132' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='344' y='164' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='352' y='116' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='360' y='164' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='368' y='116' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='368' y='164' fill='currentColor' style='font-size:1em'>i</text>
+</g>
+
+    </svg>
+  
+</div>
 <p align="center">
-    <img src="attiny_stripboard.png" width="240px"/>
-    <img src="attiny_stripboard_empty.png" width="240px"/>
+<img src="attiny_circuit.png" width="80%"/>
 </p>
-<p>Onto the next circuit.</p>
 <h1 id="hack-the-jack-back">Hack The Jack Back</h1>
-<p>Most full sized Raspberry Pi models have an on-board 4 pole TRRS jack that consists of 2 audio channels and a composite video channel. However to conserve space on the Zero, most I/O ports have either been minimized or removed completely:</p>
+<p>Most full sized Raspberry Pi models have an on-board 4 pole TRRS phono jack that consists of 2 audio channels and a composite video channel. However to conserve space on the Zero, most I/O ports have either been minimized or removed completely:</p>
 <p align="center">
-    <img src="raspberry_pi_zero_board.svg" width="400px"/>
+    <img src="raspberry_pi_zero_board.svg" width="65%"/>
 </p>
 <p>Not all hope is lost however. The composite pin is still exposed as the <code>TV</code> header on the board:</p>
 <p align="center">
-    <img src="raspberry_pi_zero_board.svg#svgView(viewBox(185, 30, 12, 15))" width=200; />
+    <img src="raspberry_pi_zero_board.svg#svgView(viewBox(185, 30, 12, 15))" width="25%"; />
 </p>
 <p>And as it turns out we can actually just re-purpose two PWM pins from the main 40 pin GPIO block. As of Raspbian Buster (10), the standard way of doing this is by using a dtoverlay called audremap. This overlay allows you to choose a pin set to remap and will make an audio device available at runtime using these pins.</p>
 <details>
@@ -891,20 +1404,22 @@ Params: swap_lr                 Reverse the channel allocation, which will also
 <p>There is a catch however. The TRRS jack of a fully fledged Raspberry Pi has a low pass filter circuit that reduces noise on each audio channel. This is something that is missing on the raw PWM pins and we are going to have to add it back to get the crisp audio we are seeking.</p>
 <h2 id="what-is-a-low-pass-filter">What is a low pass filter?</h2>
 <p>A low pass filter is a circuit that essentially places an upper bound on the output frequency of a signal. In respect to our audio channels, this means we can eliminate high frequency noise that might interfere with our signal. We know that the &lsquo;good&rsquo; part of the signal is going to be within the human hearing range (20hz - 20,000hz), so we can design a circuit with a cut off frequency close to 20,000hz.</p>
-<p>To understand how this kind of circuit works it can be useful to see it in action. Let&rsquo;s look at a simple low-pass filter circuit, and see what happens to the output signal (<b><mark style="background-color: #fff; color: green">green</mark></b>) when we increase the frequency of the input signal (<b><mark style="background-color: #fff; color: red">red</mark></b>).</p>
+<p>To understand how this kind of circuit works it can be useful to see it in action. Let&rsquo;s look at a simple low-pass filter circuit with a 270Ω resistor and a 22uF capacitor and see what happens to the output signal (<b><mark style="background-color: #fff; color: green">green</mark></b>) when we increase the frequency of the input signal (<b><mark style="background-color: #fff; color: red">red</mark></b>).</p>
 <p align="center">
     <img src="10hz_lowpass.gif" width="50%"/>
 </p>
 <p>The cut-off frequency for this circuit is 26.79Hz. This can be calculated with the following formula:
+<br>
 $$f = {1 / 2\Pi rc}$$</p>
 <p>Substituting our values:
 <br>
 $${ r} = 270Ω$$
 <br>
-$${ c} = 22\mathrm{e}{-6}F$$
+$${ c} = 22\mathrm{e}{-6}F$$</p>
+<p>$$f = {1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}}$$
 <br>
-$${1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}} = 26.793761463282046$$</p>
-<p>You can see in the above GIF that there is a <code>phase</code> difference between the output and the input, the output voltage takes some time before it reflects the input voltage. This is caused by the capacitor charging and discharging at a specific rate. At 10Hz we are below the cut off frequency and the output is able to reflect the input voltage in time before the next signal edge. However what happens when we approach the cut-off frequency (26Hz) and then move beyond to 100Hz:</p>
+$$f = 26.793761463282046$$</p>
+<p>You can see in the above GIF that there is a <code>phase</code> shift occurring between the output and the input. The output voltage takes some time before it reflects the input voltage. This is caused by the capacitor charging and discharging at a specific rate. At 10Hz we are below the cut-off frequency and the output is able to reflect the input voltage in time before the next signal edge. However what happens when we approach the cut-off frequency (26Hz) and then move beyond to 100Hz?</p>
 <table style="width:100%;">
 <tr><td style="width:50%; padding: 1px;">
 <p align="center">
@@ -917,8 +1432,14 @@ $${1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}} = 26.793761463282046$$</p>
 </p>
 </td><tr>
 </table>
-<p>The signal starts to <code>attenuate</code> (weaken) as we move beyond the cut-off frequency and that is the trick to the low-pass filter. If the frequency of the input signal at a given point in time is too fast for the capacitor to keep up, that part of the signal is essentially eliminated.</p>
-<p>There are a few additional complications that we must solve for in our circuit. The output voltage of our PWM pins is <code>3.3v</code>. The standard audio line-level in consumer products has a peak voltage of around <code>1.5v</code> so we need to reduce our PWM signal down to this level to be within spec. We can create a voltage divider to achieve this and it only requires one additional resistor per channel.</p>
+<p>The signal starts to <code>attenuate</code> (weaken) as we move beyond the cut-off frequency and that is the trick to the low-pass filter. If the frequency of the input signal at a given point in time is too fast for the capacitor to keep up, that part of the signal is essentially eliminated. If we take this demo circuit and now change the value of the 22uF capacitor to 22nF we get a cut-off frequency of 26,793.76Hz which is close enough to the upper human hearing range for our purposes:</p>
+<p>$$f = {1 / 2 * \Pi * 270 * 22\mathrm{e}{-9}}$$
+<br>
+$$f = 26,793.761463282048$$</p>
+<blockquote>
+<p>You can also use a 10nf or 33nf capacitor instead of the 22nf</p>
+</blockquote>
+<p>There are a few additional complications that we must solve for in our circuit. The output voltage of our PWM pins is <code>3.3v</code>. The standard audio line-level in consumer products has a peak voltage of around <code>1.5v</code> so we need to reduce our PWM signal down to this level to be within spec. We can create a voltage divider to achieve this and it only requires one additional resistor.</p>
 <p>We should also place a DC filter capacitor just before our output, this only permits AC and stops DC voltage from making its way to our speakers.</p>
 <p>This is our final circuit:</p>
 <table style="width:100%;">
@@ -1012,7 +1533,7 @@ $${1 / 2 * \Pi * 270 * 22\mathrm{e}{-6}} = 26.793761463282046$$</p>
 </td>
 </tr>
 </table>
-<p>The 270Ω resistor is &rsquo;re-used&rsquo; in our circuit as one half of the voltage divider. The second 150Ω resistor makes up the second part and together they reduce the voltage to approx <code>1.18v</code>. This can be calculated using the voltage divider formula:</p>
+<p>The 270Ω resistor is &rsquo;re-used&rsquo; in our circuit as one half of the voltage divider. The 150Ω resistor makes up the second part and together they reduce the voltage to approx <code>1.18v</code> at the point that they meet. This can be calculated using the voltage divider formula:</p>
 <p>$$V_{out} = \frac{R_b}{R_a+R_b} \times V_{in}$$</p>
 <p>Substituting our values:
 <br>
@@ -1020,13 +1541,516 @@ $${R_a} = 270Ω$$
 <br>
 $${R_b} = 150Ω$$
 <br>
-$$V_{in} = 3.3V$$
+$$V_{in} = 3.3V$$</p>
+<p>$$V_{out} = \frac{150}{270+150} \times 3.3$$
 <br>
-$$\frac{150}{270+150} \times 3.3 = 1.1785714285714286V$$</p>
+$$V_{out} = 1.1785714285714286V$$</p>
+<p>We need two copies of this circuit in our final board design, one for each audio channel. The resultant stripboard is placed to the left of the Pi in the case and looks like this:</p>
 <p align="center">
-    <img src="low_pass_filter_v1_bb.png" width="80%"/>
+    <img src="trrs_v2_module_top.JPG" width="70%"/>
+    <img src="full_wiring_trrs_highlight.JPG" width="70%"/>
 </p>
-</article>
+<p>My stripboard piece ended up being 11 x 12 holes across. As with our previous circuit, you can sand down the edges to fine tune the size so it fits in the cavity.</p>
+<h2 id="phono-jack-circuit-diagram">Phono Jack Circuit Diagram</h2>
+<table style="width:90%; margin-left: auto; margin-right: auto">
+<tr><td style="width:100%;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 520 297"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 88,16 L 152,16' fill='none' stroke='currentColor'></path>
+<path d='M 200,16 L 216,16' fill='none' stroke='currentColor'></path>
+<path d='M 216,16 L 248,16' fill='none' stroke='currentColor'></path>
+<path d='M 248,16 L 264,16' fill='none' stroke='currentColor'></path>
+<path d='M 288,16 L 328,16' fill='none' stroke='currentColor'></path>
+<path d='M 240,48 L 256,48' fill='none' stroke='currentColor'></path>
+<path d='M 208,64 L 224,64' fill='none' stroke='currentColor'></path>
+<path d='M 456,64 L 480,64' fill='none' stroke='currentColor'></path>
+<path d='M 0,80 L 72,80' fill='none' stroke='currentColor'></path>
+<path d='M 240,80 L 256,80' fill='none' stroke='currentColor'></path>
+<path d='M 376,80 L 440,80' fill='none' stroke='currentColor'></path>
+<path d='M 440,80 L 456,80' fill='none' stroke='currentColor'></path>
+<path d='M 456,80 L 480,80' fill='none' stroke='currentColor'></path>
+<path d='M 480,80 L 496,80' fill='none' stroke='currentColor'></path>
+<path d='M 72,96 L 88,96' fill='none' stroke='currentColor'></path>
+<path d='M 328,96 L 376,96' fill='none' stroke='currentColor'></path>
+<path d='M 72,112 L 184,112' fill='none' stroke='currentColor'></path>
+<path d='M 184,112 L 216,112' fill='none' stroke='currentColor'></path>
+<path d='M 216,112 L 248,112' fill='none' stroke='currentColor'></path>
+<path d='M 344,112 L 376,112' fill='none' stroke='currentColor'></path>
+<path d='M 72,128 L 120,128' fill='none' stroke='currentColor'></path>
+<path d='M 184,128 L 216,128' fill='none' stroke='currentColor'></path>
+<path d='M 360,128 L 376,128' fill='none' stroke='currentColor'></path>
+<path d='M 72,144 L 104,144' fill='none' stroke='currentColor'></path>
+<path d='M 240,144 L 256,144' fill='none' stroke='currentColor'></path>
+<path d='M 328,144 L 344,144' fill='none' stroke='currentColor'></path>
+<path d='M 344,144 L 360,144' fill='none' stroke='currentColor'></path>
+<path d='M 360,144 L 376,144' fill='none' stroke='currentColor'></path>
+<path d='M 72,160 L 88,160' fill='none' stroke='currentColor'></path>
+<path d='M 208,160 L 224,160' fill='none' stroke='currentColor'></path>
+<path d='M 376,160 L 496,160' fill='none' stroke='currentColor'></path>
+<path d='M 0,176 L 72,176' fill='none' stroke='currentColor'></path>
+<path d='M 240,176 L 256,176' fill='none' stroke='currentColor'></path>
+<path d='M 120,208 L 152,208' fill='none' stroke='currentColor'></path>
+<path d='M 200,208 L 216,208' fill='none' stroke='currentColor'></path>
+<path d='M 216,208 L 248,208' fill='none' stroke='currentColor'></path>
+<path d='M 248,208 L 264,208' fill='none' stroke='currentColor'></path>
+<path d='M 288,208 L 328,208' fill='none' stroke='currentColor'></path>
+<path d='M 104,256 L 344,256' fill='none' stroke='currentColor'></path>
+<path d='M 344,256 L 360,256' fill='none' stroke='currentColor'></path>
+<path d='M 88,272 L 344,272' fill='none' stroke='currentColor'></path>
+<path d='M 160,8 L 192,8' fill='none' stroke='currentColor'></path>
+<path d='M 160,24 L 192,24' fill='none' stroke='currentColor'></path>
+<path d='M 208,56 L 216,56' fill='none' stroke='currentColor'></path>
+<path d='M 216,56 L 224,56' fill='none' stroke='currentColor'></path>
+<path d='M 440,136 L 496,136' fill='none' stroke='currentColor'></path>
+<path d='M 208,152 L 216,152' fill='none' stroke='currentColor'></path>
+<path d='M 216,152 L 224,152' fill='none' stroke='currentColor'></path>
+<path d='M 160,200 L 192,200' fill='none' stroke='currentColor'></path>
+<path d='M 160,216 L 192,216' fill='none' stroke='currentColor'></path>
+<path d='M 72,80 L 72,96' fill='none' stroke='currentColor'></path>
+<path d='M 72,96 L 72,112' fill='none' stroke='currentColor'></path>
+<path d='M 72,112 L 72,128' fill='none' stroke='currentColor'></path>
+<path d='M 72,128 L 72,144' fill='none' stroke='currentColor'></path>
+<path d='M 72,144 L 72,160' fill='none' stroke='currentColor'></path>
+<path d='M 72,160 L 72,176' fill='none' stroke='currentColor'></path>
+<path d='M 88,16 L 88,96' fill='none' stroke='currentColor'></path>
+<path d='M 88,160 L 88,272' fill='none' stroke='currentColor'></path>
+<path d='M 104,144 L 104,256' fill='none' stroke='currentColor'></path>
+<path d='M 120,128 L 120,208' fill='none' stroke='currentColor'></path>
+<path d='M 160,8 L 160,24' fill='none' stroke='currentColor'></path>
+<path d='M 160,200 L 160,216' fill='none' stroke='currentColor'></path>
+<path d='M 184,112 L 184,128' fill='none' stroke='currentColor'></path>
+<path d='M 192,8 L 192,24' fill='none' stroke='currentColor'></path>
+<path d='M 192,200 L 192,216' fill='none' stroke='currentColor'></path>
+<path d='M 216,16 L 216,48' fill='none' stroke='currentColor'></path>
+<path d='M 216,80 L 216,96' fill='none' stroke='currentColor'></path>
+<path d='M 216,128 L 216,144' fill='none' stroke='currentColor'></path>
+<path d='M 216,176 L 216,208' fill='none' stroke='currentColor'></path>
+<path d='M 240,48 L 240,80' fill='none' stroke='currentColor'></path>
+<path d='M 240,144 L 240,176' fill='none' stroke='currentColor'></path>
+<path d='M 248,16 L 248,32' fill='none' stroke='currentColor'></path>
+<path d='M 248,96 L 248,112' fill='none' stroke='currentColor'></path>
+<path d='M 248,112 L 248,128' fill='none' stroke='currentColor'></path>
+<path d='M 248,192 L 248,208' fill='none' stroke='currentColor'></path>
+<path d='M 256,48 L 256,80' fill='none' stroke='currentColor'></path>
+<path d='M 256,144 L 256,176' fill='none' stroke='currentColor'></path>
+<path d='M 272,8 L 272,24' fill='none' stroke='currentColor'></path>
+<path d='M 272,200 L 272,216' fill='none' stroke='currentColor'></path>
+<path d='M 280,8 L 280,24' fill='none' stroke='currentColor'></path>
+<path d='M 280,200 L 280,216' fill='none' stroke='currentColor'></path>
+<path d='M 328,16 L 328,96' fill='none' stroke='currentColor'></path>
+<path d='M 328,144 L 328,208' fill='none' stroke='currentColor'></path>
+<path d='M 344,112 L 344,128' fill='none' stroke='currentColor'></path>
+<path d='M 344,160 L 344,240' fill='none' stroke='currentColor'></path>
+<path d='M 360,160 L 360,256' fill='none' stroke='currentColor'></path>
+<path d='M 376,80 L 376,96' fill='none' stroke='currentColor'></path>
+<path d='M 376,96 L 376,112' fill='none' stroke='currentColor'></path>
+<path d='M 376,112 L 376,128' fill='none' stroke='currentColor'></path>
+<path d='M 376,128 L 376,144' fill='none' stroke='currentColor'></path>
+<path d='M 376,144 L 376,160' fill='none' stroke='currentColor'></path>
+<path d='M 440,80 L 440,128' fill='none' stroke='currentColor'></path>
+<path d='M 456,64 L 456,80' fill='none' stroke='currentColor'></path>
+<path d='M 480,64 L 480,80' fill='none' stroke='currentColor'></path>
+<path d='M 496,80 L 496,160' fill='none' stroke='currentColor'></path>
+<path d='M 160,8 L 160,16' fill='none' stroke='currentColor'></path>
+<path d='M 160,200 L 160,208' fill='none' stroke='currentColor'></path>
+<path d='M 192,8 L 192,16' fill='none' stroke='currentColor'></path>
+<path d='M 192,200 L 192,208' fill='none' stroke='currentColor'></path>
+<path d='M 216,72 L 216,80' fill='none' stroke='currentColor'></path>
+<path d='M 216,168 L 216,176' fill='none' stroke='currentColor'></path>
+<path d='M 248,32 L 248,40' fill='none' stroke='currentColor'></path>
+<path d='M 248,88 L 248,96' fill='none' stroke='currentColor'></path>
+<path d='M 248,128 L 248,136' fill='none' stroke='currentColor'></path>
+<path d='M 248,184 L 248,192' fill='none' stroke='currentColor'></path>
+<path d='M 440,128 L 440,136' fill='none' stroke='currentColor'></path>
+<path d='M 216,96 L 216,104' fill='none' stroke='currentColor'></path>
+<path d='M 216,120 L 216,128' fill='none' stroke='currentColor'></path>
+<path d='M 216,104 A 9,9 0 0,0 216,120' fill='none' stroke='currentColor'></path>
+<path d='M 344,128 L 344,136' fill='none' stroke='currentColor'></path>
+<path d='M 344,152 L 344,160' fill='none' stroke='currentColor'></path>
+<path d='M 344,136 A 9,9 0 0,1 344,152' fill='none' stroke='currentColor'></path>
+<path d='M 360,128 L 360,136' fill='none' stroke='currentColor'></path>
+<path d='M 360,152 L 360,160' fill='none' stroke='currentColor'></path>
+<path d='M 360,136 A 9,9 0 0,1 360,152' fill='none' stroke='currentColor'></path>
+<path d='M 344,240 L 344,248' fill='none' stroke='currentColor'></path>
+<path d='M 344,264 L 344,272' fill='none' stroke='currentColor'></path>
+<path d='M 344,248 A 9,9 0 0,1 344,264' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='8' y='100' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='116' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='132' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='148' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='8' y='164' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='196' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='16' y='100' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='116' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='16' y='132' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='148' fill='currentColor' style='font-size:1em'>V</text>
+<text text-anchor='middle' x='16' y='164' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='16' y='196' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='24' y='100' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='116' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='24' y='132' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='164' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='24' y='196' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='32' y='100' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='32' y='132' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='32' y='196' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='48' y='100' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='48' y='132' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='48' y='196' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='56' y='132' fill='currentColor' style='font-size:1em'>3</text>
+<text text-anchor='middle' x='56' y='196' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='64' y='260' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='72' y='260' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='80' y='260' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='96' y='68' fill='currentColor' style='font-size:1em'>L</text>
+<text text-anchor='middle' x='96' y='84' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='104' y='68' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='104' y='84' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='112' y='68' fill='currentColor' style='font-size:1em'>f</text>
+<text text-anchor='middle' x='112' y='84' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='112' y='244' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='120' y='68' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='120' y='84' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='120' y='244' fill='currentColor' style='font-size:1em'>V</text>
+<text text-anchor='middle' x='128' y='4' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='128' y='84' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='128' y='148' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='128' y='164' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='128' y='196' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='136' y='148' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='136' y='164' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='136' y='196' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='144' y='148' fill='currentColor' style='font-size:1em'>g</text>
+<text text-anchor='middle' x='144' y='164' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='144' y='196' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>Ω</text>
+<text text-anchor='middle' x='152' y='148' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='152' y='164' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='152' y='196' fill='currentColor' style='font-size:1em'>Ω</text>
+<text text-anchor='middle' x='160' y='148' fill='currentColor' style='font-size:1em'>t</text>
+<text text-anchor='middle' x='160' y='164' fill='currentColor' style='font-size:1em'>o</text>
+<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='176' y='180' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='184' y='84' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='184' y='180' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='192' y='180' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='200' y='84' fill='currentColor' style='font-size:1em'>F</text>
+<text text-anchor='middle' x='200' y='180' fill='currentColor' style='font-size:1em'>f</text>
+<text text-anchor='middle' x='264' y='68' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='264' y='164' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='272' y='68' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='272' y='164' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='280' y='68' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='280' y='164' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='288' y='36' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='288' y='68' fill='currentColor' style='font-size:1em'>Ω</text>
+<text text-anchor='middle' x='288' y='164' fill='currentColor' style='font-size:1em'>Ω</text>
+<text text-anchor='middle' x='288' y='228' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='296' y='36' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='296' y='228' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='304' y='36' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='304' y='228' fill='currentColor' style='font-size:1em'>u</text>
+<text text-anchor='middle' x='312' y='36' fill='currentColor' style='font-size:1em'>F</text>
+<text text-anchor='middle' x='312' y='228' fill='currentColor' style='font-size:1em'>F</text>
+<text text-anchor='middle' x='392' y='100' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='392' y='116' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='392' y='132' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='392' y='148' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='400' y='100' fill='currentColor' style='font-size:1em'>l</text>
+<text text-anchor='middle' x='400' y='116' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='400' y='132' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='400' y='148' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='408' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='408' y='116' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='408' y='132' fill='currentColor' style='font-size:1em'>n</text>
+<text text-anchor='middle' x='408' y='148' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='416' y='100' fill='currentColor' style='font-size:1em'>e</text>
+<text text-anchor='middle' x='416' y='116' fill='currentColor' style='font-size:1em'>g</text>
+<text text-anchor='middle' x='416' y='132' fill='currentColor' style='font-size:1em'>g</text>
+<text text-anchor='middle' x='424' y='100' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='424' y='116' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='424' y='132' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='432' y='100' fill='currentColor' style='font-size:1em'>e</text>
+</g>
+
+    </svg>
+  
+</div>
+</td></tr>
+</table>
+<p align="center">
+    <img src="low_pass_filter_circuit.png" width="80%"/>
+</p>
+<h1 id="indicator-led">Indicator LED</h1>
+<p>The indicator LED is simply an LED with a 270Ω resistor soldered onto one leg:</p>
+<p align="center">
+    <img src="LED_wiring_long.JPG" width="32%"/>
+    <img src="LED_wrapped.JPG" width="32%"/>
+    <img src="LED_in_case.JPG" width="32%"/>
+</p>
+<p>We want to be able to indicate the power state shortly after powering on the device. Luckily for us the serial communication pins are configured as outputs very early on in the boot process. So by enabling serial communication (see <a href="#software-setup">Software Setup</a>
+) we can get a quick and dirty power indication pin on GPIO14 (UART TX).</p>
+<h2 id="led-circuit-diagram">LED Circuit Diagram</h2>
+<table style="width:100%;">
+<tr><td style="width:50%;">
+<p align="center">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 200 121"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,16 L 72,16' fill='none' stroke='currentColor'></path>
+<path d='M 72,32 L 128,32' fill='none' stroke='currentColor'></path>
+<path d='M 160,32 L 176,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,48 L 88,48' fill='none' stroke='currentColor'></path>
+<path d='M 0,64 L 72,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 120,80' fill='none' stroke='currentColor'></path>
+<path d='M 168,80 L 176,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,72 L 160,72' fill='none' stroke='currentColor'></path>
+<path d='M 128,88 L 160,88' fill='none' stroke='currentColor'></path>
+<path d='M 72,16 L 72,32' fill='none' stroke='currentColor'></path>
+<path d='M 72,32 L 72,48' fill='none' stroke='currentColor'></path>
+<path d='M 72,48 L 72,64' fill='none' stroke='currentColor'></path>
+<path d='M 88,48 L 88,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,72 L 128,88' fill='none' stroke='currentColor'></path>
+<path d='M 160,72 L 160,88' fill='none' stroke='currentColor'></path>
+<path d='M 176,32 L 176,80' fill='none' stroke='currentColor'></path>
+<path d='M 128,72 L 128,80' fill='none' stroke='currentColor'></path>
+<path d='M 160,72 L 160,80' fill='none' stroke='currentColor'></path>
+<path d='M 144,16 A 16,16 0 0,0 128,32' fill='none' stroke='currentColor'></path>
+<path d='M 144,16 A 16,16 0 0,1 160,32' fill='none' stroke='currentColor'></path>
+<path d='M 128,32 A 16,16 0 0,0 144,48' fill='none' stroke='currentColor'></path>
+<path d='M 160,32 A 16,16 0 0,1 144,48' fill='none' stroke='currentColor'></path>
+<text text-anchor='middle' x='0' y='84' fill='currentColor' style='font-size:1em'>R</text>
+<text text-anchor='middle' x='8' y='36' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='52' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='8' y='84' fill='currentColor' style='font-size:1em'>a</text>
+<text text-anchor='middle' x='16' y='36' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='16' y='52' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='16' y='84' fill='currentColor' style='font-size:1em'>s</text>
+<text text-anchor='middle' x='24' y='36' fill='currentColor' style='font-size:1em'>I</text>
+<text text-anchor='middle' x='24' y='52' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='24' y='84' fill='currentColor' style='font-size:1em'>p</text>
+<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='40' y='84' fill='currentColor' style='font-size:1em'>P</text>
+<text text-anchor='middle' x='48' y='36' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='48' y='84' fill='currentColor' style='font-size:1em'>i</text>
+<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='96' y='100' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='104' y='100' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='112' y='100' fill='currentColor' style='font-size:1em'>0</text>
+<text text-anchor='middle' x='120' y='100' fill='currentColor' style='font-size:1em'>Ω</text>
+<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>L</text>
+<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>E</text>
+<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>𝚡</text>
+<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>D</text>
+</g>
+
+    </svg>
+  
+</div>
+</p>
+</td>
+<td style="width:50%; padding: 1px;">
+<p align="center">
+    <img src="led_circuit.png"/>
+</p>
+</td><tr>
+</table>
+<h1 id="software-setup">Software Setup</h1>
+<p>Grab a copy of RetroPie:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">wget -O - https://github.com/RetroPie/RetroPie-Setup/releases/download/4.8/retropie-buster-4.8-rpi1_zero.img.gz <span class="p">|</span> gzip -d &gt; retropie.img
+</span></span></code></pre></div><p>Insert your SD Card into the computer and locate its device name:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo fdisk -l
+</span></span></code></pre></div><details>
+  <summary>Output</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">❯ sudo fdisk -l
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">Disk /dev/sdi: 29.74 GiB, <span class="m">31914983424</span> bytes, <span class="m">62333952</span> sectors
+</span></span><span class="line"><span class="cl">Disk model: USB3.0 CRW   -SD
+</span></span><span class="line"><span class="cl">Units: sectors of <span class="m">1</span> * <span class="nv">512</span> <span class="o">=</span> <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Sector size <span class="o">(</span>logical/physical<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">I/O size <span class="o">(</span>minimum/optimal<span class="o">)</span>: <span class="m">512</span> bytes / <span class="m">512</span> bytes
+</span></span><span class="line"><span class="cl">Disklabel type: dos
+</span></span><span class="line"><span class="cl">Disk identifier: 0x00000000
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Device     Boot Start      End  Sectors  Size Id Type
+</span></span><span class="line"><span class="cl">/dev/sdi1        <span class="m">8192</span> <span class="m">62333951</span> <span class="m">62325760</span> 29.7G  c W95 FAT32 <span class="o">(</span>LBA<span class="o">)</span>
+</span></span></code></pre></div></details>
+<p>Write <code>retropie.img</code> to disk, replacing <code>sdx</code> with your disk name:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo dd <span class="k">if</span><span class="o">=</span>retropie.img <span class="nv">of</span><span class="o">=</span>/dev/sdx <span class="nv">bs</span><span class="o">=</span>4M <span class="nv">conv</span><span class="o">=</span>fsync <span class="nv">status</span><span class="o">=</span>progress
+</span></span></code></pre></div><p>There should be two new mount points available after this command completes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">df -h /dev/sdx*
+</span></span></code></pre></div><details>
+  <summary>Output</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">❯ df -h /dev/sdi*
+</span></span><span class="line"><span class="cl">Filesystem      Size  Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">udev             16G     <span class="m">0</span>   16G   0% /dev
+</span></span><span class="line"><span class="cl">/dev/sdi1       256M   49M  207M  20% /media/kennedn/boot
+</span></span><span class="line"><span class="cl">/dev/sdi2       2.5G  2.5G     <span class="m">0</span> 100% /media/kennedn/retropie
+</span></span></code></pre></div></details>
+<p>cd to your boot partition to continue with setup:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> /media/kennedn/boot
+</span></span></code></pre></div><h2 id="configtxt">config.txt</h2>
+<p>Uncomment <code>sdtv_mode</code> in <code>config.txt</code> to enable composite video:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># uncomment for composite PAL</span>
+</span></span><span class="line"><span class="cl"><span class="nv">sdtv_mode</span><span class="o">=</span><span class="m">2</span>
+</span></span></code></pre></div><p>Add a <code>dtoverlay</code> line to <code>config.txt</code> to configure <code>gpio-shutdown</code>, this will enable GPIO3 as a power toggle pin:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">dtoverlay</span><span class="o">=</span>gpio-shutdown
+</span></span></code></pre></div><p>Add a <code>dtoverlay</code> line to <code>config.txt</code> to configure <code>audremap</code>, this will re-route audio to PWM pins <code>12</code> and <code>13</code>. In my config I swap the left and right channels with <code>swap_lr</code> to compensate for how I have wired the TRRS module to the board:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">dtoverlay</span><span class="o">=</span>audremap,pins_12_13,swap_lr
+</span></span></code></pre></div><p>Add an <code>enable_uart</code> line to <code>config.txt</code> to enable the tx and rx GPIO pins for our indicator LED:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">enable_uart</span><span class="o">=</span><span class="m">1</span>
+</span></span></code></pre></div><details>
+<summary>Full config.txt</summary>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># For more options and information see</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># http://rpf.io/configtxt</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Some settings may impact device functionality. See link above for details</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment if you get no picture on HDMI for a default &#34;safe&#34; mode</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#hdmi_safe=1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment this if your display has a black border of unused pixels visible</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># and your display can output without overscan</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#disable_overscan=1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment the following to adjust overscan. Use positive numbers if console</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># goes off screen, and negative if there is too much border</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#overscan_left=16</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#overscan_right=16</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#overscan_top=16</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#overscan_bottom=16</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment to force a console size. By default it will be display&#39;s size minus</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># overscan.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#framebuffer_width=1280</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#framebuffer_height=720</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment if hdmi display is not detected and composite is being output</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#hdmi_force_hotplug=1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment to force a specific HDMI mode (this will force VGA)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#hdmi_group=1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#hdmi_mode=1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment to force a HDMI mode rather than DVI. This can make audio work in</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># DMT (computer monitor) modes</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#hdmi_drive=2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment to increase signal to HDMI, if you have interference, blanking, or</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># no display</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#config_hdmi_boost=4</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># uncomment for composite PAL</span>
+</span></span><span class="line"><span class="cl"><span class="nv">sdtv_mode</span><span class="o">=</span><span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#uncomment to overclock the arm. 700 MHz is the default.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#arm_freq=800</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Uncomment some or all of these to enable the optional hardware interfaces</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtparam=i2c_arm=on</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtparam=i2s=on</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtparam=spi=on</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Uncomment this to enable infrared communication.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtoverlay=gpio-ir,gpio_pin=17</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtoverlay=gpio-ir-tx,gpio_pin=18</span>
+</span></span><span class="line"><span class="cl"><span class="nv">dtoverlay</span><span class="o">=</span>gpio-shutdown
+</span></span><span class="line"><span class="cl"><span class="nv">dtoverlay</span><span class="o">=</span>audremap,pins_12_13,swap_lr
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Additional overlays and parameters are documented /boot/overlays/README</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Enable audio (loads snd_bcm2835)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">dtparam</span><span class="o">=</span><span class="nv">audio</span><span class="o">=</span>on
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">enable_uart</span><span class="o">=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>pi4<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Enable DRM VC4 V3D driver on top of the dispmanx display stack</span>
+</span></span><span class="line"><span class="cl"><span class="nv">dtoverlay</span><span class="o">=</span>vc4-fkms-v3d
+</span></span><span class="line"><span class="cl"><span class="nv">max_framebuffers</span><span class="o">=</span><span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>all<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#dtoverlay=vc4-fkms-v3d</span>
+</span></span><span class="line"><span class="cl"><span class="nv">gpu_mem_256</span><span class="o">=</span><span class="m">128</span>
+</span></span><span class="line"><span class="cl"><span class="nv">gpu_mem_512</span><span class="o">=</span><span class="m">256</span>
+</span></span><span class="line"><span class="cl"><span class="nv">gpu_mem_1024</span><span class="o">=</span><span class="m">256</span>
+</span></span><span class="line"><span class="cl"><span class="nv">overscan_scale</span><span class="o">=</span><span class="m">1</span>
+</span></span></code></pre></div></details>
+<h2 id="network-setup">Network setup</h2>
+<p>Enable ssh by creating a blank file called <code>ssh</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">touch ssh
+</span></span></code></pre></div><p>Create and fill out a file called <code>wpa_supplicant.conf</code>, replacing <code>NETWORK-NAME</code> and <code>NETWORK-PASSWORD</code> with your own values:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">country</span><span class="o">=</span>GB
+</span></span><span class="line"><span class="cl"><span class="nv">ctrl_interface</span><span class="o">=</span><span class="nv">DIR</span><span class="o">=</span>/var/run/wpa_supplicant <span class="nv">GROUP</span><span class="o">=</span>netdev
+</span></span><span class="line"><span class="cl"><span class="nv">update_config</span><span class="o">=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">network</span><span class="o">={</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">ssid</span><span class="o">=</span><span class="s2">&#34;NETWORK-NAME&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">psk</span><span class="o">=</span><span class="s2">&#34;NETWORK-PASSWORD&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h2 id="controller-setup">Controller setup</h2>
+<p>We need to boot into RetroPie for the remaining steps. We can ssh directly on to the device headlessly if the IP address is known, otherwise you may need to plug in a monitor and keyboard, you can press <code>F4</code> when using a physical keyboard to drop into a tty shell.</p>
+<p>SSH onto the NESZero:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh pi@192.168.1.112
+</span></span></code></pre></div><p>Run the RetroPie-Setup script as root:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo RetroPie-Setup/retropie_setup.sh
+</span></span></code></pre></div><p>You will be presented with a menu system, Select <code>Manage packages</code>:</p>
+<p align="center">
+    <img src="gamecon_step1.png" width=95%/>
+</p>
+<p>On the next menu select <code>driver</code>:</p>
+<p align="center">
+    <img src="gamecon_step2.png" width=95%/>
+</p>
+<p>On the next menu select <code>gamecondriver</code>:</p>
+<p align="center">
+    <img src="gamecon_step3.png" width=95%/>
+</p>
+<p>On the next menu select <code>Install from pre-compiled binary</code>:</p>
+<p align="center">
+    <img src="gamecon_step4.png" width=95%/>
+</p>
+<p>Once completed, you can hit back a few times and then exit. We can then re-start emulationstation and map our buttons for the nes controller:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">emulationstation
+</span></span></code></pre></div><p>Over in emulation station, you will need to plug in another controller or a keyboard to the usb slot.</p>
+<p>Press <code>backspace</code> to bring up the main menu, move down to <code>CONFIGURE INPUT</code> with the arrow keys:</p>
+<p align="center">
+    <img src="es_configure_input.png" width=70%/>
+</p>
+<p>and hit <code>z</code> twice to enter the Configure Input Menu:</p>
+<p align="center">
+    <img src="es_configure_input_2.png" width=70%/>
+</p>
+<p>You can then move through the prompts to configure the NES Controller as an input device.</p>
+<h1 id="finish">Finish</h1>
+<p>If you made it all the way through then congratulations! You can finally kick back, relax and play some Earthbound on your CRT TV:</p>
+<p align="center">
+<video width="90%" controls>
+  <source src="crt_tv_earthbound.m4v" type="video/mp4">
+</video> 
+</p></article>
 </div>
 <div class="article bottom"><section class="article discussion"><script 
             src="https://utteranc.es/client.js" 
