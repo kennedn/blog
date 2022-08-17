@@ -65,6 +65,8 @@ So we are going to use this as a starting point but add some of our own build re
 - [Add composite video and audio to the Pi](#hack-the-jack-back)
 - [Add a power indicator LED](#indicator-led)
 
+The final 3d model we end up using for a base is available [on thingiverse](https://www.thingiverse.com/thing:5467298) as a remix of the original.
+
 <details>
 <summary>Parts List</summary>
 
