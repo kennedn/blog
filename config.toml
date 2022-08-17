@@ -62,9 +62,9 @@ showTags = false             # /tags/
 title = "Home"
 url = "/"
 
-[[params.nav.custom]]
-title = "About"
-url = "about"
+#[[params.nav.custom]]
+#title = "About"
+#url = "about"
 
 # for chinese
 [params.beian]
