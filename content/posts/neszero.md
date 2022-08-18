@@ -11,7 +11,7 @@ imgs:
     <img src="case_closed_connected_back.JPG" width="45%"/>
 </p>
 
-I recently purchased a CRT TV in the hopes of reliving some of my childhood memories through some of the old games I used to play. This works great for devices that support composite video and I've gotten some fairly decent mileage out of the consoles I still own from that era.
+I recently purchased a CRT TV in the hopes of reliving my childhood memories through some of the old games I used to play. This works great for devices that support composite video and I've gotten some fairly decent mileage out of the consoles I still own from that era.
 
 But therein lies the problem. The TV is old enough to only support one external connection via a scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to interfacing with any device made after 2010.
 
@@ -61,7 +61,7 @@ If I was going to build something I not only wanted it to work well, I wanted it
 So we are going to use this as a starting point but add some of our own build requirements:
 
 - [Wire the NES buttons up to the Pi so it can be used as a controller](#how-nes-controllers-work)
-- [Use the NES controller buttons to power toggle the console](#using-an-attiny-to-bridge-the-gap)
+- [Use a NES button combination to power toggle the console](#using-an-attiny-to-bridge-the-gap)
 - [Add composite video and audio to the Pi](#hack-the-jack-back)
 - [Add a power indicator LED](#indicator-led)
 
