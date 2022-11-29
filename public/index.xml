@@ -21,7 +21,7 @@
     &lt;img src=&#34;case_closed_connected_front.JPG&#34; width=&#34;45%&#34;/&gt;
     &lt;img src=&#34;case_closed_connected_back.JPG&#34; width=&#34;45%&#34;/&gt;
 &lt;/p&gt;
-&lt;p&gt;I recently purchased a CRT TV in the hopes of reliving some of my childhood memories through some of the old games I used to play. This works great for devices that support composite video and I&amp;rsquo;ve gotten some fairly decent mileage out of the consoles I still own from that era.&lt;/p&gt;
+&lt;p&gt;I recently purchased a CRT TV in the hopes of reliving my childhood memories through some of the old games I used to play. This works great for devices that support composite video and I&amp;rsquo;ve gotten some fairly decent mileage out of the consoles I still own from that era.&lt;/p&gt;
 &lt;p&gt;But therein lies the problem. The TV is old enough to only support one external connection via a scart port on the back of the unit. It became clear rather quickly that this kind of connectivity is a big limiting factor when it comes to interfacing with any device made after 2010.&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
     &lt;img src=&#34;crt_back.JPG&#34; width=&#34;60%&#34;/&gt;
@@ -96,7 +96,7 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;#how-nes-controllers-work&#34;&gt;Wire the NES buttons up to the Pi so it can be used as a controller&lt;/a&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#using-an-attiny-to-bridge-the-gap&#34;&gt;Use the NES controller buttons to power toggle the console&lt;/a&gt;
+&lt;li&gt;&lt;a href=&#34;#using-an-attiny-to-bridge-the-gap&#34;&gt;Use a NES button combination to power toggle the console&lt;/a&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;#hack-the-jack-back&#34;&gt;Add composite video and audio to the Pi&lt;/a&gt;
 &lt;/li&gt;

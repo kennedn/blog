@@ -1,5 +1,5 @@
 ---
-title: "NESZero: Building a Console for a Different Era"
+title: "Embedding a Pi Zero in a NES controller"
 date: 2022-08-10T10:19:40+01:00
 draft: false
 math: true
@@ -191,11 +191,13 @@ RetroPie actually has a driver that does this for us, driver setup is covered in
 
 
 <table>
+    <thead>
     <tr>
-        <td>4021 pin</td>
-        <td>Wire Color</td>
-        <td>Raspberry Pi</td>
+        <th>4021 pin</th>
+        <th>Wire Color</th>
+        <th>Raspberry Pi</th>
     </tr>
+    </thead>
     <tr>
         <td>3v3</td>
         <td><mark style="background-color: #0005; color: green; font-weight: bold;">Green</mark> or <mark style="background-color: #0005; color: white; font-weight: bold;">White</mark></td>
