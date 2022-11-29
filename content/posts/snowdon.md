@@ -302,13 +302,13 @@ Snowdon  220Ω    Rasp Pi
 
 ## Code
 
-We are going to be writing a Programmable IO (PIO) assembly program that will take a 32-bit unsigned integer (uint32_t) as input, translate it into a a NEC formatted message and broadcast it on GPIO 16.
+To achieve the timing requirements of the protocol, we are going to be writing a Programmable IO (PIO) assembly program that will take a 32-bit unsigned integer (uint32_t) as input, translate it into a a NEC formatted message and broadcast it on GPIO 16.
 
 
 >PIO is a bit of a hard nut to crack so here are some suggested materials if its your first PIO rodeo:
 >- [Youtube - Raspberry Pi Pico's PIO](https://www.youtube.com/watch?v=yYnQYF_Xa8g)
 >- [Youtube - Raspberry Pi Pico and RP2040](https://www.youtube.com/watch?v=OLV-TSRTTE8&list=PL_tws4AXg7auiZHZsL-qfrXoMiUONBB0U)
->- [PDF &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Pico C SDK, Section 3](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
+>- [PDF - Pico C SDK, Section 3](https://datasheets.raspberrypi.com/pico/raspberry-pi-pico-c-sdk.pdf)
 
 <br>
 The first thing we are going to configure for our driver is side set. Side set allows us to drive up to 5 consecutive pins as a side effect of a PIO ASM instruction. For our purposes we are only interested in driving a single GPIO pin with our IR data, so we will declare this to the compiler with a label:
@@ -442,13 +442,11 @@ We then start again from `next` until we have processed all 32 bits:
 </p>
 
 
- `end_pulse` label.
-
 ```assembly
 end_pulse:
     nop side 0 [1]          ; Side set 0 for 2 ticks (560us)
 ```
-Finally, after all bits have been exhausted, we enter the `end_pulse` label, where we:
+After all bits have been exhausted, we finally enter the `end_pulse` label, where we:
 - Do nothing for a single tick
 - Side set 0 on GPIO 16 for 2 ticks 
 - Wrap back around to the first pull instruction to wait for next input
@@ -512,8 +510,49 @@ static inline void nec_transmit_program_init(PIO pio, uint sm, uint offset, uint
 </details>
 
 ## Demo
-> Toggle the switch to change between the input sources (Infrared reciever or our PIO program)
+This simulation demonstrates our driver's ability to mimic an infrared remote. When the switch is toggled left, it will accept input directly from the IR remote via the IR receiver.
+<br>
+<br>
+However, when the switch is toggled to the right, we see that our PIO program is sending a random remote code on GPIO 27 every 500ms:
+<details>
+<summary>Code</summary>
 
+```c
+#define TX_PIN 27
+uint32_t remote_codes[] = {
+    0x5da2ff00,  //POWER                                                            
+    0xdd22ff00,  //TEST                                                             
+    0xfd02ff00,  //PLUS                                                             
+    0x3dc2ff00,  //BACK                                                             
+    0x1de2ff00,  //MENU
+    0x6f90ff00,  //NEXT
+    0x57a8ff00,  //PLAY
+    0x1fe0ff00,  //PREV
+    0x9768ff00,  //0
+    0x6798ff00,  //MINUS
+    0x4fb0ff00,  //C
+    0x857aff00,  //3
+    0xe718ff00,  //2
+    0xcf30ff00,  //1
+    0xef10ff00,  //4
+    0xc738ff00,  //5
+    0xa55aff00,  //6
+    0xad52ff00,  //9
+    0xb54aff00,  //8
+    0xbd42ff00,  //7
+};
+...
+while (true) {
+    pio_sm_put_blocking(PIO_INSTANCE, tx_sm, 
+                        remote_codes[rand() % ARRAY_SIZE(remote_codes)]);
+...
+    sleep_ms(500);
+}
+```
+</details>
+
+<br>
+<br>
 <div>
     <div class="responsive-iframe-container">
         <iframe class="responsive-iframe" frameBorder="0" seamless="" sandbox="allow-top-navigation-by-user-activation allow-same-origin allow-forms allow-scripts" 
