@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.102.0-DEV" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>NESZero: Building a Console for a Different Era&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.62890ff179269039558d6e56cd0f1fa29799d2e2b9f267bb098baaa92c0c4b6ecb9b44e33c0a67e6ad3bc9b438c92124.css" integrity="sha384-YokP8XkmkDlVjW5WzQ8fopeZ0uK58me7CYuqqSwMS27Lm0TjPApn5q07ybQ4ySEk"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="NESZero: Building a Console for a Different Era" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/neszero/full_wiring_carpet.jpg" /><body><section id="header">
+<meta name="supported-color-schemes" content="light dark"><title>Embedding a Pi Zero in a NES controller&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.16665d7c2e5874f6f5876ca26bb47862e4f7be0ae649cf1f88b4081072b00497735b46a19a2c4fe819da163dd21e8728.css" integrity="sha384-FmZdfC5YdPb1h2yia7R4YuT3vgrmSc8fiLQIEHKwBJdzW0ahmixP6BnaFj3SHoco"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Embedding a Pi Zero in a NES controller" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/neszero/full_wiring_carpet.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
-<script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">NESZero: Building a Console for a Different Era</h1><p class="article date">Wednesday, August 10, 2022</p></section><article class="article markdown-body"><p align="center">
+    <h1 class="article title">Embedding a Pi Zero in a NES controller</h1><p class="article date">Wednesday, August 10, 2022</p></section><article class="article markdown-body"><p align="center">
     <img src="case_closed_connected_front.JPG" width="45%"/>
     <img src="case_closed_connected_back.JPG" width="45%"/>
 </p>
@@ -293,11 +293,13 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <p>Wire coloring can vary between controllers and I would highly recommend double checking wire / pin mappings with a multimeter.</p>
 </blockquote>
 <table>
+    <thead>
     <tr>
-        <td>4021 pin</td>
-        <td>Wire Color</td>
-        <td>Raspberry Pi</td>
+        <th>4021 pin</th>
+        <th>Wire Color</th>
+        <th>Raspberry Pi</th>
     </tr>
+    </thead>
     <tr>
         <td>3v3</td>
         <td><mark style="background-color: #0005; color: green; font-weight: bold;">Green</mark> or <mark style="background-color: #0005; color: white; font-weight: bold;">White</mark></td>
@@ -2054,7 +2056,7 @@ $$V_{out} = 1.1785714285714286V$$</p>
 </video> 
 </p></article>
 </div>
-<div class="article bottom"><section class="article discussion"><script 
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/blog/posts/snowdon/"><span class="iconfont icon-article"></span>Hijacking infrared to make a dumb device smart</a></p></section><section class="article discussion"><script 
             src="https://utteranc.es/client.js" 
             repo="kennedn/blog-comments"
             issue-term="pathname"
