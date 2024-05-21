@@ -1,7 +1,7 @@
 baseURL = "https://kennedn.com/blog/"
 title = "Kennedn's Blog"
 theme = "notepadium"
-copyright = "© Joshua Kennedy 2022"
+copyright = "© Joshua Kennedy 2024"
 summaryLength = 50
 
 languageCode = "en-gb"
@@ -71,3 +71,7 @@ url = "/"
   icp = ""     # example: 粤ICP备20056596号-1
   gongan = ""  # example: 粤公网安备 44030502005645号
   code = ""    # example: 44030502005645
+
+[server]
+  [[server.headers]]
+    for = '/**'

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.68.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Why not parse your JSON at build time?&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.d772509cb1a13ff931c0e6f887a0271b24000520fca7f8f6b4a8e12be049e781c498e0ed49c01d0569866b72f9ec177f.css" integrity="sha384-13JQnLGhP/kxwOb4h6AnGyQABSD8p/j2tKjhK&#43;BJ54HEmODtScAdBWmGa3L57Bd/"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Why not parse your JSON at build time?" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/json/cover.gif" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/blog/">Home</a></nav></div></span></div></section>
+
+<section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Why not parse your JSON at build time?</h1><p class="article date">Tuesday, May 14, 2024</p></section><article class="article markdown-body"><p>This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however.</p>
+<p>Most of my lights and devices are wired into my <a href="https://github.com/kennedn/restate-go"target="_blank" rel="noopener noreferrer">home automation api</a>
+. This is great as I have a smartwatch that can control it all, but it&rsquo;s a poor user experience for others who have no such device. I decided therefore, to repurpose the badger as a home automation controller that anyone can use.</p>
+<p>This culminated in the <a href="https://github.com/kennedn/restful-badger"target="_blank" rel="noopener noreferrer">restful-badger</a>
+ project, which permits an arbitrary number of RESTful &lsquo;tiles&rsquo; to be configured. Each tile can control and get state over HTTP.</p>
+<p align="center">
+    <img src="demo.gif" width=70%"/>
+</p>
+<script src="./mini-coi.js" scope="./"></script>
+<link rel="stylesheet" href="https://pyscript.net/releases/2024.5.2/core.css">
+<script type="module" src="https://pyscript.net/releases/2024.5.2/core.js"></script>
+<script>
+    let shadow_rules = [
+        `.cm-gutters {display: none !important;}`,
+        `.cm-scroller {max-height: 50vh !important;}`,
+        `.ͼb {color: red !important;}`,
+        `.ͼc {color: violet !important;}`,
+        `.ͼg {color: #ff0 !important;}`,
+        `.ͼe {color: #87ceeb !important;}`,
+        `.ͼd {color: #f60 !important;}`
+    ];
+    let document_rules = [
+        `.mpy-editor-output {border-top: 3px solid white; margin-top: 10px; padding-top: 10px; white-space: pre-wrap !important;}`,
+        `.highlight {margin-bottom: 0px !important;}`
+    ]
+    let interval = setInterval(() => {
+        let editor_boxes = document.querySelectorAll('.mpy-editor-box');
+        if (editor_boxes.length < 4) {
+            return;
+        }
+        document_rules.forEach(rule => {
+            document.styleSheets[0].insertRule(rule, 0);
+        });
+        clearInterval(interval);
+        [...editor_boxes].forEach(editor_box => {
+            // Hide 'micropython' header
+            editor_box.setAttribute("data-env", "");
+
+            let shadow = editor_box.querySelector(".mpy-editor-input > div").shadowRoot;
+            shadow_rules.forEach(rule => {
+                shadow.styleSheets[0].insertRule(rule, 0);
+            });
+
+            let button = editor_box.querySelector(".mpy-editor-run-button");
+            button.innerHTML += "<p>Run Code<p>";
+
+            editor_box.querySelector(".mpy-editor-run-button").click()
+        });
+        // Hide line count
+        // shadow.querySelector(".cm-gutters").style = "display:none;";
+        // shadow.querySelector(".cm-scroller").style = "height: 50vh;";
+        // [...shadow.querySelectorAll(".ͼe")].forEach(elm => {
+        //     elm.style = "color: green !important;";
+        // });
+
+        // document.querySelector(".mpy-editor-output").style = "border-top: 3px solid white; margin-top: 10px; padding-top: 10px";
+    }, 100);
+</script>
+<h1 id="the-problem">The problem</h1>
+<p>One of the major design decisions for the software was that the tiles should be configurable. I chose JSON as the data format for my tiles, a given tile may look something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;office&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;image_idx&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&#34;action_request&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;method&#34;</span><span class="p">:</span> <span class="s2">&#34;POST&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;endpoint&#34;</span><span class="p">:</span> <span class="s2">&#34;/v2/meross/office&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;json_body&#34;</span><span class="p">:</span> <span class="s2">&#34;{\&#34;code\&#34;: \&#34;toggle\&#34;}&#34;</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;status_request&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;method&#34;</span><span class="p">:</span> <span class="s2">&#34;POST&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;endpoint&#34;</span><span class="p">:</span> <span class="s2">&#34;/v2/meross/office&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;json_body&#34;</span><span class="p">:</span> <span class="s2">&#34;{\&#34;code\&#34;: \&#34;status\&#34;}&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;onoff&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;on_value&#34;</span><span class="p">:</span> <span class="s2">&#34;1&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;off_value&#34;</span><span class="p">:</span> <span class="s2">&#34;0&#34;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>A major downside of using JSON however is that it is expensive to parse on an embedded system. But there is a way to have our cake and eat it too. A way to avoid the runtime cost of parsing JSON but still use it.</p>
+<h2 id="enter-the-humble-byte-array">Enter the humble byte array</h2>
+<p>Something that C is very good at parsing is bytes. If we could encode our JSON into a structured byte array and feed those bytes to the microcontorller instead, most of the heavy lifting would be done before we hit runtime. All that would be left to do on our microcontroller is some book keeping to make sure the right bytes end up in the correct place.</p>
+<p>The correct place being a couple of c structs, which will look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">RESTFUL_REQUEST_DATA_</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">method</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">endpoint</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">json_body</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">on_value</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">off_value</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">RESTFUL_REQUEST_DATA</span><span class="p">;</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">TILE_</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">image_idx</span><span class="p">;</span>
+    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">action_request</span><span class="p">;</span>
+    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">status_request</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">TILE</span><span class="p">;</span>
+</code></pre></div><p>Most programming languages can work with bytes, so we can leverage a high level language such as python to encode the JSON file.</p>
+<p>We have 2 types of data to encode in our example JSON, an integer and several strings. Integer encoding is trivial and involves simply appending the integer to our byte array directly:</p>
+<script type="mpy-editor" target="integer">
+    import array
+    image_idx = 1
+    buffer = array.array('B')
+    buffer.append(image_idx)
+    print(buffer)
+</script>
+<div class="highlight"><pre class="chroma" style="padding: 0; margin: 0;" id="integer"></pre></div>
+<p>For strings we must capture both the length and the contents of the string in the byte array to be able to effectively book keep later on in C:</p>
+<script type ="mpy-editor" env="string_env" setup>
+    def xxd_print(buffer, bytes_per_line=16):
+        bytes_per_line = bytes_per_line if bytes_per_line < len(buffer) else len(buffer)
+        print("HEX", " " * 3 * (bytes_per_line - 1), "ASCII")
+        for c in [buffer[i:i+bytes_per_line] for i in range(0,len(buffer),bytes_per_line)]:
+            h = ' '.join(f'{n:02x}' for n in c)
+            print(h," " * (3*bytes_per_line - len(h)), ''.join(chr(n) if 32 <= n <= 126 else '.' for n in c))
+</script>
+<script type="mpy-editor" env="string_env" target="string">
+    import array
+
+    def append_string(buffer, string):
+        buffer.append(len(string))
+        for c in string:
+            buffer.append(ord(c))
+
+    name = "office"
+    buffer = array.array('B')
+    append_string(buffer, name)
+    xxd_print(buffer)
+</script>
+<div class="highlight"><pre class="chroma" style="padding: 0; margin: 0;" id="string"></pre></div>
+<p>Building on these concepts we can now encode our entire JSON example:</p>
+<script type ="mpy-editor" env="pyscript" setup>
+    def xxd_print(buffer, bytes_per_line=16):
+        bytes_per_line = bytes_per_line if bytes_per_line < len(buffer) else len(buffer)
+        print("HEX", " " * 3 * (bytes_per_line - 1), "ASCII")
+        for c in [buffer[i:i+bytes_per_line] for i in range(0,len(buffer),bytes_per_line)]:
+            h = ' '.join(f'{n:02x}' for n in c)
+            print(h," " * (3*bytes_per_line - len(h)), ''.join(chr(n) if 32 <= n <= 126 else '.' for n in c))
+</script>
+<script type="mpy-editor" env=pyscript target="encode">
+    import json
+    import array
+
+    def append_string(buffer, string):
+        buffer.append(len(string))
+        for c in string:
+            buffer.append(ord(c))
+
+    tile_string = """
+    {
+        "name": "office",
+        "image_idx": 1,
+        "action_request": {
+            "method": "POST",
+            "endpoint": "/v2/meross/office",
+            "json_body": "{\\"code\\": \\"toggle\\"}"
+        },
+        "status_request": {
+            "method": "POST",
+            "endpoint": "/v2/meross/office",
+            "json_body": "{\\"code\\": \\"status\\"}",
+            "key": "onoff",
+            "on_value": "1",
+            "off_value": "0"
+        }
+    }
+    """
+
+    tile = json.loads(tile_string)
+
+    buffer = array.array('B')
+
+    append_string(buffer, tile["name"])
+    buffer.append(tile["image_idx"])
+
+    request = tile["action_request"]
+    append_string(buffer, request["method"])
+    append_string(buffer, request["endpoint"])
+    append_string(buffer, request["json_body"])
+
+    request = tile["status_request"]
+    append_string(buffer, request["method"])
+    append_string(buffer, request["endpoint"])
+    append_string(buffer, request["json_body"])
+    append_string(buffer, request["key"])
+    append_string(buffer, request["on_value"])
+    append_string(buffer, request["off_value"])
+
+    xxd_print(buffer)
+</script>
+<div class="highlight"><pre class="chroma" style="padding: 0; margin: 0;" id="encode"></pre></div>
+<h2 id="using-our-binary-data">Using our binary data</h2>
+<p>We now have a binary format that contains all the information we need to be able to reconstruct the important parts of the JSON in C, but how do we get it into our C program? One method is to simply hard code it.</p>
+<p>By adding a little bit of printing logic to our python code we can output c syntax for a <code>char</code> byte array:</p>
+<script type="mpy-editor" env=c_printing target="c_printing">
+    import json
+    import array
+
+    def append_string(buffer, string):
+        buffer.append(len(string))
+        for c in string:
+            buffer.append(ord(c))
+
+    tile_string = """
+    {
+        "name": "office",
+        "image_idx": 1,
+        "action_request": {
+            "method": "POST",
+            "endpoint": "/v2/meross/office",
+            "json_body": "{\\"code\\": \\"toggle\\"}"
+        },
+        "status_request": {
+            "method": "POST",
+            "endpoint": "/v2/meross/office",
+            "json_body": "{\\"code\\": \\"status\\"}",
+            "key": "onoff",
+            "on_value": "1",
+            "off_value": "0"
+        }
+    }
+    """
+
+    tile = json.loads(tile_string)
+
+    buffer = array.array('B')
+
+    append_string(buffer, tile["name"])
+    buffer.append(tile["image_idx"])
+
+    request = tile["action_request"]
+    append_string(buffer, request["method"])
+    append_string(buffer, request["endpoint"])
+    append_string(buffer, request["json_body"])
+
+    request = tile["status_request"]
+    append_string(buffer, request["method"])
+    append_string(buffer, request["endpoint"])
+    append_string(buffer, request["json_body"])
+    append_string(buffer, request["key"])
+    append_string(buffer, request["on_value"])
+    append_string(buffer, request["off_value"])
+
+    hex_string = ', '.join(f'0x{b:02x}' for b in buffer)
+
+    print(
+    f"""static const char tile_data[{len(buffer)}] = {{
+        {hex_string}
+    }};"""
+    )
+</script>
+<div class="highlight"><pre class="chroma" style="padding: 0; margin: 0; white-space: pre-wrap !important;" id="c_printing"></pre></div>
+<h2 id="decoding-the-byte-array">Decoding the byte array</h2>
+<p>To decode the byte array in C on our microcontorller, we must traverse it whilst keeping track of our position. We can do this by simply incrementing a variable that we will call <code>ptr</code>.</p>
+<p>We still only have 2 types of data to concern ourselves with. In the case of a single byte value, such as <code>image_idx</code>, extraction is simple:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[</span><span class="mi">102</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x6c</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x6e</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x30</span>
+<span class="p">};</span>
+<span class="n">uint</span> <span class="n">ptr</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+<span class="kt">char</span> <span class="n">image_idx</span> <span class="o">=</span> <span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="o">++</span><span class="p">];</span>
+</code></pre></div><p>To reconstruct a string however, we must use the string length provided in <code>tile_data</code> to determine how many bytes to <code>malloc</code> and copy:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[</span><span class="mi">102</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x6c</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x6e</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x30</span>
+<span class="p">};</span>
+<span class="n">uint</span> <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="n">uint8_t</span> <span class="n">str_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">uint8_t</span><span class="p">)</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="o">++</span><span class="p">];</span> <span class="c1">// First byte denotes string size
+</span><span class="c1"></span><span class="kt">char</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">str_size</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// Allocate memory
+</span><span class="c1"></span><span class="n">strncpy</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">],</span> <span class="n">str_size</span><span class="p">);</span>   <span class="c1">// Copy to alloced memory
+</span><span class="c1"></span><span class="n">name</span><span class="p">[</span><span class="n">str_size</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>  <span class="c1">// Null terminate
+</span><span class="c1"></span><span class="n">ptr</span> <span class="o">+=</span> <span class="n">str_size</span><span class="p">;</span>
+</code></pre></div><p>We will perform this same string action many times so it makes sense to refactor it into a function call:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="nf">make_str</span><span class="p">(</span><span class="kt">char</span> <span class="o">**</span><span class="n">dest</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">uint8_t</span> <span class="n">str_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">uint8_t</span><span class="p">)</span><span class="o">*</span><span class="n">src</span><span class="o">++</span><span class="p">;</span> <span class="c1">// First byte denotes string size
+</span><span class="c1"></span>    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">str_size</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// Allocate memory
+</span><span class="c1"></span>    <span class="n">strncpy</span><span class="p">(</span><span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">str_size</span><span class="p">);</span>  <span class="c1">// Copy to alloced memory
+</span><span class="c1"></span>    <span class="p">(</span><span class="o">*</span><span class="n">dest</span><span class="p">)[</span><span class="n">str_size</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>  <span class="c1">// Null terminate
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">str_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[</span><span class="mi">102</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x6c</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x6e</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x30</span>
+    <span class="p">};</span>
+    <span class="n">uint</span> <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+<span class="p">}</span>
+</code></pre></div><p>Piecing this all together we end up with the following code that can decode our packed tile data into c structs:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;pico/stdlib.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">RESTFUL_REQUEST_DATA_</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">method</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">endpoint</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">json_body</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">on_value</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">off_value</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">RESTFUL_REQUEST_DATA</span><span class="p">;</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">TILE_</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">image_idx</span><span class="p">;</span>
+    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">action_request</span><span class="p">;</span>
+    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">status_request</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">TILE</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[</span><span class="mi">102</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x06</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x67</span><span class="p">,</span> <span class="mh">0x6c</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x50</span><span class="p">,</span> <span class="mh">0x4f</span><span class="p">,</span> <span class="mh">0x53</span><span class="p">,</span> <span class="mh">0x54</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x76</span><span class="p">,</span> <span class="mh">0x32</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6d</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x72</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x2f</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x69</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x12</span><span class="p">,</span> <span class="mh">0x7b</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x63</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x64</span><span class="p">,</span> <span class="mh">0x65</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x3a</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x61</span><span class="p">,</span> <span class="mh">0x74</span><span class="p">,</span> <span class="mh">0x75</span><span class="p">,</span> <span class="mh">0x73</span><span class="p">,</span> <span class="mh">0x22</span><span class="p">,</span> <span class="mh">0x7d</span><span class="p">,</span> <span class="mh">0x05</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x6e</span><span class="p">,</span> <span class="mh">0x6f</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x66</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x31</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x30</span>
+<span class="p">};</span>
+
+<span class="kt">char</span> <span class="nf">make_str</span><span class="p">(</span><span class="kt">char</span> <span class="o">**</span><span class="n">dest</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">uint8_t</span> <span class="n">str_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">uint8_t</span><span class="p">)</span><span class="o">*</span><span class="n">src</span><span class="o">++</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">str_size</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">strncpy</span><span class="p">(</span><span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">str_size</span><span class="p">);</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">dest</span><span class="p">)[</span><span class="n">str_size</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>  <span class="c1">// Null terminate
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">str_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">make_tile</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">uint</span> <span class="n">ptr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">TILE</span> <span class="o">*</span><span class="n">tile</span> <span class="o">=</span> <span class="p">(</span><span class="n">TILE</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">TILE</span><span class="p">));</span>
+
+    <span class="c1">// Name
+</span><span class="c1"></span>    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tile</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="c1">// Image idx
+</span><span class="c1"></span>    <span class="n">tile</span><span class="o">-&gt;</span><span class="n">image_idx</span> <span class="o">=</span> <span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="o">++</span><span class="p">];</span>
+
+    <span class="c1">// Action Request
+</span><span class="c1"></span>    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">action_request</span> <span class="o">=</span> <span class="p">(</span><span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">RESTFUL_REQUEST_DATA</span><span class="p">));</span>
+    <span class="n">tile</span><span class="o">-&gt;</span><span class="n">action_request</span> <span class="o">=</span> <span class="n">action_request</span><span class="p">;</span>
+
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">endpoint</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">json_body</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">action_request</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+    <span class="c1">// Status Request
+</span><span class="c1"></span>    <span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="n">status_request</span> <span class="o">=</span> <span class="p">(</span><span class="n">RESTFUL_REQUEST_DATA</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">RESTFUL_REQUEST_DATA</span><span class="p">));</span>
+    <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span> <span class="o">=</span> <span class="n">status_request</span><span class="p">;</span>
+
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">endpoint</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">json_body</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">on_value</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+    <span class="n">ptr</span> <span class="o">+=</span> <span class="n">make_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">off_value</span><span class="p">,</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">tile_data</span><span class="p">[</span><span class="n">ptr</span><span class="p">]);</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Name: %s</span><span class="se">\n</span><span class="s">Image Index: %d</span><span class="se">\n</span><span class="s">Action Request:</span><span class="se">\n</span><span class="s">    Method: %s</span><span class="se">\n</span><span class="s">    Endpoint: %s</span><span class="se">\n</span><span class="s">    JSON Body: %s</span><span class="se">\n</span><span class="s">Status Request:</span><span class="se">\n</span><span class="s">    Method: %s</span><span class="se">\n</span><span class="s">    Endpoint: %s</span><span class="se">\n</span><span class="s">    JSON Body: %s</span><span class="se">\n</span><span class="s">    Key: %s</span><span class="se">\n</span><span class="s">    On Value: %s</span><span class="se">\n</span><span class="s">    Off Value: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+        <span class="n">tile</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">tile</span><span class="o">-&gt;</span><span class="n">image_idx</span><span class="p">,</span>
+        <span class="n">tile</span><span class="o">-&gt;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">action_request</span><span class="o">-&gt;</span><span class="n">json_body</span><span class="p">,</span>
+        <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">method</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">json_body</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">on_value</span><span class="p">,</span> <span class="n">tile</span><span class="o">-&gt;</span><span class="n">status_request</span><span class="o">-&gt;</span><span class="n">off_value</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">stdio_init_all</span><span class="p">();</span>
+    <span class="n">make_tile</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><a style="margin-top:-20px;" target="_blank" href="https://wokwi.com/projects/398438177444631553">
+    <img src="wokwi_badge.svg"></img>
+</a>
+<h1 id="get-the-pre-processor-to-do-it">Get the Pre-processor to do it</h1>
+<p>We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf at build time:</p>
+<div class="highlight"><pre class="chroma"><code class="language-cmake" data-lang="cmake"><span class="nb">set</span><span class="p">(</span><span class="s">JSON_FILEPATH</span> <span class="s2">&#34;${PROJECT_SOURCE_DIR}/config/tiles.json&#34;</span> <span class="s">CACHE</span> <span class="s">STRING</span> <span class="s2">&#34;Location of tiles json&#34;</span><span class="p">)</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="nb">execute_process</span><span class="p">(</span><span class="s">COMMAND</span> <span class="s2">&#34;${PROJECT_SOURCE_DIR}/tools/json_to_c_array.py&#34;</span> <span class="s2">&#34;-f&#34;</span> <span class="s2">&#34;${JSON_FILEPATH}&#34;</span> <span class="s">OUTPUT_VARIABLE</span> <span class="s2">&#34;TILE_DATA&#34;</span><span class="p">)</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="nb">target_compile_definitions</span><span class="p">(</span><span class="s">badger</span> <span class="s">PRIVATE</span> 
+    <span class="s">TILE_DATA=</span><span class="o">${</span><span class="nv">TILE_DATA</span><span class="o">}</span>
+<span class="p">)</span><span class="err">
+</span></code></pre></div><a style="margin-top:-20px;" target="_blank" href="https://github.com/kennedn/restful-badger/blob/main/src/CMakeLists.txt#L22-L40">
+    <img src="view_source_badge.svg"></img>
+</a>
+<p>This can then be referenced in our C code as a pre-processor statement:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">TILE_DATA</span>
+<span class="p">};</span>
+</code></pre></div><a style="margin-top:-20px;" target="_blank" href="https://github.com/kennedn/restful-badger/blob/main/src/modules/tiles.c#L18-L19">
+    <img src="view_source_badge.svg"></img>
+</a>
+<p>The techniques discussed in this blog post were utilized and expanded upon to create <a href="https://github.com/kennedn/restful-badger"target="_blank" rel="noopener noreferrer">restful-badger</a>
+. Hopefully, someone will find them useful for their own project. Happy coding!</p>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/blog/posts/snowdon/"><span class="iconfont icon-article"></span>Hijacking infrared to make a dumb device smart</a></p></section><section class="article discussion"><script 
+            src="https://utteranc.es/client.js" 
+            repo="kennedn/blog-comments"
+            issue-term="pathname"
+            label=""
+            theme="photon-dark"
+            crossorigin="anonymous" async>
+        </script></section></div></section><section id="footer"><div class="footer-wrap">
+    <p class="copyright">© Joshua Kennedy 2024</p>
+    <p class="powerby">
+      Site code is open source 🔓︎ and can be found 
+      <a target="_blank" href="https://github.com/kennedn/kennedn.github.io">here</a></div>
+</section></body>
+
+</html>

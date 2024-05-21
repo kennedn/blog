@@ -6,6 +6,19 @@ math: true
 imgs: 
     - cover.jpg
 ---
+<p align="center">
+    <img src="tv_side.jpg" width="45%"/>
+    <img src="tv_front.jpg" width="45%"/>
+</p>
+
+I own a very old 'flat' screen television from 2009. One of the reason this TV is still kicking around is because I have a strange sentimental affection for it. Another is that I have written [automation](https://github.com/kennedn/tvcom) for it that works really well and it would be a pain  to migrate away from it.
+
+It does have a problem however, the TV tends to hit resonance frequency very often with its built-in speakers, causing the body of the unit to vibrate something awful and produce some ear wrenching sounds as a result.
+
+So, to extend the longevity of this relic, I decided to invest in a cheapo soundbar, the [Majority Snowdon II](https://www.majority.co.uk/soundbars/snowdon/). This has worked to fix the resonance issue but has somewhat moved my problems laterally as it came with its own caveats. Namely, its a big dumb dumb.
+
+That's right, it's not a smart device, its about as dumb as they come in 2022. It has an infrared remote, some physical buttons and that's it! However, I had a plan when I bought this device. I thought I could probably make it smarter. So after losing the remote down the side of the couch for the 87th time I decided to crack it open and see what could be done.
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         [...document.getElementsByClassName('responsive-iframe')].forEach((iframe) => {
@@ -25,18 +38,6 @@ imgs:
 </script>
 
 
-<p align="center">
-    <img src="tv_side.jpg" width="45%"/>
-    <img src="tv_front.jpg" width="45%"/>
-</p>
-
-I own a very old 'flat' screen television from 2009. One of the reason this TV is still kicking around is because I have a strange sentimental affection for it. Another is that I have written [automation](https://github.com/kennedn/tvcom) for it that works really well and it would be a pain  to migrate away from it.
-
-It does have a problem however, the TV tends to hit resonance frequency very often with its built-in speakers, causing the body of the unit to vibrate something awful and produce some ear wrenching sounds as a result.
-
-So, to extend the longevity of this relic, I decided to invest in a cheapo soundbar, the [Majority Snowdon II](https://www.majority.co.uk/soundbars/snowdon/). This has worked to fix the resonance issue but has somewhat moved my problems laterally as it came with its own caveats. Namely, its a big dumb dumb.
-
-That's right, it's not a smart device, its about as dumb as they come in 2022. It has an infrared remote, some physical buttons and that's it! However, I had a plan when I bought this device. I thought I could probably make it smarter. So after losing the remote down the side of the couch for the 87th time I decided to crack it open and see what could be done.
 
 <details>
 <summary>Table of Contents</summary>
@@ -562,9 +563,7 @@ while (true) {
 <br/>
 <div>
     <div class="responsive-iframe-container">
-        <iframe class="responsive-iframe" frameBorder="0" seamless="" sandbox="allow-top-navigation-by-user-activation allow-same-origin allow-forms allow-scripts" 
-            src="https://wokwi.com/projects/349529974649127506">
-            </iframe>
+        <iframe class="responsive-iframe" frameBorder="0" src="https://wokwi.com/projects/349529974649127506"></iframe>
     </div>
     <a target="_blank" href="https://wokwi.com/projects/349529974649127506">
         <img src="wokwi_badge.svg"></img>

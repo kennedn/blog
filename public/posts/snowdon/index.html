@@ -1,14 +1,24 @@
 <!DOCTYPE html>
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.102.0-DEV" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.68.3" /><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Hijacking infrared to make a dumb device smart&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.165f0c0936480d83478ee3f1370bc00fc1c0c3c564c1f4fc3c74364b45f631f37acdcb483841393445dd9740c6be2a9f.css" integrity="sha384-Fl8MCTZIDYNHjuPxNwvAD8HAw8VkwfT8PHQ2S0X2MfN6zctIOEE5NEXdl0DGviqf"><meta name="twitter:card" content="summary" />
+<meta name="supported-color-schemes" content="light dark"><title>Hijacking infrared to make a dumb device smart&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.d772509cb1a13ff931c0e6f887a0271b24000520fca7f8f6b4a8e12be049e781c498e0ed49c01d0569866b72f9ec177f.css" integrity="sha384-13JQnLGhP/kxwOb4h6AnGyQABSD8p/j2tKjhK&#43;BJ54HEmODtScAdBWmGa3L57Bd/"><meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Hijacking infrared to make a dumb device smart" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/snowdon/cover.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 <section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
-        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/blog/">Home</a></nav></div></span></div></section>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Hijacking infrared to make a dumb device smart</h1><p class="article date">Saturday, November 26, 2022</p></section><article class="article markdown-body"><script>
+    <h1 class="article title">Hijacking infrared to make a dumb device smart</h1><p class="article date">Saturday, November 26, 2022</p></section><article class="article markdown-body"><p align="center">
+    <img src="tv_side.jpg" width="45%"/>
+    <img src="tv_front.jpg" width="45%"/>
+</p>
+<p>I own a very old &lsquo;flat&rsquo; screen television from 2009. One of the reason this TV is still kicking around is because I have a strange sentimental affection for it. Another is that I have written <a href="https://github.com/kennedn/tvcom"target="_blank" rel="noopener noreferrer">automation</a>
+ for it that works really well and it would be a pain  to migrate away from it.</p>
+<p>It does have a problem however, the TV tends to hit resonance frequency very often with its built-in speakers, causing the body of the unit to vibrate something awful and produce some ear wrenching sounds as a result.</p>
+<p>So, to extend the longevity of this relic, I decided to invest in a cheapo soundbar, the <a href="https://www.majority.co.uk/soundbars/snowdon/"target="_blank" rel="noopener noreferrer">Majority Snowdon II</a>
+. This has worked to fix the resonance issue but has somewhat moved my problems laterally as it came with its own caveats. Namely, its a big dumb dumb.</p>
+<p>That&rsquo;s right, it&rsquo;s not a smart device, its about as dumb as they come in 2022. It has an infrared remote, some physical buttons and that&rsquo;s it! However, I had a plan when I bought this device. I thought I could probably make it smarter. So after losing the remote down the side of the couch for the 87th time I decided to crack it open and see what could be done.</p>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         [...document.getElementsByClassName('responsive-iframe')].forEach((iframe) => {
             let reload_iframe = () => {
@@ -25,16 +35,6 @@
         });
     });
 </script>
-<p align="center">
-    <img src="tv_side.jpg" width="45%"/>
-    <img src="tv_front.jpg" width="45%"/>
-</p>
-<p>I own a very old &lsquo;flat&rsquo; screen television from 2009. One of the reason this TV is still kicking around is because I have a strange sentimental affection for it. Another is that I have written <a href="https://github.com/kennedn/tvcom"target="_blank" rel="noopener noreferrer">automation</a>
- for it that works really well and it would be a pain  to migrate away from it.</p>
-<p>It does have a problem however, the TV tends to hit resonance frequency very often with its built-in speakers, causing the body of the unit to vibrate something awful and produce some ear wrenching sounds as a result.</p>
-<p>So, to extend the longevity of this relic, I decided to invest in a cheapo soundbar, the <a href="https://www.majority.co.uk/soundbars/snowdon/"target="_blank" rel="noopener noreferrer">Majority Snowdon II</a>
-. This has worked to fix the resonance issue but has somewhat moved my problems laterally as it came with its own caveats. Namely, its a big dumb dumb.</p>
-<p>That&rsquo;s right, it&rsquo;s not a smart device, its about as dumb as they come in 2022. It has an infrared remote, some physical buttons and that&rsquo;s it! However, I had a plan when I bought this device. I thought I could probably make it smarter. So after losing the remote down the side of the couch for the 87th time I decided to crack it open and see what could be done.</p>
 <details>
 <summary>Table of Contents</summary>
 <ul>
@@ -158,199 +158,101 @@
 <h2 id="wiring">Wiring</h2>
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr><td style="width:30%; padding: 1px;">
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 137"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 120,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,96 L 120,96' fill='none' stroke='currentColor'></path>
-<path d='M 0,112 L 88,112' fill='none' stroke='currentColor'></path>
-<path d='M 120,112 L 200,112' fill='none' stroke='currentColor'></path>
-<path d='M 88,16 L 88,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 88,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 88,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 88,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 88,96' fill='none' stroke='currentColor'></path>
-<path d='M 88,96 L 88,112' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 120,32 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 120,48 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 120,64 L 120,80' fill='none' stroke='currentColor'></path>
-<path d='M 120,80 L 120,96' fill='none' stroke='currentColor'></path>
-<path d='M 120,96 L 120,112' fill='none' stroke='currentColor'></path>
-<text text-anchor='middle' x='8' y='4' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='8' y='68' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='16' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='16' y='52' fill='currentColor' style='font-size:1em'>B</text>
-<text text-anchor='middle' x='16' y='68' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='24' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='24' y='52' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='24' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='24' y='84' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='32' y='4' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='32' y='52' fill='currentColor' style='font-size:1em'>U</text>
-<text text-anchor='middle' x='32' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='32' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='40' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='68' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='40' y='84' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='48' y='52' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='68' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='84' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='56' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='56' y='52' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='68' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='84' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='64' y='36' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='64' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='100' fill='currentColor' style='font-size:1em'>5</text>
-<text text-anchor='middle' x='72' y='36' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='68' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='100' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='136' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='52' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='68' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='84' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='100' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='144' y='52' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='144' y='68' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='144' y='84' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='144' y='100' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='152' y='52' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='152' y='68' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='152' y='84' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='152' y='100' fill='currentColor' style='font-size:1em'>Y</text>
-<text text-anchor='middle' x='160' y='4' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='160' y='52' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='160' y='100' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='176' y='4' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='176' y='68' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='184' y='52' fill='currentColor' style='font-size:1em'>9</text>
-<text text-anchor='middle' x='184' y='68' fill='currentColor' style='font-size:1em'>8</text>
-<text text-anchor='middle' x='184' y='84' fill='currentColor' style='font-size:1em'>7</text>
-</g>
-
-    </svg>
-  
-</div>
-</td>
+<pre><code class="language-goat" data-lang="goat"> Snowdon         Rasp Pi
+-----------.   .----------
+       GND +---+ GND
+  BLUE_LED +---+ GPIO 19 
+ GREEN_LED +---+ GPIO 18 
+   RED_LED +---+ GPIO 17  
+       +5V +---+ VSYS    
+-----------'   '----------
+</code></pre></td>
 <td style="width:70%; padding 1px;">
     <img src="snowdon_fritzing_led.png" />
 </tr>
 </table>
 <h2 id="code">Code</h2>
 <p>Since we are only concerned with 3 pins (17,18 &amp; 19), we can create a 32 bit bit-mask that will select only these pins:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define RGB_BASE_PIN 17
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>     <span class="c1">// Pin 17
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span> <span class="c1">// Pin 18
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// Pin 19
-</span></span></span></code></pre></div><p>Then in our main loop we can initialise the pins as input with our mask:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
-</span></span></code></pre></div><p>And then get the current value of each of the 3 pins by ANDing the value of the GPIO register with our mask. We then shift this to the right to clear out the left over zeros from our AND operation and end up with a 3 bit value representing our 3 color lines:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
-</span></span></span><span class="line"><span class="cl"><span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">uint32_t</span> <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
-</span></span></code></pre></div><p>Finally, we can pass this value into a switch statement and based on the value of the 3 color bits, we can print a different message:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span></code></pre></div><details>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define RGB_BASE_PIN 17
+</span><span class="cp"></span><span class="k">const</span> <span class="n">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>     <span class="c1">// Pin 17
+</span><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span> <span class="c1">// Pin 18
+</span><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// Pin 19
+</span></code></pre></div><p>Then in our main loop we can initialise the pins as input with our mask:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
+</code></pre></div><p>And then get the current value of each of the 3 pins by ANDing the value of the GPIO register with our mask. We then shift this to the right to clear out the left over zeros from our AND operation and end up with a 3 bit value representing our 3 color lines:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
+</span><span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
+</span><span class="c1"></span><span class="n">uint32_t</span> <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
+</code></pre></div><p>Finally, we can pass this value into a switch statement and based on the value of the 3 color bits, we can print a different message:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
+</span><span class="c1"></span>        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></div><details>
   <summary>Full code</summary>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;pico/stdlib.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="cl"><span class="cp">#define RGB_BASE_PIN 17
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>        <span class="c1">// Pin 17
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span>    <span class="c1">// Pin 18
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>     <span class="c1">// Pin 19
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">stdio_init_all</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// Enable pins 17, 18 &amp; 19 as input 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">gpio</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// Perform comparisons on the 3 bits to determine the state of the RGB LED
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">default</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="n">sleep_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></details> 
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&#34;pico/stdlib.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="cp">#define RGB_BASE_PIN 17
+</span><span class="cp"></span><span class="k">const</span> <span class="n">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>        <span class="c1">// Pin 17
+</span><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span>    <span class="c1">// Pin 18
+</span><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>     <span class="c1">// Pin 19
+</span><span class="c1"></span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">stdio_init_all</span><span class="p">();</span>
+    <span class="c1">// Enable pins 17, 18 &amp; 19 as input 
+</span><span class="c1"></span>    <span class="n">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
+    <span class="n">uint32_t</span> <span class="n">gpio</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
+</span><span class="c1"></span>        <span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
+</span><span class="c1"></span>        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
+        <span class="c1">// Perform comparisons on the 3 bits to determine the state of the RGB LED
+</span><span class="c1"></span>        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
+</span><span class="c1"></span>                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="o">:</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">sleep_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></details> 
 <h2 id="demo">Demo</h2>
 <p>This simulation demonstrates our ability to decode the color of an RGB LED. The switches on the breadboard can be toggled to &lsquo;hardcode&rsquo; an RGB value which our program will then decode on a 500ms timer.</p>
 <div>
@@ -403,84 +305,13 @@ Each bit in the message starts with a LOW pulse for 562.5us, followed by:
 <h2 id="wiring-1">Wiring</h2>
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr><td style="width:35%; padding: 1px;">
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 105"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 0,16 L 48,16' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
-<path d='M 48,32 L 64,32' fill='none' stroke='currentColor'></path>
-<path d='M 112,32 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 48,48 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 48,64 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 0,80 L 48,80' fill='none' stroke='currentColor'></path>
-<path d='M 120,80 L 200,80' fill='none' stroke='currentColor'></path>
-<path d='M 72,24 L 104,24' fill='none' stroke='currentColor'></path>
-<path d='M 72,40 L 104,40' fill='none' stroke='currentColor'></path>
-<path d='M 48,16 L 48,32' fill='none' stroke='currentColor'></path>
-<path d='M 48,32 L 48,48' fill='none' stroke='currentColor'></path>
-<path d='M 48,48 L 48,64' fill='none' stroke='currentColor'></path>
-<path d='M 48,64 L 48,80' fill='none' stroke='currentColor'></path>
-<path d='M 72,24 L 72,40' fill='none' stroke='currentColor'></path>
-<path d='M 104,24 L 104,40' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 120,32 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 120,48 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 120,64 L 120,80' fill='none' stroke='currentColor'></path>
-<path d='M 72,24 L 72,32' fill='none' stroke='currentColor'></path>
-<path d='M 104,24 L 104,32' fill='none' stroke='currentColor'></path>
-<text text-anchor='middle' x='0' y='4' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='8' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='16' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='16' y='52' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='16' y='68' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='24' y='4' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='24' y='36' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='24' y='52' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='24' y='68' fill='currentColor' style='font-size:1em'>5</text>
-<text text-anchor='middle' x='32' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='32' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='32' y='68' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='72' y='4' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='80' y='4' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='88' y='4' fill='currentColor' style='font-size:1em'>0</text>
-<text text-anchor='middle' x='96' y='4' fill='currentColor' style='font-size:1em'>Ω</text>
-<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='136' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='52' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='68' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='144' y='52' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='144' y='68' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='152' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='152' y='68' fill='currentColor' style='font-size:1em'>Y</text>
-<text text-anchor='middle' x='160' y='4' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='160' y='36' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='176' y='4' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>6</text>
-</g>
-
-    </svg>
-  
-</div>
-</td>
+<pre><code class="language-goat" data-lang="goat">Snowdon  220Ω    Rasp Pi
+------.   ___  .----------
+   IR +--|___|-+ GPIO 16  
+  GND +--------+ GND
+  +5V +--------+ VSYS    
+------'        '----------
+</code></pre></td>
 <td style="width:65%; padding 1px;">
     <img src="snowdon_fritzing_ir.png" />
 </tr>
@@ -503,27 +334,28 @@ Each bit in the message starts with a LOW pulse for 562.5us, followed by:
 </blockquote>
 <br/>
 The first thing we are going to configure for our driver is side set. Side set allows us to drive up to 5 consecutive pins as a side effect of a PIO ASM instruction. For our purposes we are only interested in driving a single GPIO pin with our IR data, so we will declare this to the compiler with a label:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="na">.side_set</span> <span class="mi">1</span>
-</span></span></code></pre></div><blockquote>
+<div class="highlight"><pre class="chroma"><code class="language-asm" data-lang="asm"><span class="na">.side_set</span> <span class="mi">1</span>
+</code></pre></div><blockquote>
 <p>Side setting <i>steals</i> bits from the delay function in PIO. <i>Stealing</i> 1 bit for side setting, as we are doing, reduces this maximum delay value from 31 ticks to 15 ticks</p>
 </blockquote>
 <br/>
 In our init function we also need to perform some setup to assosiate the variable <b>pin</b> (GPIO 16) with the side set function:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">sm_config_set_sideset_pins</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="n">pin</span><span class="p">);</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">sm_config_set_sideset_pins</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="n">pin</span><span class="p">);</span>
+</code></pre></div><br/>
 We also need to perform some setup functions to enable our pin as output and give it an initial value:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">pio_gpio_init</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">pin</span><span class="p">);</span>                                <span class="c1">// Set pin function to GPIO
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">pio_sm_set_consecutive_pindirs</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>  <span class="c1">// Set the pin direction to output 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">pio_sm_set_pins_with_mask</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="mi">1u</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>       <span class="c1">// Set the initial value of the pin to 1 (HIGH)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">gpio_pull_up</span><span class="p">(</span><span class="n">pin</span><span class="p">);</span>                                      <span class="c1">// Set the default value of the pin to 1 (HIGH)
-</span></span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">pio_gpio_init</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">pin</span><span class="p">);</span>                                <span class="c1">// Set pin function to GPIO
+</span><span class="c1"></span><span class="n">pio_sm_set_consecutive_pindirs</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>  <span class="c1">// Set the pin direction to output 
+</span><span class="c1"></span><span class="n">pio_sm_set_pins_with_mask</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="mi">1u</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>       <span class="c1">// Set the initial value of the pin to 1 (HIGH)
+</span><span class="c1"></span><span class="n">gpio_pull_up</span><span class="p">(</span><span class="n">pin</span><span class="p">);</span>                                      <span class="c1">// Set the default value of the pin to 1 (HIGH)
+</span><span class="c1"></span>
+</code></pre></div><br/>
 Lastly, we need to configure the clock. Looking at the timing diagram, our first instinct may be to set the clock to ~560us. so that each PIO instruction takes ~560us to execute. However, as will become evident later on, we actually need the flexibility to perform 2 instructions per ~560us window. So that is what we will set the clock to:
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 2 ticks per 560us window 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="n">div</span> <span class="o">=</span> <span class="n">clock_get_hz</span><span class="p">(</span><span class="n">clk_sys</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">562.5e-6</span><span class="n">f</span><span class="p">));</span>
-</span></span><span class="line"><span class="cl"><span class="n">sm_config_set_clkdiv</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="n">div</span><span class="p">);</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 2 ticks per 560us window 
+</span><span class="c1"></span><span class="kt">float</span> <span class="n">div</span> <span class="o">=</span> <span class="n">clock_get_hz</span><span class="p">(</span><span class="n">clk_sys</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">562.5e-6</span><span class="n">f</span><span class="p">));</span>
+<span class="n">sm_config_set_clkdiv</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="n">div</span><span class="p">);</span>
+</code></pre></div><br/>
 <p>The body of the PIO program looks like this:</p>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">.wrap_target
+<pre><code class="language-assembly" data-lang="assembly">.wrap_target
     pull side 1
 pulse_init:
     nop side 0 [15] 
@@ -544,14 +376,14 @@ end_pulse:
 </code></pre><p>Let&rsquo;s disect this to understand how we are achieving NEC transmission.
 <br/>
 <br/></p>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">pull side 1
+<pre><code class="language-assembly" data-lang="assembly">pull side 1
 </code></pre><p>The <code>pull</code> instruction will pull 32 bits into the program as input. This call will block until we give the program our <code>uint32_t</code> to encode. Additionally we:</p>
 <ul>
 <li>Use side set to drive GPIO 16 HIGH, this will remain HIGH whilst the <code>pull</code> instruction is blocked
 <br/>
 <br/></li>
 </ul>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">pulse_init:
+<pre><code class="language-assembly" data-lang="assembly">pulse_init:
     nop side 0 [15] 
     nop side 0 [15]         ; 9ms on 
     nop side 1 [15]         ; 4.5ms delay
@@ -562,7 +394,7 @@ end_pulse:
 <li>Use side set to drive GPIO 16 LOW for 32 ticks (9ms) and then HIGH for 16 ticks (4.5ms).</li>
 </ul>
  <img src="nec_protocol_1.png" width="60%"/>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">next:
+<pre><code class="language-assembly" data-lang="assembly">next:
     out y 1 side 0          ; Read next bit from OSR into y, side set LOW for 1 tick (280us)
     jmp !y short side 0     ; If y == 0, goto short,  side set LOW for 1 tick (280us)
 </code></pre><p>We fall through to the <code>next</code> label, where we:</p>
@@ -573,7 +405,7 @@ end_pulse:
 <br/>
 <br/></li>
 </ul>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">long:
+<pre><code class="language-assembly" data-lang="assembly">long:
     jmp bit_loop side 1 [4] ; Side set HIGH for 5 ticks (1400us)
 </code></pre><p>If we did not conditionally jump, then we fall through to the <code>long</code> label, where we:</p>
 <ul>
@@ -582,7 +414,7 @@ end_pulse:
 <br/>
 <br/></li>
 </ul>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">short:
+<pre><code class="language-assembly" data-lang="assembly">short:
     nop side 1              ; Side set HIGH for 1 tick (280us)
 </code></pre><p>Else, we conditionally jumped to the <code>short</code> label, where we:</p>
 <ul>
@@ -591,7 +423,7 @@ end_pulse:
 <br/>
 <br/></li>
 </ul>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">bit_loop:
+<pre><code class="language-assembly" data-lang="assembly">bit_loop:
     jmp !osre next side 1   ; goto next if osr is not empty, side set HIGH for 1 tick (280us)
 </code></pre><p>Regardless of our branching path, we end up in the <code>bit_loop</code> label. Where we:</p>
 <ul>
@@ -605,7 +437,7 @@ end_pulse:
 <p align="center">
     <img src="nec_protocol.gif" width="100%"/>
 </p>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">end_pulse:
+<pre><code class="language-assembly" data-lang="assembly">end_pulse:
     nop side 0 [1]          ; Side set LOW for 2 ticks (560us)
 </code></pre><p>After all bits have been exhausted, we finally enter the <code>end_pulse</code> label, where we:</p>
 <ul>
@@ -618,7 +450,7 @@ end_pulse:
 </p>
 <details>
   <summary>Full code</summary>
-<pre tabindex="0"><code class="language-assembly" data-lang="assembly">; Implements an inverted NEC infrared protocol WITHOUT carrier signal
+<pre><code class="language-assembly" data-lang="assembly">; Implements an inverted NEC infrared protocol WITHOUT carrier signal
 ; For use in wired connection to IR line.  Each instruction is 280us
 .program nec
 .side_set 1
@@ -642,7 +474,7 @@ end_pulse:
 .wrap
 
 % c-sdk {
-#include &#34;hardware/clocks.h&#34;
+#include &quot;hardware/clocks.h&quot;
 static inline void nec_transmit_program_init(PIO pio, uint sm, uint offset, uint pin) {
     pio_sm_config c = nec_program_get_default_config(offset);
     sm_config_set_sideset_pins(&amp;c, pin);
@@ -672,45 +504,43 @@ static inline void nec_transmit_program_init(PIO pio, uint sm, uint offset, uint
 However, when the switch is toggled to the right, we see that our PIO program is sending a random remote code out on GPIO 16 every 500ms:</p>
 <details>
 <summary>Code</summary>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="p">...</span> 
-</span></span><span class="line"><span class="cl"><span class="cp">#define TX_PIN 16
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="p">...</span>
-</span></span><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="n">remote_codes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="mh">0x5da2ff00</span><span class="p">,</span>  <span class="c1">//POWER                                                            
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xdd22ff00</span><span class="p">,</span>  <span class="c1">//TEST                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xfd02ff00</span><span class="p">,</span>  <span class="c1">//PLUS                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x3dc2ff00</span><span class="p">,</span>  <span class="c1">//BACK                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x1de2ff00</span><span class="p">,</span>  <span class="c1">//MENU
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x6f90ff00</span><span class="p">,</span>  <span class="c1">//NEXT
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x57a8ff00</span><span class="p">,</span>  <span class="c1">//PLAY
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x1fe0ff00</span><span class="p">,</span>  <span class="c1">//PREV
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x9768ff00</span><span class="p">,</span>  <span class="c1">//0
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x6798ff00</span><span class="p">,</span>  <span class="c1">//MINUS
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x4fb0ff00</span><span class="p">,</span>  <span class="c1">//C
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x857aff00</span><span class="p">,</span>  <span class="c1">//3
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xe718ff00</span><span class="p">,</span>  <span class="c1">//2
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xcf30ff00</span><span class="p">,</span>  <span class="c1">//1
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xef10ff00</span><span class="p">,</span>  <span class="c1">//4
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xc738ff00</span><span class="p">,</span>  <span class="c1">//5
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xa55aff00</span><span class="p">,</span>  <span class="c1">//6
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xad52ff00</span><span class="p">,</span>  <span class="c1">//9
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xb54aff00</span><span class="p">,</span>  <span class="c1">//8
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xbd42ff00</span><span class="p">,</span>  <span class="c1">//7
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
-</span></span><span class="line"><span class="cl"><span class="p">...</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pio_sm_put_blocking</span><span class="p">(</span><span class="n">PIO_INSTANCE</span><span class="p">,</span> <span class="n">tx_sm</span><span class="p">,</span> 
-</span></span><span class="line"><span class="cl">                        <span class="n">remote_codes</span><span class="p">[</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="n">ARRAY_SIZE</span><span class="p">(</span><span class="n">remote_codes</span><span class="p">)]);</span>
-</span></span><span class="line"><span class="cl"><span class="p">...</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sleep_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></details>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">...</span> 
+<span class="cp">#define TX_PIN 16
+</span><span class="cp"></span><span class="p">...</span>
+<span class="n">uint32_t</span> <span class="n">remote_codes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x5da2ff00</span><span class="p">,</span>  <span class="c1">//POWER                                                            
+</span><span class="c1"></span>    <span class="mh">0xdd22ff00</span><span class="p">,</span>  <span class="c1">//TEST                                                             
+</span><span class="c1"></span>    <span class="mh">0xfd02ff00</span><span class="p">,</span>  <span class="c1">//PLUS                                                             
+</span><span class="c1"></span>    <span class="mh">0x3dc2ff00</span><span class="p">,</span>  <span class="c1">//BACK                                                             
+</span><span class="c1"></span>    <span class="mh">0x1de2ff00</span><span class="p">,</span>  <span class="c1">//MENU
+</span><span class="c1"></span>    <span class="mh">0x6f90ff00</span><span class="p">,</span>  <span class="c1">//NEXT
+</span><span class="c1"></span>    <span class="mh">0x57a8ff00</span><span class="p">,</span>  <span class="c1">//PLAY
+</span><span class="c1"></span>    <span class="mh">0x1fe0ff00</span><span class="p">,</span>  <span class="c1">//PREV
+</span><span class="c1"></span>    <span class="mh">0x9768ff00</span><span class="p">,</span>  <span class="c1">//0
+</span><span class="c1"></span>    <span class="mh">0x6798ff00</span><span class="p">,</span>  <span class="c1">//MINUS
+</span><span class="c1"></span>    <span class="mh">0x4fb0ff00</span><span class="p">,</span>  <span class="c1">//C
+</span><span class="c1"></span>    <span class="mh">0x857aff00</span><span class="p">,</span>  <span class="c1">//3
+</span><span class="c1"></span>    <span class="mh">0xe718ff00</span><span class="p">,</span>  <span class="c1">//2
+</span><span class="c1"></span>    <span class="mh">0xcf30ff00</span><span class="p">,</span>  <span class="c1">//1
+</span><span class="c1"></span>    <span class="mh">0xef10ff00</span><span class="p">,</span>  <span class="c1">//4
+</span><span class="c1"></span>    <span class="mh">0xc738ff00</span><span class="p">,</span>  <span class="c1">//5
+</span><span class="c1"></span>    <span class="mh">0xa55aff00</span><span class="p">,</span>  <span class="c1">//6
+</span><span class="c1"></span>    <span class="mh">0xad52ff00</span><span class="p">,</span>  <span class="c1">//9
+</span><span class="c1"></span>    <span class="mh">0xb54aff00</span><span class="p">,</span>  <span class="c1">//8
+</span><span class="c1"></span>    <span class="mh">0xbd42ff00</span><span class="p">,</span>  <span class="c1">//7
+</span><span class="c1"></span><span class="p">};</span>
+<span class="p">...</span>
+<span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">pio_sm_put_blocking</span><span class="p">(</span><span class="n">PIO_INSTANCE</span><span class="p">,</span> <span class="n">tx_sm</span><span class="p">,</span> 
+                        <span class="n">remote_codes</span><span class="p">[</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="n">ARRAY_SIZE</span><span class="p">(</span><span class="n">remote_codes</span><span class="p">)]);</span>
+<span class="p">...</span>
+    <span class="n">sleep_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></details>
 <br/>
 <div>
     <div class="responsive-iframe-container">
-        <iframe class="responsive-iframe" frameBorder="0" seamless="" sandbox="allow-top-navigation-by-user-activation allow-same-origin allow-forms allow-scripts" 
-            src="https://wokwi.com/projects/349529974649127506">
-            </iframe>
+        <iframe class="responsive-iframe" frameBorder="0" src="https://wokwi.com/projects/349529974649127506"></iframe>
     </div>
     <a target="_blank" href="https://wokwi.com/projects/349529974649127506">
         <img src="wokwi_badge.svg"></img>
@@ -730,43 +560,22 @@ Theres a great <a href="https://fasterthanli.me/articles/the-http-crash-course-n
 So how do we send fancy strings?
 <br/><br/>
 Let&rsquo;s send a standard HTTP PUT request via the cli tool <code>curl</code> and see what it looks like, request:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X PUT http://api.int/api/v1.0/pc<span class="se">\?</span>code<span class="se">\=</span>status
-</span></span></code></pre></div><p>Response:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;status&#34;</span>: <span class="s2">&#34;on&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><p>Plucking the request out of wireshark, we can see that the actual TCP payload contains the following information:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">PUT /api/v1.0/pc?code<span class="o">=</span>status HTTP/1.1<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Host: api.int<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">User-Agent: curl/7.68.0<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Accept: */*<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl"><span class="se">\r\n</span>
-</span></span></code></pre></div><br/>
-<p>Let&rsquo;s disect this. The first line specifies a few things:</p>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Method</td>
-<td>GET</td>
-<td>The method of  the call, common methods are GET, POST, PUT, HEAD</td>
-</tr>
-<tr>
-<td>Target</td>
-<td>/api/v1.0/pc?code=status</td>
-<td>Specifies the sub-path target of the call, this allows routing in a HTTP server that hosts many different endpoints. key/value pairs can also be specified in this line</td>
-</tr>
-<tr>
-<td>Version</td>
-<td>HTTP/1.1</td>
-<td>This is the HTTP version of the call, for our purposes it will always be HTTP/1.1</td>
-</tr>
-</tbody>
-</table>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">curl -X PUT http://api.int/api/v1.0/pc<span class="se">\?</span>code<span class="se">\=</span>status
+</code></pre></div><p>Response:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">{</span><span class="s2">&#34;status&#34;</span>: <span class="s2">&#34;on&#34;</span><span class="o">}</span>
+</code></pre></div><p>Plucking the request out of wireshark, we can see that the actual TCP payload contains the following information:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">PUT /api/v1.0/pc?code<span class="o">=</span>status HTTP/1.1<span class="se">\r\n</span>
+Host: api.int<span class="se">\r\n</span>
+User-Agent: curl/7.68.0<span class="se">\r\n</span>
+Accept: */*<span class="se">\r\n</span>
+<span class="se">\r\n</span>
+</code></pre></div><br/>
+<p>Let&rsquo;s disect this. The first line specifies a few things:
+|Parameter|Value|Description|
+|&mdash;&mdash;&mdash;|&mdash;&ndash;|&mdash;&mdash;&mdash;&ndash;|
+| Method  | GET | The method of  the call, common methods are GET, POST, PUT, HEAD |
+| Target  | /api/v1.0/pc?code=status   | Specifies the sub-path target of the call, this allows routing in a HTTP server that hosts many different endpoints. key/value pairs can also be specified in this line |
+| Version | HTTP/1.1| This is the HTTP version of the call, for our purposes it will always be HTTP/1.1|</p>
 <ul>
 <li>Each line end is denoted with a carriage return <code>\r</code> and line feed <code>\n</code>.</li>
 <li>Each line after the first contains a header variable in the form of a key/value pair.</li>
@@ -775,14 +584,14 @@ Let&rsquo;s send a standard HTTP PUT request via the cli tool <code>curl</code> 
 <br/></li>
 </ul>
 <p>The response data looks like this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Content-Length: 17<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Content-Type: application/json<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Date: Wed, <span class="m">30</span> Nov <span class="m">2022</span> 10:40:24 GMT<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl">Server: waitress<span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl"><span class="se">\r\n</span>
-</span></span><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;status&#34;</span>: <span class="s2">&#34;on&#34;</span><span class="o">}</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">HTTP/1.1 <span class="m">200</span> OK<span class="se">\r\n</span>
+Content-Length: 17<span class="se">\r\n</span>
+Content-Type: application/json<span class="se">\r\n</span>
+Date: Wed, <span class="m">30</span> Nov <span class="m">2022</span> 10:40:24 GMT<span class="se">\r\n</span>
+Server: waitress<span class="se">\r\n</span>
+<span class="se">\r\n</span>
+<span class="o">{</span><span class="s2">&#34;status&#34;</span>: <span class="s2">&#34;on&#34;</span><span class="o">}</span>
+</code></pre></div><br/>
 It follows a very similar format, the first line again specifies a few things:
 <table>
 <thead>
@@ -825,7 +634,7 @@ This concept of setting the <code>Content-Length</code> header applies to the cl
 <p>The first (and hardest) thing we need to do in our little HTTP server is process HTTP request messages.</p>
 <p>We can achieve this by breaking the string up into it&rsquo;s individual <code>tokens</code>. We are going to use the string function <code>strpbrk</code> to achieve this.</p>
 <p>The man page has this to say on the <code>strpbrk</code> function:</p>
-<pre tabindex="0"><code>SYNOPSIS
+<pre><code>SYNOPSIS
        #include &lt;string.h&gt;
 
        char *strpbrk(const char *s, const char *accept);
@@ -846,82 +655,82 @@ RETURN VALUE
 <br/>
 <br/></p>
 <p>Define our message in a string (char *) and create a pointer to the first character:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span> <span class="n">http_message</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;PUT /api/v1.0/pc?code=status HTTP/1.1</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;Host: api.int</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;User-Agent: curl/7.68.0</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;Accept: */*</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="p">};</span>
-</span></span><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">p1</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
-</span></span></code></pre></div><p>Call the <code>strpbrk</code> function to obtain a pointer to the first instance of one of our deliminators:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">char</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="n">strpbrk</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="s">&#34; ?=</span><span class="se">\r</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span></code></pre></div><p>Now lets null terminate <code>p2</code>. By placing <code>\0</code> at the position earmarked by <code>p2</code>, we transform the deliminator into the last character of the string:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
-</span></span></code></pre></div><p>If we now print <code>p1</code>, it will only print up to the first <code>\0</code>, essentially turning it into our first <code>token</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">p1</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="o">&gt;</span> <span class="n">PUT</span>
-</span></span></code></pre></div><p>We can further extend this technique to iterate over each token in the first line of the HTTP request, and by keeping track of the deliminators we can tell exactly which token we just extracted.</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="n">http_message</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#34;PUT /api/v1.0/pc?code=status HTTP/1.1</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;Host: api.int</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;User-Agent: curl/7.68.0</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;Accept: */*</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span>
+<span class="p">};</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">p1</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
+</code></pre></div><p>Call the <code>strpbrk</code> function to obtain a pointer to the first instance of one of our deliminators:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="n">strpbrk</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="s">&#34; ?=</span><span class="se">\r</span><span class="s">&#34;</span><span class="p">);</span>
+</code></pre></div><p>Now lets null terminate <code>p2</code>. By placing <code>\0</code> at the position earmarked by <code>p2</code>, we transform the deliminator into the last character of the string:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</code></pre></div><p>If we now print <code>p1</code>, it will only print up to the first <code>\0</code>, essentially turning it into our first <code>token</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">p1</span><span class="p">);</span>
+<span class="o">&gt;</span> <span class="n">PUT</span>
+</code></pre></div><p>We can further extend this technique to iterate over each token in the first line of the HTTP request, and by keeping track of the deliminators we can tell exactly which token we just extracted.</p>
 <br/>
 <details>
   <summary>Full code</summary>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">http_message</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;PUT /api/v1.0/pc?other=monkey&amp;code=status HTTP/1.1</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;Host: api.int</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;User-Agent: curl/7.68.0</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;Accept: */*</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">};</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="c1">// Process HTTP message body, example: &#34;PUT /api/v1.0/pc?code=status HTTP/1.1&#34;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// char *message_body = http_message;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">delim</span> <span class="o">=</span> <span class="s">&#34; ?=&amp;</span><span class="se">\r</span><span class="s">&#34;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">next_delim</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">current_delim</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">token</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">message_body</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="n">token</span> <span class="o">=</span> <span class="n">message_body</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">message_body</span> <span class="o">=</span> <span class="n">strpbrk</span><span class="p">(</span><span class="n">message_body</span><span class="p">,</span> <span class="n">delim</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">message_body</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="n">next_delim</span> <span class="o">=</span> <span class="o">*</span><span class="n">message_body</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">switch</span><span class="p">(</span><span class="n">current_delim</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Method</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">next_delim</span> <span class="o">!=</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">          <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Target</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">          <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Version</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="sc">&#39;?&#39;</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="sc">&#39;&amp;&#39;</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Key</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="sc">&#39;=&#39;</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Value</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="n">current_delim</span> <span class="o">=</span> <span class="n">next_delim</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="n">message_body</span><span class="o">++</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// Carriage return indicates we have reached the end of the first line of message body
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">current_delim</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div></details>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">http_message</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#34;PUT /api/v1.0/pc?other=monkey&amp;code=status HTTP/1.1</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;Host: api.int</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;User-Agent: curl/7.68.0</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;Accept: */*</span><span class="se">\r\n</span><span class="s">&#34;</span>
+    <span class="s">&#34;</span><span class="se">\r\n</span><span class="s">&#34;</span>
+  <span class="p">};</span>
+
+  <span class="c1">// Process HTTP message body, example: &#34;PUT /api/v1.0/pc?code=status HTTP/1.1&#34;
+</span><span class="c1"></span>  <span class="c1">// char *message_body = http_message;
+</span><span class="c1"></span>  <span class="kt">char</span> <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">delim</span> <span class="o">=</span> <span class="s">&#34; ?=&amp;</span><span class="se">\r</span><span class="s">&#34;</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">next_delim</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">current_delim</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="o">*</span><span class="n">token</span><span class="p">;</span>
+
+  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">message_body</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">message_body</span><span class="p">;</span>
+    <span class="n">message_body</span> <span class="o">=</span> <span class="n">strpbrk</span><span class="p">(</span><span class="n">message_body</span><span class="p">,</span> <span class="n">delim</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">message_body</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">next_delim</span> <span class="o">=</span> <span class="o">*</span><span class="n">message_body</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+
+    <span class="k">switch</span><span class="p">(</span><span class="n">current_delim</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Method</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">next_delim</span> <span class="o">!=</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Target</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Version</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;?&#39;</span><span class="o">:</span>
+      <span class="k">case</span> <span class="sc">&#39;&amp;&#39;</span><span class="o">:</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Key</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;=&#39;</span><span class="o">:</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Value</span><span class="se">\t\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">token</span><span class="p">);</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">current_delim</span> <span class="o">=</span> <span class="n">next_delim</span><span class="p">;</span>
+    <span class="n">message_body</span><span class="o">++</span><span class="p">;</span>
+    <span class="c1">// Carriage return indicates we have reached the end of the first line of message body
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">current_delim</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></details>
 <blockquote>
 <p>Within the final program we actually take this one step further and use the same technique to step through JSON as a flat file if it is provided as part of the HTTP request.</p>
 </blockquote>
@@ -948,90 +757,14 @@ RETURN VALUE
 <p>Due to this I decided to wire up the SWD debugging pins from the Pico to the unused pins so that I could perform debugging without having to re-open the unit:</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr><td style="width:30%; padding: 1px;">
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 121"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 120,80' fill='none' stroke='currentColor'></path>
-<path d='M 0,96 L 88,96' fill='none' stroke='currentColor'></path>
-<path d='M 120,96 L 200,96' fill='none' stroke='currentColor'></path>
-<path d='M 88,16 L 88,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 88,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 88,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 88,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 88,96' fill='none' stroke='currentColor'></path>
-<path d='M 120,16 L 120,32' fill='none' stroke='currentColor'></path>
-<path d='M 120,32 L 120,48' fill='none' stroke='currentColor'></path>
-<path d='M 120,48 L 120,64' fill='none' stroke='currentColor'></path>
-<path d='M 120,64 L 120,80' fill='none' stroke='currentColor'></path>
-<path d='M 120,80 L 120,96' fill='none' stroke='currentColor'></path>
-<text text-anchor='middle' x='8' y='4' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='16' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='24' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='32' y='4' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='32' y='52' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='32' y='68' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='40' y='52' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='40' y='68' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='48' y='52' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='48' y='68' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='56' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='56' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='56' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='56' y='84' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='64' y='36' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='64' y='52' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='64' y='68' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>5</text>
-<text text-anchor='middle' x='72' y='36' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='72' y='68' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='136' y='4' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='136' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='136' y='52' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='136' y='68' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='136' y='84' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='144' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='144' y='36' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='144' y='52' fill='currentColor' style='font-size:1em'>W</text>
-<text text-anchor='middle' x='144' y='68' fill='currentColor' style='font-size:1em'>W</text>
-<text text-anchor='middle' x='144' y='84' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='152' y='36' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='152' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='152' y='68' fill='currentColor' style='font-size:1em'>C</text>
-<text text-anchor='middle' x='152' y='84' fill='currentColor' style='font-size:1em'>Y</text>
-<text text-anchor='middle' x='160' y='4' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='160' y='52' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='160' y='68' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='160' y='84' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='168' y='52' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='168' y='68' fill='currentColor' style='font-size:1em'>K</text>
-<text text-anchor='middle' x='176' y='4' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>i</text>
-</g>
-
-    </svg>
-  
-</div>
-</td>
+<pre><code class="language-goat" data-lang="goat"> Snowdon         Rasp Pi
+-----------.   .----------
+       GND +---+ GND
+    NONE_1 +---+ SWDIO
+    NONE_2 +---+ SWCLK
+       +5V +---+ VSYS    
+-----------'   '----------
+</code></pre></td>
 <td style="width:70%; padding 1px;">
     <img src="snowdon_fritzing_swd.png" />
 </tr>
@@ -1050,61 +783,61 @@ RETURN VALUE
 <p>To bring this all together we only really need a little bit of glue code to translate a HTTP request into a call to our PIO driver or LED decoder.</p>
 <br/>
 <p>This is achieve in the program by extracting a value from one of the user provided parameters passed in the HTTP request (<code>code</code>) and passing this into a helper function. The function translates the user provided string into a 32 bit NEC code for our PIO driver, or a <code>HTTP_CODE_LOOKUP_STATUS</code> command for our LED decoder:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">uint32_t</span> <span class="nf">http_code_lookup</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">code</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;status&#34;</span><span class="p">))</span>        <span class="p">{</span> <span class="k">return</span> <span class="n">HTTP_CODE_LOOKUP_STATUS</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;power&#34;</span><span class="p">))</span>         <span class="p">{</span><span class="k">return</span> <span class="mh">0x807F807F</span><span class="p">;}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;input&#34;</span><span class="p">))</span>         <span class="p">{</span><span class="k">return</span> <span class="mh">0x807F40BF</span><span class="p">;}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;mute&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FCC33</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;volume_up&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FC03F</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;volume_down&#34;</span><span class="p">))</span>   <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F10EF</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;previous&#34;</span><span class="p">))</span>      <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FA05F</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;next&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F609F</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;play_pause&#34;</span><span class="p">))</span>    <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FE01F</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;treble_up&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FA45B</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;treble_down&#34;</span><span class="p">))</span>   <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FE41B</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;bass_up&#34;</span><span class="p">))</span>       <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F20DF</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;bass_down&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F649B</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;pair&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F906F</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;flat&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F48B7</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;music&#34;</span><span class="p">))</span>         <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F946B</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;dialog&#34;</span><span class="p">))</span>        <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F54AB</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;movie&#34;</span><span class="p">))</span>         <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F14EB</span><span class="p">;</span> <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">HTTP_CODE_LOOKUP_UNKNOWN_VALUE</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">uint32_t</span> <span class="nf">http_code_lookup</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">code</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;status&#34;</span><span class="p">))</span>        <span class="p">{</span> <span class="k">return</span> <span class="n">HTTP_CODE_LOOKUP_STATUS</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;power&#34;</span><span class="p">))</span>         <span class="p">{</span><span class="k">return</span> <span class="mh">0x807F807F</span><span class="p">;}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;input&#34;</span><span class="p">))</span>         <span class="p">{</span><span class="k">return</span> <span class="mh">0x807F40BF</span><span class="p">;}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;mute&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FCC33</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;volume_up&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FC03F</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;volume_down&#34;</span><span class="p">))</span>   <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F10EF</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;previous&#34;</span><span class="p">))</span>      <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FA05F</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;next&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F609F</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;play_pause&#34;</span><span class="p">))</span>    <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FE01F</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;treble_up&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FA45B</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;treble_down&#34;</span><span class="p">))</span>   <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807FE41B</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;bass_up&#34;</span><span class="p">))</span>       <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F20DF</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;bass_down&#34;</span><span class="p">))</span>     <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F649B</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;pair&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F906F</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;flat&#34;</span><span class="p">))</span>          <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F48B7</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;music&#34;</span><span class="p">))</span>         <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F946B</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;dialog&#34;</span><span class="p">))</span>        <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F54AB</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="s">&#34;movie&#34;</span><span class="p">))</span>         <span class="p">{</span> <span class="k">return</span> <span class="mh">0x807F14EB</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">return</span> <span class="n">HTTP_CODE_LOOKUP_UNKNOWN_VALUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><br/>
 <p>We then just make the respective call in our program and return a nice hard coded JSON string in our HTTP response:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span> <span class="o">==</span> <span class="n">HTTP_CODE_LOOKUP_STATUS</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">gpio</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">do</span><span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">optical</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">aux</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">line-in</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">bluetooth</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off (likely in a transitioning state)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">busy_wait_ms</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">                <span class="k">continue</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">gpio</span> <span class="o">==</span> <span class="mi">0</span><span class="n">b111</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span> <span class="o">&gt;</span> <span class="n">HTTP_CODE_LOOKUP_NO_VALUE</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pio_sm_put_blocking</span><span class="p">(</span><span class="n">PIO_INSTANCE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">status</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">ok</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">if</span> <span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span> <span class="o">==</span> <span class="n">HTTP_CODE_LOOKUP_STATUS</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">uint32_t</span> <span class="n">gpio</span><span class="p">;</span>
+    <span class="k">do</span><span class="p">{</span>
+        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="n">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
+        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
+</span><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
+</span><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">optical</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
+</span><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">aux</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
+</span><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">line-in</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
+</span><span class="c1"></span>                <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">bluetooth</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off (likely in a transitioning state)
+</span><span class="c1"></span>                <span class="n">busy_wait_ms</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+                <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">gpio</span> <span class="o">==</span> <span class="mi">0</span><span class="n">b111</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span> <span class="o">&gt;</span> <span class="n">HTTP_CODE_LOOKUP_NO_VALUE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">pio_sm_put_blocking</span><span class="p">(</span><span class="n">PIO_INSTANCE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">state</span><span class="o">-&gt;</span><span class="n">message_body</span><span class="o">-&gt;</span><span class="n">code</span><span class="p">);</span>
+    <span class="n">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">status</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">ok</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><br/>
 <p>This is essentially all the building blocks required to roll our own RESTful API. With that out of the way, all that&rsquo;s left to do now is wire it up and compile!</p>
 <h2 id="wiring-2">Wiring</h2>
 <blockquote>
@@ -1112,167 +845,18 @@ RETURN VALUE
 </blockquote>
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr><td style="width:30%; padding: 1px;">
-
-
-
-<div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 248 185"
-      >
-      <g transform='translate(8,16)'>
-<path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
-<path d='M 152,16 L 232,16' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 96,32' fill='none' stroke='currentColor'></path>
-<path d='M 144,32 L 152,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 152,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 152,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 152,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,96 L 152,96' fill='none' stroke='currentColor'></path>
-<path d='M 88,112 L 152,112' fill='none' stroke='currentColor'></path>
-<path d='M 88,128 L 152,128' fill='none' stroke='currentColor'></path>
-<path d='M 88,144 L 152,144' fill='none' stroke='currentColor'></path>
-<path d='M 0,160 L 88,160' fill='none' stroke='currentColor'></path>
-<path d='M 152,160 L 232,160' fill='none' stroke='currentColor'></path>
-<path d='M 104,24 L 136,24' fill='none' stroke='currentColor'></path>
-<path d='M 104,40 L 136,40' fill='none' stroke='currentColor'></path>
-<path d='M 88,16 L 88,32' fill='none' stroke='currentColor'></path>
-<path d='M 88,32 L 88,48' fill='none' stroke='currentColor'></path>
-<path d='M 88,48 L 88,64' fill='none' stroke='currentColor'></path>
-<path d='M 88,64 L 88,80' fill='none' stroke='currentColor'></path>
-<path d='M 88,80 L 88,96' fill='none' stroke='currentColor'></path>
-<path d='M 88,96 L 88,112' fill='none' stroke='currentColor'></path>
-<path d='M 88,112 L 88,128' fill='none' stroke='currentColor'></path>
-<path d='M 88,128 L 88,144' fill='none' stroke='currentColor'></path>
-<path d='M 88,144 L 88,160' fill='none' stroke='currentColor'></path>
-<path d='M 104,24 L 104,40' fill='none' stroke='currentColor'></path>
-<path d='M 136,24 L 136,40' fill='none' stroke='currentColor'></path>
-<path d='M 152,16 L 152,32' fill='none' stroke='currentColor'></path>
-<path d='M 152,32 L 152,48' fill='none' stroke='currentColor'></path>
-<path d='M 152,48 L 152,64' fill='none' stroke='currentColor'></path>
-<path d='M 152,64 L 152,80' fill='none' stroke='currentColor'></path>
-<path d='M 152,80 L 152,96' fill='none' stroke='currentColor'></path>
-<path d='M 152,96 L 152,112' fill='none' stroke='currentColor'></path>
-<path d='M 152,112 L 152,128' fill='none' stroke='currentColor'></path>
-<path d='M 152,128 L 152,144' fill='none' stroke='currentColor'></path>
-<path d='M 152,144 L 152,160' fill='none' stroke='currentColor'></path>
-<path d='M 104,24 L 104,32' fill='none' stroke='currentColor'></path>
-<path d='M 136,24 L 136,32' fill='none' stroke='currentColor'></path>
-<text text-anchor='middle' x='8' y='4' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='8' y='68' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='16' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='16' y='52' fill='currentColor' style='font-size:1em'>B</text>
-<text text-anchor='middle' x='16' y='68' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='24' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='24' y='52' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='24' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='24' y='84' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='32' y='4' fill='currentColor' style='font-size:1em'>w</text>
-<text text-anchor='middle' x='32' y='36' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='32' y='52' fill='currentColor' style='font-size:1em'>U</text>
-<text text-anchor='middle' x='32' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='32' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='32' y='100' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='32' y='116' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='40' y='4' fill='currentColor' style='font-size:1em'>d</text>
-<text text-anchor='middle' x='40' y='36' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='40' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='40' y='68' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='40' y='84' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='40' y='100' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='40' y='116' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='48' y='4' fill='currentColor' style='font-size:1em'>o</text>
-<text text-anchor='middle' x='48' y='36' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='52' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='68' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='84' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='48' y='100' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='48' y='116' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='56' y='4' fill='currentColor' style='font-size:1em'>n</text>
-<text text-anchor='middle' x='56' y='36' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='52' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='68' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='84' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='56' y='116' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='56' y='132' fill='currentColor' style='font-size:1em'>+</text>
-<text text-anchor='middle' x='56' y='148' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='64' y='36' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='52' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='68' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='84' fill='currentColor' style='font-size:1em'>E</text>
-<text text-anchor='middle' x='64' y='100' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='64' y='116' fill='currentColor' style='font-size:1em'>_</text>
-<text text-anchor='middle' x='64' y='132' fill='currentColor' style='font-size:1em'>5</text>
-<text text-anchor='middle' x='64' y='148' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='72' y='36' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='52' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='68' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='84' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='72' y='100' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='72' y='116' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='72' y='132' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='72' y='148' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='104' y='4' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='112' y='4' fill='currentColor' style='font-size:1em'>2</text>
-<text text-anchor='middle' x='120' y='4' fill='currentColor' style='font-size:1em'>0</text>
-<text text-anchor='middle' x='128' y='4' fill='currentColor' style='font-size:1em'>Ω</text>
-<text text-anchor='middle' x='168' y='4' fill='currentColor' style='font-size:1em'>R</text>
-<text text-anchor='middle' x='168' y='36' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='168' y='52' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='168' y='68' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='168' y='84' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='168' y='100' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='168' y='116' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='168' y='132' fill='currentColor' style='font-size:1em'>V</text>
-<text text-anchor='middle' x='168' y='148' fill='currentColor' style='font-size:1em'>G</text>
-<text text-anchor='middle' x='176' y='4' fill='currentColor' style='font-size:1em'>a</text>
-<text text-anchor='middle' x='176' y='36' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='52' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='68' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='84' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='176' y='100' fill='currentColor' style='font-size:1em'>W</text>
-<text text-anchor='middle' x='176' y='116' fill='currentColor' style='font-size:1em'>W</text>
-<text text-anchor='middle' x='176' y='132' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='176' y='148' fill='currentColor' style='font-size:1em'>N</text>
-<text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>s</text>
-<text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='184' y='52' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='184' y='68' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='184' y='84' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='184' y='100' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='184' y='116' fill='currentColor' style='font-size:1em'>C</text>
-<text text-anchor='middle' x='184' y='132' fill='currentColor' style='font-size:1em'>Y</text>
-<text text-anchor='middle' x='184' y='148' fill='currentColor' style='font-size:1em'>D</text>
-<text text-anchor='middle' x='192' y='4' fill='currentColor' style='font-size:1em'>p</text>
-<text text-anchor='middle' x='192' y='36' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='192' y='52' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='192' y='68' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='192' y='100' fill='currentColor' style='font-size:1em'>I</text>
-<text text-anchor='middle' x='192' y='116' fill='currentColor' style='font-size:1em'>L</text>
-<text text-anchor='middle' x='192' y='132' fill='currentColor' style='font-size:1em'>S</text>
-<text text-anchor='middle' x='200' y='100' fill='currentColor' style='font-size:1em'>O</text>
-<text text-anchor='middle' x='200' y='116' fill='currentColor' style='font-size:1em'>K</text>
-<text text-anchor='middle' x='208' y='4' fill='currentColor' style='font-size:1em'>P</text>
-<text text-anchor='middle' x='208' y='36' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='208' y='52' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='208' y='68' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='208' y='84' fill='currentColor' style='font-size:1em'>1</text>
-<text text-anchor='middle' x='216' y='4' fill='currentColor' style='font-size:1em'>i</text>
-<text text-anchor='middle' x='216' y='36' fill='currentColor' style='font-size:1em'>6</text>
-<text text-anchor='middle' x='216' y='52' fill='currentColor' style='font-size:1em'>9</text>
-<text text-anchor='middle' x='216' y='68' fill='currentColor' style='font-size:1em'>8</text>
-<text text-anchor='middle' x='216' y='84' fill='currentColor' style='font-size:1em'>7</text>
-</g>
-
-    </svg>
-  
-</div>
-</td>
+<pre><code class="language-goat" data-lang="goat"> Snowdon     220Ω    Rasp Pi
+-----------.  ___  .----------
+    IR_LED +-|___|-+ GPIO 16
+  BLUE_LED +-------+ GPIO 19
+ GREEN_LED +-------+ GPIO 18
+   RED_LED +-------+ GPIO 17
+    NONE_1 +-------+ SWDIO
+    NONE_2 +-------+ SWCLK
+       +5V +-------+ VSYS
+       GND +-------+ GND
+-----------'       '----------
+</code></pre></td>
 <td style="width:70%; padding 1px;">
     <img src="snowdon_fritzing.png" />
 </tr>
@@ -1293,27 +877,27 @@ RETURN VALUE
 <p>Due to the final software containing hardcoded WiFi credentials, it&rsquo;s impossible to share a pre-built <code>uf2</code>. So we must install the Pico SDK and built it from scratch.</p>
 <br/>
 <p>Install dependencies for SDK:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt update
-</span></span><span class="line"><span class="cl">sudo apt install git cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
-</span></span></code></pre></div><p>Clone SDK;</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> ~/
-</span></span><span class="line"><span class="cl">git clone https://github.com/raspberrypi/pico-sdk.git
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> pico-sdk
-</span></span><span class="line"><span class="cl">git submodule update --init
-</span></span></code></pre></div><p>Export PICO_SDK_PATH variable:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PICO_SDK_PATH</span><span class="o">=</span><span class="nv">$HOME</span>/pico-sdk
-</span></span></code></pre></div><p>Clone Snowdon-II-WiFi:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/kennedn/snowdon-ii-wifi.git
-</span></span></code></pre></div><p>Create a build directory and configure <code>cmake</code> with WiFi credentials:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> snowdon-ii-wifi
-</span></span><span class="line"><span class="cl">mkdir build
-</span></span><span class="line"><span class="cl"><span class="nb">cd</span> build
-</span></span><span class="line"><span class="cl"><span class="c1"># Replace &lt;SSID&gt; and &lt;PASSWORD&gt; with own values</span>
-</span></span><span class="line"><span class="cl">cmake -DPICO_BOARD<span class="o">=</span>pico_w -DWIFI_SSID<span class="o">=</span><span class="s2">&#34;&lt;SSID&gt;&#34;</span> -DWIFI_PASSWORD<span class="o">=</span><span class="s2">&#34;&lt;PASSWORD&gt;&#34;</span> ..
-</span></span></code></pre></div><p>Compile the program:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> src
-</span></span><span class="line"><span class="cl">make
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">sudo apt update
+sudo apt install git cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
+</code></pre></div><p>Clone SDK;</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> ~/
+git clone https://github.com/raspberrypi/pico-sdk.git
+<span class="nb">cd</span> pico-sdk
+git submodule update --init
+</code></pre></div><p>Export PICO_SDK_PATH variable:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">PICO_SDK_PATH</span><span class="o">=</span><span class="nv">$HOME</span>/pico-sdk
+</code></pre></div><p>Clone Snowdon-II-WiFi:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">git clone https://github.com/kennedn/snowdon-ii-wifi.git
+</code></pre></div><p>Create a build directory and configure <code>cmake</code> with WiFi credentials:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> snowdon-ii-wifi
+mkdir build
+<span class="nb">cd</span> build
+<span class="c1"># Replace &lt;SSID&gt; and &lt;PASSWORD&gt; with own values</span>
+cmake -DPICO_BOARD<span class="o">=</span>pico_w -DWIFI_SSID<span class="o">=</span><span class="s2">&#34;&lt;SSID&gt;&#34;</span> -DWIFI_PASSWORD<span class="o">=</span><span class="s2">&#34;&lt;PASSWORD&gt;&#34;</span> ..
+</code></pre></div><p>Compile the program:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">cd</span> src
+make
+</code></pre></div><br/>
 <p>If all goes well, a file named <code>snowdon.uf2</code> should now exist under <code>~/snowdon-ii-wifi/build/src/</code>.</p>
 <br/>
 <p>The Pico can now be plugged in via USB whilst holding down the <code>BOOTSEL</code> button, and the <code>uf2</code> file dropped in the volume mount.</p>
@@ -1322,10 +906,10 @@ RETURN VALUE
 <p><code>http://&lt;ip_address&gt;:8080</code></p>
 <br/>
 <p>The endpoint expects a single <code>code</code> parameter, which can be sent via either url encoding or in the JSON body of the request, e.g:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X PUT http://192.168.1.238:8080?code<span class="o">=</span>status
-</span></span><span class="line"><span class="cl"><span class="c1"># or</span>
-</span></span><span class="line"><span class="cl">curl -X PUT http://192.168.1.238:8080 -H <span class="s1">&#39;Content-Type: application/json&#39;</span> -d <span class="s1">&#39;{&#34;code&#34;: &#34;power&#34;}&#39;</span>
-</span></span></code></pre></div><br/>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">curl -X PUT http://192.168.1.238:8080?code<span class="o">=</span>status
+<span class="c1"># or</span>
+curl -X PUT http://192.168.1.238:8080 -H <span class="s1">&#39;Content-Type: application/json&#39;</span> -d <span class="s1">&#39;{&#34;code&#34;: &#34;power&#34;}&#39;</span>
+</code></pre></div><br/>
 <p>And this is the full list of available code values:</p>
 <table>
 <thead>
@@ -1429,48 +1013,20 @@ RETURN VALUE
 </tbody>
 </table>
 <br/>
-<p><code>power_state</code> has the following possible values:</p>
-<table>
-<thead>
-<tr>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>on</td>
-</tr>
-<tr>
-<td>off</td>
-</tr>
-</tbody>
-</table>
+<p><code>power_state</code> has the following possible values:
+|Value|
+|&mdash;&ndash;|
+|on   |
+|off  |</p>
 <br/>
-<p><code>input_state</code> has the following possible values:</p>
-<table>
-<thead>
-<tr>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>off</td>
-</tr>
-<tr>
-<td>optical</td>
-</tr>
-<tr>
-<td>aux</td>
-</tr>
-<tr>
-<td>line-in</td>
-</tr>
-<tr>
-<td>bluetooth</td>
-</tr>
-</tbody>
-</table>
+<p><code>input_state</code> has the following possible values:
+|Value|
+|&mdash;&ndash;|
+|off  |
+|optical|
+|aux|
+|line-in|
+|bluetooth|</p>
 <h1 id="finish">Finish</h1>
 <p>With that we can now send HTTP commands to our Pico:</p>
 <p align="center">
@@ -1482,7 +1038,7 @@ RETURN VALUE
 </p>
 </article>
 </div>
-<div class="article bottom"><section class="article navigation"><p><a class="link" href="/blog/posts/neszero/"><span class="iconfont icon-article"></span>Embedding a Pi Zero in a NES controller</a></p></section><section class="article discussion"><script 
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/blog/posts/json/"><span class="iconfont icon-article"></span>Why not parse your JSON at build time?</a></p><p><a class="link" href="/blog/posts/neszero/"><span class="iconfont icon-article"></span>Embedding a Pi Zero in a NES controller</a></p></section><section class="article discussion"><script 
             src="https://utteranc.es/client.js" 
             repo="kennedn/blog-comments"
             issue-term="pathname"
@@ -1490,7 +1046,7 @@ RETURN VALUE
             theme="photon-dark"
             crossorigin="anonymous" async>
         </script></section></div></section><section id="footer"><div class="footer-wrap">
-    <p class="copyright">© Joshua Kennedy 2022</p>
+    <p class="copyright">© Joshua Kennedy 2024</p>
     <p class="powerby">
       Site code is open source 🔓︎ and can be found 
       <a target="_blank" href="https://github.com/kennedn/kennedn.github.io">here</a></div>
