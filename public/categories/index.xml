@@ -384,8 +384,8 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;a style=&#34;margin-top:-20px;&#34; target=&#34;_blank&#34; href=&#34;https://wokwi.com/projects/398438177444631553&#34;&gt;
     &lt;img src=&#34;wokwi_badge.svg&#34;&gt;&lt;/img&gt;
 &lt;/a&gt;
-&lt;h1 id=&#34;get-the-pre-processor-to-do-it&#34;&gt;Get the Pre-processor to do it&lt;/h1&gt;
-&lt;p&gt;We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf at build time:&lt;/p&gt;
+&lt;h1 id=&#34;get-the-preprocessor-to-do-it&#34;&gt;Get the preprocessor to do it&lt;/h1&gt;
+&lt;p&gt;We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cmake&#34; data-lang=&#34;cmake&#34;&gt;&lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;JSON_FILEPATH&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;${PROJECT_SOURCE_DIR}/config/tiles.json&amp;#34;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;CACHE&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;STRING&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Location of tiles json&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;
 &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;
 &lt;/span&gt;&lt;span class=&#34;err&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;execute_process&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;COMMAND&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;${PROJECT_SOURCE_DIR}/tools/json_to_c_array.py&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;-f&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;${JSON_FILEPATH}&amp;#34;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;OUTPUT_VARIABLE&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;TILE_DATA&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;
@@ -396,7 +396,7 @@
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;a style=&#34;margin-top:-20px;&#34; target=&#34;_blank&#34; href=&#34;https://github.com/kennedn/restful-badger/blob/main/src/CMakeLists.txt#L22-L40&#34;&gt;
     &lt;img src=&#34;view_source_badge.svg&#34;&gt;&lt;/img&gt;
 &lt;/a&gt;
-&lt;p&gt;This can then be referenced in our C code as a pre-processor statement:&lt;/p&gt;
+&lt;p&gt;This symbol can then be referenced in our C code and replaced with our bytes by the preprocessor at build time:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tile_data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
     &lt;span class=&#34;n&#34;&gt;TILE_DATA&lt;/span&gt;
 &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;

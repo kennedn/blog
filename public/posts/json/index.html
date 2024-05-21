@@ -376,8 +376,8 @@
 </code></pre></div><a style="margin-top:-20px;" target="_blank" href="https://wokwi.com/projects/398438177444631553">
     <img src="wokwi_badge.svg"></img>
 </a>
-<h1 id="get-the-pre-processor-to-do-it">Get the Pre-processor to do it</h1>
-<p>We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf at build time:</p>
+<h1 id="get-the-preprocessor-to-do-it">Get the preprocessor to do it</h1>
+<p>We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf:</p>
 <div class="highlight"><pre class="chroma"><code class="language-cmake" data-lang="cmake"><span class="nb">set</span><span class="p">(</span><span class="s">JSON_FILEPATH</span> <span class="s2">&#34;${PROJECT_SOURCE_DIR}/config/tiles.json&#34;</span> <span class="s">CACHE</span> <span class="s">STRING</span> <span class="s2">&#34;Location of tiles json&#34;</span><span class="p">)</span><span class="err">
 </span><span class="err">
 </span><span class="err"></span><span class="nb">execute_process</span><span class="p">(</span><span class="s">COMMAND</span> <span class="s2">&#34;${PROJECT_SOURCE_DIR}/tools/json_to_c_array.py&#34;</span> <span class="s2">&#34;-f&#34;</span> <span class="s2">&#34;${JSON_FILEPATH}&#34;</span> <span class="s">OUTPUT_VARIABLE</span> <span class="s2">&#34;TILE_DATA&#34;</span><span class="p">)</span><span class="err">
@@ -388,7 +388,7 @@
 </span></code></pre></div><a style="margin-top:-20px;" target="_blank" href="https://github.com/kennedn/restful-badger/blob/main/src/CMakeLists.txt#L22-L40">
     <img src="view_source_badge.svg"></img>
 </a>
-<p>This can then be referenced in our C code as a pre-processor statement:</p>
+<p>This symbol can then be referenced in our C code and replaced with our bytes by the preprocessor at build time:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="k">const</span> <span class="kt">char</span> <span class="n">tile_data</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">TILE_DATA</span>
 <span class="p">};</span>

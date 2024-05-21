@@ -417,9 +417,9 @@ int main() {
     <img src="wokwi_badge.svg"></img>
 </a>
 
-# Get the Pre-processor to do it
+# Get the preprocessor to do it
 
-We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf at build time:
+We have now managed to convert a JSON file into a byte array, hardcode it and then decode it. We can go further however. If we are using a build tool such as CMake. We can simply instruct it to run the python script on our behalf:
 
 ```cmake
 set(JSON_FILEPATH "${PROJECT_SOURCE_DIR}/config/tiles.json" CACHE STRING "Location of tiles json")
@@ -434,7 +434,7 @@ target_compile_definitions(badger PRIVATE
     <img src="view_source_badge.svg"></img>
 </a>
 
-This can then be referenced in our C code as a pre-processor statement:
+This symbol can then be referenced in our C code and replaced with our bytes by the preprocessor at build time:
 
 ```c
 static const char tile_data[] = {
