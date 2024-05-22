@@ -1,5 +1,5 @@
 ---
-title: "Using JSON on a microcontroller without understanding it"
+title: "Why not parse your JSON at build time?"
 date: 2024-05-14T11:10:53+01:00
 draft: false
 math: false

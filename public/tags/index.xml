@@ -11,7 +11,7 @@
     
     
     <item>
-      <title>Using JSON on a microcontroller without understanding it</title>
+      <title>Why not parse your JSON at build time?</title>
       <link>https://kennedn.com/blog/posts/json/</link>
       <pubDate>Tue, 14 May 2024 11:10:53 +0100</pubDate>
       
