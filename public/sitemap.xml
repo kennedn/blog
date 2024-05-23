@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
-    <loc>http://localhost:8080/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
-    <loc>http://localhost:8080/posts/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
-    <loc>http://localhost:8080/posts/json/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
-    <loc>http://localhost:8080/posts/snowdon/</loc><lastmod>2022-11-26T21:44:40+01:00</lastmod></url><url>
-    <loc>http://localhost:8080/posts/neszero/</loc><lastmod>2022-08-10T10:19:40+01:00</lastmod></url><url>
-    <loc>http://localhost:8080/categories/</loc></url><url>
-    <loc>http://localhost:8080/tags/</loc></url></urlset>
+    <loc>https://kennedn.com/blog/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
+    <loc>https://kennedn.com/blog/posts/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
+    <loc>https://kennedn.com/blog/posts/json/</loc><lastmod>2024-05-14T11:10:53+01:00</lastmod></url><url>
+    <loc>https://kennedn.com/blog/posts/snowdon/</loc><lastmod>2022-11-26T21:44:40+01:00</lastmod></url><url>
+    <loc>https://kennedn.com/blog/posts/neszero/</loc><lastmod>2022-08-10T10:19:40+01:00</lastmod></url><url>
+    <loc>https://kennedn.com/blog/categories/</loc></url><url>
+    <loc>https://kennedn.com/blog/tags/</loc></url></urlset>

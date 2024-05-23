@@ -1,22 +1,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Kennedn&#39;s Blog</title>
-    <link>http://localhost:8080/posts/</link>
+    <link>https://kennedn.com/blog/posts/</link>
     <description>Recent content in Posts on Kennedn&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-gb</language>
     <copyright>© Joshua Kennedy 2024</copyright>
     <lastBuildDate>Tue, 14 May 2024 11:10:53 +0100</lastBuildDate>
     
-        <atom:link href="http://localhost:8080/posts/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://kennedn.com/blog/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Why not parse your JSON at build time?</title>
-      <link>http://localhost:8080/posts/json/</link>
+      <link>https://kennedn.com/blog/posts/json/</link>
       <pubDate>Tue, 14 May 2024 11:10:53 +0100</pubDate>
       
-      <guid>http://localhost:8080/posts/json/</guid>
+      <guid>https://kennedn.com/blog/posts/json/</guid>
       <description>&lt;p&gt;This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however.&lt;/p&gt;
 &lt;p&gt;Most of my lights and devices are wired into my &lt;a href=&#34;https://github.com/kennedn/restate-go&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;home automation api&lt;/a&gt;
 . This is great as I have a smartwatch that can control it all, but it&amp;rsquo;s a poor user experience for others who have no such device. I decided therefore, to repurpose the badger as a home automation controller that anyone can use.&lt;/p&gt;
@@ -411,10 +411,10 @@
     
     <item>
       <title>Hijacking infrared to make a dumb device smart</title>
-      <link>http://localhost:8080/posts/snowdon/</link>
+      <link>https://kennedn.com/blog/posts/snowdon/</link>
       <pubDate>Sat, 26 Nov 2022 21:44:40 +0100</pubDate>
       
-      <guid>http://localhost:8080/posts/snowdon/</guid>
+      <guid>https://kennedn.com/blog/posts/snowdon/</guid>
       <description>&lt;p align=&#34;center&#34;&gt;
     &lt;img src=&#34;tv_side.jpg&#34; width=&#34;45%&#34;/&gt;
     &lt;img src=&#34;tv_front.jpg&#34; width=&#34;45%&#34;/&gt;
@@ -1890,10 +1890,10 @@ RETURN VALUE
     
     <item>
       <title>Embedding a Pi Zero in a NES controller</title>
-      <link>http://localhost:8080/posts/neszero/</link>
+      <link>https://kennedn.com/blog/posts/neszero/</link>
       <pubDate>Wed, 10 Aug 2022 10:19:40 +0100</pubDate>
       
-      <guid>http://localhost:8080/posts/neszero/</guid>
+      <guid>https://kennedn.com/blog/posts/neszero/</guid>
       <description>&lt;p align=&#34;center&#34;&gt;
     &lt;img src=&#34;case_closed_connected_front.JPG&#34; width=&#34;45%&#34;/&gt;
     &lt;img src=&#34;case_closed_connected_back.JPG&#34; width=&#34;45%&#34;/&gt;
