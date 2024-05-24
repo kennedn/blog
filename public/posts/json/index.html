@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.126.1"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Why not parse your JSON at build time?&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.165f0c0936480d83478ee3f1370bc00fc1c0c3c564c1f4fc3c74364b45f631f37acdcb483841393445dd9740c6be2a9f.css" integrity="sha384-Fl8MCTZIDYNHjuPxNwvAD8HAw8VkwfT8PHQ2S0X2MfN6zctIOEE5NEXdl0DGviqf"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Why not parse your JSON at build time?" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/json/cover.gif" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<meta name="supported-color-schemes" content="light dark"><title>Using JSON without understanding it&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.165f0c0936480d83478ee3f1370bc00fc1c0c3c564c1f4fc3c74364b45f631f37acdcb483841393445dd9740c6be2a9f.css" integrity="sha384-Fl8MCTZIDYNHjuPxNwvAD8HAw8VkwfT8PHQ2S0X2MfN6zctIOEE5NEXdl0DGviqf"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Using JSON without understanding it" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/json/cover.gif" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 <section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Why not parse your JSON at build time?</h1><p class="article date">Tuesday, May 14, 2024</p></section><article class="article markdown-body"><p>This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however.</p>
-<p>Most of my lights and devices are wired into my <a href="https://github.com/kennedn/restate-go"target="_blank" rel="noopener noreferrer">home automation api</a>
-. This is great as I have a smartwatch that can control it all, but it&rsquo;s a poor user experience for others who have no such device. I decided therefore, to repurpose the badger as a home automation controller that anyone can use.</p>
+    <h1 class="article title">Using JSON without understanding it</h1><p class="article date">Tuesday, May 14, 2024</p></section><article class="article markdown-body"><p>This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however. I wanted a home automation controller.</p>
 <p>This culminated in the <a href="https://github.com/kennedn/restful-badger"target="_blank" rel="noopener noreferrer">restful-badger</a>
  project, which permits an arbitrary number of RESTful &rsquo;tiles&rsquo; to be configured. Each tile can control and get state over HTTP.</p>
 <p align="center">

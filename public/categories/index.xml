@@ -11,14 +11,12 @@
     
     
     <item>
-      <title>Why not parse your JSON at build time?</title>
+      <title>Using JSON without understanding it</title>
       <link>https://kennedn.com/blog/posts/json/</link>
       <pubDate>Tue, 14 May 2024 11:10:53 +0100</pubDate>
       
       <guid>https://kennedn.com/blog/posts/json/</guid>
-      <description>&lt;p&gt;This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however.&lt;/p&gt;
-&lt;p&gt;Most of my lights and devices are wired into my &lt;a href=&#34;https://github.com/kennedn/restate-go&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;home automation api&lt;/a&gt;
-. This is great as I have a smartwatch that can control it all, but it&amp;rsquo;s a poor user experience for others who have no such device. I decided therefore, to repurpose the badger as a home automation controller that anyone can use.&lt;/p&gt;
+      <description>&lt;p&gt;This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however. I wanted a home automation controller.&lt;/p&gt;
 &lt;p&gt;This culminated in the &lt;a href=&#34;https://github.com/kennedn/restful-badger&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;restful-badger&lt;/a&gt;
  project, which permits an arbitrary number of RESTful &amp;rsquo;tiles&amp;rsquo; to be configured. Each tile can control and get state over HTTP.&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;

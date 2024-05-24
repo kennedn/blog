@@ -1,5 +1,5 @@
 ---
-title: "Why not parse your JSON at build time?"
+title: "Using JSON without understanding it"
 date: 2024-05-14T11:10:53+01:00
 draft: false
 math: false
@@ -7,9 +7,7 @@ imgs:
     - cover.gif
 ---
 
-This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however.
-
-Most of my lights and devices are wired into my [home automation api](https://github.com/kennedn/restate-go). This is great as I have a smartwatch that can control it all, but it's a poor user experience for others who have no such device. I decided therefore, to repurpose the badger as a home automation controller that anyone can use.
+This year I was gifted a Badger 2040W. This device is essentially a Pi Pico attached to a black and white e-ink display. The device is supposed to be used as a wearable badge. My use case was a little different however. I wanted a home automation controller.
 
 This culminated in the [restful-badger](https://github.com/kennedn/restful-badger) project, which permits an arbitrary number of RESTful 'tiles' to be configured. Each tile can control and get state over HTTP.
 
