@@ -11,11 +11,15 @@ I own a fridge that has a really cool 'feature'. It beeps if the door is open fo
 
 In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:
 
-![](fridge_wires_close.JPG)
+<p>
+<img src=fridge_wires_close.JPG width=60%/>
+</p>
 
 Something I did have access to however was a daughter board that acts as the control panel for the fridge.
 
-![](panel_on.JPG)
+<p>
+<img src=panel_on.JPG width=60%/>
+</p>
 
 ## Pwning the panel
 
@@ -26,7 +30,9 @@ To try and understand the attack surface and see if it was possible to somehow d
 
 Both of these features are acheived via 6 pin connector on the daughter board:
 
-![](fridge_panel_connector.JPG)
+<p>
+<img src=fridge_panel_connector.JPG width=60%/>
+</p>
 
 The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:
 
@@ -34,18 +40,6 @@ The connector is actually a serial interface which permits control of two 8 bit 
 
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr>
-<td style="width:69%; padding: 1px;">
-
-| PIN        | DESC                                      |
-|------------|-------------------------------------------|
-| CLK        | Clock input                               |
-| DS         | Serial data in                            |
-| OE         | Output enable                             |
-| OUT/LAT    | Dual purpose, read: output, write: latch  |
-| GND        | Ground                                    |
-| VCC        | Power, 5v                                 |
-
-</td>
 <td style="width:29%; padding: 1px;">
 
 
@@ -64,6 +58,18 @@ The connector is actually a serial interface which permits control of two 8 bit 
     DS OUT VCC
        LAT
 ```
+</td>
+<td style="width:69%; padding: 1px;">
+
+| PIN        | DESC                                      |
+|------------|-------------------------------------------|
+| CLK        | Clock input                               |
+| DS         | Serial data in                            |
+| OE         | Output enable                             |
+| OUT/LAT    | Dual purpose, read: output, write: latch  |
+| GND        | Ground                                    |
+| VCC        | Power, 5v                                 |
+
 </td>
 </tr>
 </table>
@@ -189,7 +195,7 @@ $$t_1 = 100\ ms$$
 
 But the above math highlights an issue with this, by default the above arrangement only allows a selection of duty cycles between 50% - 100%. Even making $$r_1$$ as small as possible ($$220\ \Omega$$) will result in around a 50% duty cycle:
 
-<p align="center">
+<p>
     <img src="555_no_diode.gif" width="26%"/>
     <img src="oscilloscope_no_diode.png" width="69%"/>
 </p>
@@ -231,7 +237,7 @@ The solution is to add a diode across $$r_2$$ which actually allows us to reach 
 <td style="width:50%; padding: 1px;"></td></tr>
 </table>
 
-<p align="center">
+<p>
     <img src="555_diode.gif" width="26%"/>
     <img src="oscilloscope_diode.png" width="69%"/>
 </p>
@@ -258,7 +264,7 @@ $$t_1 = 0.694 \cdot 220 \cdot 220 \cdot 10^{-6} = 48\ ms$$
 This is pretty close to the what we were looking for, So I built a 'modchip' using those same values of $$r_1$$, $$r_2$$ and $$c$$: 
 
 
-<p align="center">
+<p>
     <img src="modchip_hand.JPG" width="42%"/>
     <img src="test_bench.JPG" width="56%"/>
 </p>
@@ -273,7 +279,7 @@ avg=56.970      min=55.283      max=58.160
 
 Perfect! The only thing left to do now was wrap it in copious amounts of kapton tape and reinstall in the fridge:
 
-<p align="center">
+<p>
     <img src="modchip_wired.JPG" width="49%"/>
     <img src="modchip_wrapped.JPG" width="49%"/>
 </p>

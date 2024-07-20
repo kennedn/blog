@@ -10,11 +10,13 @@
 <section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Modchipping a fridge</h1><p class="article date">Saturday, July 20, 2024</p></section><article class="article markdown-body"><p>I own a fridge that has a really cool &lsquo;feature&rsquo;. It beeps if the door is open for more than 60 seconds. 95% of the time this is more annoying than it is helpful. In my opinion it should just shut up and trust that I know best.</p>
 <p>In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:</p>
-<p><img  src="fridge_wires_close.JPG"
-        alt/></p>
+<p>
+<img src=fridge_wires_close.JPG width=60%/>
+</p>
 <p>Something I did have access to however was a daughter board that acts as the control panel for the fridge.</p>
-<p><img  src="panel_on.JPG"
-        alt/></p>
+<p>
+<img src=panel_on.JPG width=60%/>
+</p>
 <h2 id="pwning-the-panel">Pwning the panel</h2>
 <p>To try and understand the attack surface and see if it was possible to somehow disable the alarm I reverse engineered the functionality of the control panel. It essentially has 2 features:</p>
 <ul>
@@ -22,47 +24,12 @@
 <li>Light control</li>
 </ul>
 <p>Both of these features are acheived via 6 pin connector on the daughter board:</p>
-<p><img  src="fridge_panel_connector.JPG"
-        alt/></p>
+<p>
+<img src=fridge_panel_connector.JPG width=60%/>
+</p>
 <p>The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
 <tr>
-<td style="width:69%; padding: 1px;">
-<table>
-<thead>
-<tr>
-<th>PIN</th>
-<th>DESC</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CLK</td>
-<td>Clock input</td>
-</tr>
-<tr>
-<td>DS</td>
-<td>Serial data in</td>
-</tr>
-<tr>
-<td>OE</td>
-<td>Output enable</td>
-</tr>
-<tr>
-<td>OUT/LAT</td>
-<td>Dual purpose, read: output, write: latch</td>
-</tr>
-<tr>
-<td>GND</td>
-<td>Ground</td>
-</tr>
-<tr>
-<td>VCC</td>
-<td>Power, 5v</td>
-</tr>
-</tbody>
-</table>
-</td>
 <td style="width:29%; padding: 1px;">
 
 
@@ -128,6 +95,42 @@
     </svg>
   
 </div>
+</td>
+<td style="width:69%; padding: 1px;">
+<table>
+<thead>
+<tr>
+<th>PIN</th>
+<th>DESC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLK</td>
+<td>Clock input</td>
+</tr>
+<tr>
+<td>DS</td>
+<td>Serial data in</td>
+</tr>
+<tr>
+<td>OE</td>
+<td>Output enable</td>
+</tr>
+<tr>
+<td>OUT/LAT</td>
+<td>Dual purpose, read: output, write: latch</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>Ground</td>
+</tr>
+<tr>
+<td>VCC</td>
+<td>Power, 5v</td>
+</tr>
+</tbody>
+</table>
 </td>
 </tr>
 </table>
@@ -395,7 +398,7 @@
 <p>$$t_0 = 59000\ ms$$,
 $$t_1 = 100\ ms$$</p>
 <p>But the above math highlights an issue with this, by default the above arrangement only allows a selection of duty cycles between 50% - 100%. Even making $$r_1$$ as small as possible ($$220\ \Omega$$) will result in around a 50% duty cycle:</p>
-<p align="center">
+<p>
     <img src="555_no_diode.gif" width="26%"/>
     <img src="oscilloscope_no_diode.png" width="69%"/>
 </p>
@@ -514,7 +517,7 @@ $$t_1 = 100\ ms$$</p>
 </td>
 <td style="width:50%; padding: 1px;"></td></tr>
 </table>
-<p align="center">
+<p>
     <img src="555_diode.gif" width="26%"/>
     <img src="oscilloscope_diode.png" width="69%"/>
 </p>
@@ -530,7 +533,7 @@ $$c = 220\ \mu F$$</p>
 <p>$$t_0 = 0.694 \cdot 300000 \cdot 220 \cdot 10^{-6} = 45804\ ms$$</p>
 <p>$$t_1 = 0.694 \cdot 220 \cdot 220 \cdot 10^{-6} = 48\ ms$$</p>
 <p>This is pretty close to the what we were looking for, So I built a &lsquo;modchip&rsquo; using those same values of $$r_1$$, $$r_2$$ and $$c$$:</p>
-<p align="center">
+<p>
     <img src="modchip_hand.JPG" width="42%"/>
     <img src="test_bench.JPG" width="56%"/>
 </p>
@@ -538,7 +541,7 @@ $$c = 220\ \mu F$$</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">&gt; python3 time-delta.py
 </span></span><span class="line"><span class="cl"><span class="nv">avg</span><span class="o">=</span>56.970      <span class="nv">min</span><span class="o">=</span>55.283      <span class="nv">max</span><span class="o">=</span>58.160
 </span></span></code></pre></div><p>Perfect! The only thing left to do now was wrap it in copious amounts of kapton tape and reinstall in the fridge:</p>
-<p align="center">
+<p>
     <img src="modchip_wired.JPG" width="49%"/>
     <img src="modchip_wrapped.JPG" width="49%"/>
 </p>
