@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.129.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark"><title>Modchipping a fridge&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.165f0c0936480d83478ee3f1370bc00fc1c0c3c564c1f4fc3c74364b45f631f37acdcb483841393445dd9740c6be2a9f.css" integrity="sha384-Fl8MCTZIDYNHjuPxNwvAD8HAw8VkwfT8PHQ2S0X2MfN6zctIOEE5NEXdl0DGviqf"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Modchipping a fridge" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/fridgepwn/modchip_hand.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<section id="header">
+    <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
+        <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
+
+<section id="content"><div class="article-container"><section class="article header">
+    <h1 class="article title">Modchipping a fridge</h1><p class="article date">Saturday, July 20, 2024</p></section><article class="article markdown-body"><p>I own a fridge that has a really cool &lsquo;feature&rsquo;. It beeps if the door is open for more than 60 seconds. 95% of the time this is more annoying than it is helpful. In my opinion it should just shut up and trust that I know best.</p>
+<p>In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:</p>
+<p><img  src="fridge_wires_close.JPG"
+        alt/></p>
+<p>Something I did have access to however was a daughter board that acts as the control panel for the fridge.</p>
+<p><img  src="panel_on.JPG"
+        alt/></p>
+<h2 id="pwning-the-panel">Pwning the panel</h2>
+<p>To try and understand the attack surface and see if it was possible to somehow disable the alarm I reverse engineered the functionality of the control panel. It essentially has 2 features:</p>
+<ul>
+<li>Button sensing (including a magnetic switch for door state detection)</li>
+<li>Light control</li>
+</ul>
+<p>Both of these features are acheived via 6 pin connector on the daughter board:</p>
+<p><img  src="fridge_panel_connector.JPG"
+        alt/></p>
+<p>The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:</p>
+<table style="width:100%; margin-left: auto; margin-right: auto">
+<tr>
+<td style="width:69%; padding: 1px;">
+<table>
+<thead>
+<tr>
+<th>PIN</th>
+<th>DESC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CLK</td>
+<td>Clock input</td>
+</tr>
+<tr>
+<td>DS</td>
+<td>Serial data in</td>
+</tr>
+<tr>
+<td>OE</td>
+<td>Output enable</td>
+</tr>
+<tr>
+<td>OUT/LAT</td>
+<td>Dual purpose, read: output, write: latch</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>Ground</td>
+</tr>
+<tr>
+<td>VCC</td>
+<td>Power, 5v</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td style="width:29%; padding: 1px;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 144 217"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 0,64 L 16,64' fill='none' stroke='currentColor'></path>
+<path d='M 16,64 L 48,64' fill='none' stroke='currentColor'></path>
+<path d='M 48,64 L 80,64' fill='none' stroke='currentColor'></path>
+<path d='M 80,64 L 112,64' fill='none' stroke='currentColor'></path>
+<path d='M 0,128 L 16,128' fill='none' stroke='currentColor'></path>
+<path d='M 32,128 L 64,128' fill='none' stroke='currentColor'></path>
+<path d='M 64,128 L 80,128' fill='none' stroke='currentColor'></path>
+<path d='M 96,128 L 112,128' fill='none' stroke='currentColor'></path>
+<path d='M 0,64 L 0,128' fill='none' stroke='currentColor'></path>
+<path d='M 16,32 L 16,64' fill='none' stroke='currentColor'></path>
+<path d='M 16,64 L 16,96' fill='none' stroke='currentColor'></path>
+<path d='M 32,96 L 32,128' fill='none' stroke='currentColor'></path>
+<path d='M 32,128 L 32,160' fill='none' stroke='currentColor'></path>
+<path d='M 48,32 L 48,64' fill='none' stroke='currentColor'></path>
+<path d='M 48,64 L 48,96' fill='none' stroke='currentColor'></path>
+<path d='M 64,96 L 64,128' fill='none' stroke='currentColor'></path>
+<path d='M 64,128 L 64,160' fill='none' stroke='currentColor'></path>
+<path d='M 80,32 L 80,64' fill='none' stroke='currentColor'></path>
+<path d='M 80,64 L 80,96' fill='none' stroke='currentColor'></path>
+<path d='M 96,96 L 96,128' fill='none' stroke='currentColor'></path>
+<path d='M 96,128 L 96,160' fill='none' stroke='currentColor'></path>
+<path d='M 112,64 L 112,128' fill='none' stroke='currentColor'></path>
+<circle cx='16' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<circle cx='32' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<circle cx='48' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<circle cx='64' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<circle cx='80' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<circle cx='96' cy='96' r='6' stroke='currentColor' fill='currentColor'></circle>
+<text text-anchor='middle' x='8' y='20' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='16' y='20' fill='currentColor' style='font-size:1em'>L</text>
+<text text-anchor='middle' x='24' y='20' fill='currentColor' style='font-size:1em'>K</text>
+<text text-anchor='middle' x='32' y='180' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='40' y='180' fill='currentColor' style='font-size:1em'>S</text>
+<text text-anchor='middle' x='48' y='20' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='56' y='20' fill='currentColor' style='font-size:1em'>E</text>
+<text text-anchor='middle' x='56' y='180' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='56' y='196' fill='currentColor' style='font-size:1em'>L</text>
+<text text-anchor='middle' x='64' y='180' fill='currentColor' style='font-size:1em'>U</text>
+<text text-anchor='middle' x='64' y='196' fill='currentColor' style='font-size:1em'>A</text>
+<text text-anchor='middle' x='72' y='180' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='72' y='196' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='80' y='20' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='88' y='20' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='88' y='180' fill='currentColor' style='font-size:1em'>V</text>
+<text text-anchor='middle' x='96' y='20' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='96' y='180' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='104' y='180' fill='currentColor' style='font-size:1em'>C</text>
+</g>
+
+    </svg>
+  
+</div>
+</td>
+</tr>
+</table>
+<p>This setup allows the fridge control up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state.</p>
+<p>Each button is directly wired up to the <code>OUT</code> pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on <code>OUT</code> unless its bit on the shift register is currently enabled:</p>
+<table style="width:100%; margin-left: auto; margin-right: auto">
+<tr><td style="width:50%; padding: 1px;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 320 329"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 160,32 L 216,32' fill='none' stroke='currentColor'></path>
+<path d='M 152,64 L 168,64' fill='none' stroke='currentColor'></path>
+<path d='M 0,96 L 16,96' fill='none' stroke='currentColor'></path>
+<path d='M 48,96 L 64,96' fill='none' stroke='currentColor'></path>
+<path d='M 152,96 L 168,96' fill='none' stroke='currentColor'></path>
+<path d='M 64,128 L 96,128' fill='none' stroke='currentColor'></path>
+<path d='M 144,128 L 160,128' fill='none' stroke='currentColor'></path>
+<path d='M 160,128 L 200,128' fill='none' stroke='currentColor'></path>
+<path d='M 216,160 L 264,160' fill='none' stroke='currentColor'></path>
+<path d='M 256,192 L 272,192' fill='none' stroke='currentColor'></path>
+<path d='M 208,208 L 224,208' fill='none' stroke='currentColor'></path>
+<path d='M 0,224 L 64,224' fill='none' stroke='currentColor'></path>
+<path d='M 256,224 L 272,224' fill='none' stroke='currentColor'></path>
+<path d='M 120,240 L 152,240' fill='none' stroke='currentColor'></path>
+<path d='M 176,240 L 216,240' fill='none' stroke='currentColor'></path>
+<path d='M 248,272 L 280,272' fill='none' stroke='currentColor'></path>
+<path d='M 256,288 L 272,288' fill='none' stroke='currentColor'></path>
+<path d='M 104,120 L 136,120' fill='none' stroke='currentColor'></path>
+<path d='M 104,136 L 136,136' fill='none' stroke='currentColor'></path>
+<path d='M 0,96 L 0,112' fill='none' stroke='currentColor'></path>
+<path d='M 0,112 L 0,128' fill='none' stroke='currentColor'></path>
+<path d='M 0,128 L 0,144' fill='none' stroke='currentColor'></path>
+<path d='M 0,144 L 0,160' fill='none' stroke='currentColor'></path>
+<path d='M 0,160 L 0,176' fill='none' stroke='currentColor'></path>
+<path d='M 0,176 L 0,192' fill='none' stroke='currentColor'></path>
+<path d='M 0,192 L 0,208' fill='none' stroke='currentColor'></path>
+<path d='M 0,208 L 0,224' fill='none' stroke='currentColor'></path>
+<path d='M 64,96 L 64,112' fill='none' stroke='currentColor'></path>
+<path d='M 64,112 L 64,128' fill='none' stroke='currentColor'></path>
+<path d='M 64,128 L 64,144' fill='none' stroke='currentColor'></path>
+<path d='M 64,144 L 64,160' fill='none' stroke='currentColor'></path>
+<path d='M 64,160 L 64,176' fill='none' stroke='currentColor'></path>
+<path d='M 64,176 L 64,192' fill='none' stroke='currentColor'></path>
+<path d='M 64,192 L 64,208' fill='none' stroke='currentColor'></path>
+<path d='M 64,208 L 64,224' fill='none' stroke='currentColor'></path>
+<path d='M 104,120 L 104,136' fill='none' stroke='currentColor'></path>
+<path d='M 120,240 L 120,304' fill='none' stroke='currentColor'></path>
+<path d='M 136,120 L 136,136' fill='none' stroke='currentColor'></path>
+<path d='M 152,64 L 152,96' fill='none' stroke='currentColor'></path>
+<path d='M 160,32 L 160,48' fill='none' stroke='currentColor'></path>
+<path d='M 160,112 L 160,128' fill='none' stroke='currentColor'></path>
+<path d='M 168,64 L 168,96' fill='none' stroke='currentColor'></path>
+<path d='M 200,96 L 200,128' fill='none' stroke='currentColor'></path>
+<path d='M 200,128 L 200,160' fill='none' stroke='currentColor'></path>
+<path d='M 216,0 L 216,32' fill='none' stroke='currentColor'></path>
+<path d='M 216,32 L 216,96' fill='none' stroke='currentColor'></path>
+<path d='M 216,160 L 216,192' fill='none' stroke='currentColor'></path>
+<path d='M 216,224 L 216,240' fill='none' stroke='currentColor'></path>
+<path d='M 256,192 L 256,224' fill='none' stroke='currentColor'></path>
+<path d='M 264,160 L 264,176' fill='none' stroke='currentColor'></path>
+<path d='M 264,240 L 264,256' fill='none' stroke='currentColor'></path>
+<path d='M 272,192 L 272,224' fill='none' stroke='currentColor'></path>
+<path d='M 200,128 L 216,96' fill='none' stroke='currentColor'></path>
+<path d='M 152,240 L 168,208' fill='none' stroke='currentColor'></path>
+<path d='M 200,128 L 216,160' fill='none' stroke='currentColor'></path>
+<path d='M 104,120 L 104,128' fill='none' stroke='currentColor'></path>
+<path d='M 136,120 L 136,128' fill='none' stroke='currentColor'></path>
+<path d='M 160,48 L 160,56' fill='none' stroke='currentColor'></path>
+<path d='M 160,104 L 160,112' fill='none' stroke='currentColor'></path>
+<path d='M 216,216 L 216,224' fill='none' stroke='currentColor'></path>
+<path d='M 264,176 L 264,184' fill='none' stroke='currentColor'></path>
+<path d='M 264,232 L 264,240' fill='none' stroke='currentColor'></path>
+<path d='M 264,256 L 264,264' fill='none' stroke='currentColor'></path>
+<polygon points='224.000000,0.000000 212.000000,-5.600000 212.000000,5.600000' fill='currentColor' transform='rotate(270.000000, 216.000000, 0.000000)'></polygon>
+<path d='M 216,192 L 216,200' fill='none' stroke='currentColor'></path>
+<polygon points='232.000000,192.000000 220.000000,186.399994 220.000000,197.600006' fill='currentColor' transform='rotate(90.000000, 216.000000, 192.000000)'></polygon>
+<path d='M 16,96 A 16,16 0 0,0 32,112' fill='none' stroke='currentColor'></path>
+<path d='M 48,96 A 16,16 0 0,1 32,112' fill='none' stroke='currentColor'></path>
+<circle cx='120' cy='304' r='6' stroke='currentColor' fill='#fff'></circle>
+<circle cx='176' cy='240' r='6' stroke='currentColor' fill='currentColor'></circle>
+<text text-anchor='middle' x='8' y='244' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='16' y='244' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='24' y='244' fill='currentColor' style='font-size:1em'>h</text>
+<text text-anchor='middle' x='32' y='244' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='40' y='132' fill='currentColor' style='font-size:1em'>Q</text>
+<text text-anchor='middle' x='40' y='244' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='48' y='132' fill='currentColor' style='font-size:1em'>x</text>
+<text text-anchor='middle' x='48' y='244' fill='currentColor' style='font-size:1em'>9</text>
+<text text-anchor='middle' x='56' y='244' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='64' y='244' fill='currentColor' style='font-size:1em'>d</text>
+<text text-anchor='middle' x='88' y='116' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='96' y='116' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='112' y='84' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='120' y='84' fill='currentColor' style='font-size:1em'>.</text>
+<text text-anchor='middle' x='128' y='84' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='136' y='84' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='136' y='292' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='144' y='292' fill='currentColor' style='font-size:1em'>U</text>
+<text text-anchor='middle' x='152' y='292' fill='currentColor' style='font-size:1em'>T</text>
+<text text-anchor='middle' x='232' y='4' fill='currentColor' style='font-size:1em'>5</text>
+<text text-anchor='middle' x='240' y='4' fill='currentColor' style='font-size:1em'>v</text>
+<text text-anchor='middle' x='280' y='212' fill='currentColor' style='font-size:1em'>4</text>
+<text text-anchor='middle' x='280' y='260' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='288' y='212' fill='currentColor' style='font-size:1em'>7</text>
+<text text-anchor='middle' x='288' y='260' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='296' y='212' fill='currentColor' style='font-size:1em'>k</text>
+<text text-anchor='middle' x='296' y='260' fill='currentColor' style='font-size:1em'>D</text>
+</g>
+
+    </svg>
+  
+</div>
+</td>
+<td style="width:50%; padding: 1px;"></td></tr>
+</table>
+<p>The sequence for reading a button is therefor:</p>
+<ul>
+<li>Toggle the buttons enable bit on the shift register</li>
+<li>Read the state of the OUT pin</li>
+<li>Repeat for each button</li>
+</ul>
+<p>I was able to prove this by having a Raspberry Pi dawn it&rsquo;s freon cap and pretend to be the fridge. I was able to control the lights:</p>
+<p><img  src="pi_light_control.gif"
+        alt/></p>
+<p>And detect button state:</p>
+<p><img  src="pi_button_detect.gif"
+        alt/></p>
+<h2 id="creating-a-modchip">Creating a modchip</h2>
+<p>Based on the findings from the control panel, there were a few methods of potentially disabling the alarm:</p>
+<ul>
+<li>Automatically press alarm off when the alarm sounds</li>
+<li>Hijack the magnetic sensor to tell the fridge it is closed</li>
+</ul>
+<p>Controlling the alarm off button was a bit of a dead end for a few reasons.</p>
+<ul>
+<li>The alarm off button did not work until the alarm was actually sounding.</li>
+<li>The button makes its own sound when pressed, meaning if we pressed it on a timer we would be replacing one noise for another.</li>
+<li>The control panel had no feedback for when the alarm sounded, meaning we couldn&rsquo;t detect and press either.</li>
+</ul>
+<p>Hijacking the magnetic sensor had more potential but one of the caveats of this method was that the internal fridge light is disabled when the fridge is in it&rsquo;s &lsquo;door closed&rsquo; state.</p>
+<p>To work around this I decided to wait as long as was possible (~59 seconds) and then tell the fridge that the door just closed for around ~100ms.</p>
+<p>I was originally going to opt for a microcontroller as the basis for my modchip but what we have just described is essentially a timing circuit. So the desired functionality is actually achievable with just a simple 555 timer.</p>
+<h3 id="555-timer">555 timer</h3>
+<p>A 555 timer in an astable mode is exactly what we require. Astable means that the 555 oscillates between its on and off state on repeat. We can control the time spent in the on and off state with a couple of resistors ($$r_1$$ &amp; $$r_2$$) and a capacitor ($$c$$).</p>
+<table style="width:100%; margin-left: auto; margin-right: auto">
+<tr><td style="width:50%; padding: 1px;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 288 393"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 32,48 L 128,48' fill='none' stroke='currentColor'></path>
+<path d='M 128,48 L 176,48' fill='none' stroke='currentColor'></path>
+<path d='M 24,80 L 40,80' fill='none' stroke='currentColor'></path>
+<path d='M 24,112 L 40,112' fill='none' stroke='currentColor'></path>
+<path d='M 96,112 L 128,112' fill='none' stroke='currentColor'></path>
+<path d='M 128,112 L 176,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,112 L 208,112' fill='none' stroke='currentColor'></path>
+<path d='M 32,144 L 96,144' fill='none' stroke='currentColor'></path>
+<path d='M 208,144 L 264,144' fill='none' stroke='currentColor'></path>
+<path d='M 24,176 L 40,176' fill='none' stroke='currentColor'></path>
+<path d='M 24,208 L 40,208' fill='none' stroke='currentColor'></path>
+<path d='M 208,208 L 256,208' fill='none' stroke='currentColor'></path>
+<path d='M 32,240 L 72,240' fill='none' stroke='currentColor'></path>
+<path d='M 72,240 L 96,240' fill='none' stroke='currentColor'></path>
+<path d='M 248,240 L 264,240' fill='none' stroke='currentColor'></path>
+<path d='M 96,256 L 120,256' fill='none' stroke='currentColor'></path>
+<path d='M 120,256 L 176,256' fill='none' stroke='currentColor'></path>
+<path d='M 176,256 L 208,256' fill='none' stroke='currentColor'></path>
+<path d='M 248,256 L 264,256' fill='none' stroke='currentColor'></path>
+<path d='M 24,272 L 40,272' fill='none' stroke='currentColor'></path>
+<path d='M 24,288 L 40,288' fill='none' stroke='currentColor'></path>
+<path d='M 72,288 L 120,288' fill='none' stroke='currentColor'></path>
+<path d='M 32,320 L 176,320' fill='none' stroke='currentColor'></path>
+<path d='M 176,320 L 256,320' fill='none' stroke='currentColor'></path>
+<path d='M 160,352 L 192,352' fill='none' stroke='currentColor'></path>
+<path d='M 168,368 L 184,368' fill='none' stroke='currentColor'></path>
+<path d='M 24,80 L 24,112' fill='none' stroke='currentColor'></path>
+<path d='M 24,176 L 24,208' fill='none' stroke='currentColor'></path>
+<path d='M 32,48 L 32,64' fill='none' stroke='currentColor'></path>
+<path d='M 32,128 L 32,144' fill='none' stroke='currentColor'></path>
+<path d='M 32,144 L 32,160' fill='none' stroke='currentColor'></path>
+<path d='M 32,224 L 32,240' fill='none' stroke='currentColor'></path>
+<path d='M 32,240 L 32,256' fill='none' stroke='currentColor'></path>
+<path d='M 32,304 L 32,320' fill='none' stroke='currentColor'></path>
+<path d='M 40,80 L 40,112' fill='none' stroke='currentColor'></path>
+<path d='M 40,176 L 40,208' fill='none' stroke='currentColor'></path>
+<path d='M 72,240 L 72,288' fill='none' stroke='currentColor'></path>
+<path d='M 96,112 L 96,144' fill='none' stroke='currentColor'></path>
+<path d='M 96,144 L 96,240' fill='none' stroke='currentColor'></path>
+<path d='M 96,240 L 96,256' fill='none' stroke='currentColor'></path>
+<path d='M 120,256 L 120,288' fill='none' stroke='currentColor'></path>
+<path d='M 128,48 L 128,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,16 L 176,48' fill='none' stroke='currentColor'></path>
+<path d='M 176,48 L 176,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,256 L 176,320' fill='none' stroke='currentColor'></path>
+<path d='M 176,320 L 176,336' fill='none' stroke='currentColor'></path>
+<path d='M 208,112 L 208,144' fill='none' stroke='currentColor'></path>
+<path d='M 208,144 L 208,208' fill='none' stroke='currentColor'></path>
+<path d='M 208,208 L 208,256' fill='none' stroke='currentColor'></path>
+<path d='M 256,208 L 256,224' fill='none' stroke='currentColor'></path>
+<path d='M 256,272 L 256,320' fill='none' stroke='currentColor'></path>
+<path d='M 32,64 L 32,72' fill='none' stroke='currentColor'></path>
+<path d='M 32,120 L 32,128' fill='none' stroke='currentColor'></path>
+<path d='M 32,160 L 32,168' fill='none' stroke='currentColor'></path>
+<path d='M 32,216 L 32,224' fill='none' stroke='currentColor'></path>
+<path d='M 32,256 L 32,264' fill='none' stroke='currentColor'></path>
+<path d='M 32,296 L 32,304' fill='none' stroke='currentColor'></path>
+<path d='M 176,336 L 176,344' fill='none' stroke='currentColor'></path>
+<path d='M 256,224 L 256,232' fill='none' stroke='currentColor'></path>
+<path d='M 256,264 L 256,272' fill='none' stroke='currentColor'></path>
+<polygon points='184.000000,16.000000 172.000000,10.400000 172.000000,21.600000' fill='currentColor' transform='rotate(270.000000, 176.000000, 16.000000)'></polygon>
+<circle cx='264' cy='144' r='6' stroke='currentColor' fill='#fff'></circle>
+<text text-anchor='middle' x='48' y='260' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='56' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='56' y='196' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='64' y='100' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='64' y='196' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='192' y='20' fill='currentColor' style='font-size:1em'>V</text>
+<text text-anchor='middle' x='200' y='20' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='200' y='372' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='208' y='20' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='208' y='372' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='216' y='372' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='256' y='132' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='264' y='132' fill='currentColor' style='font-size:1em'>U</text>
+<text text-anchor='middle' x='272' y='132' fill='currentColor' style='font-size:1em'>T</text>
+</g>
+
+    </svg>
+  
+</div>
+</td>
+<td style="width:50%; padding: 1px;"></td></tr>
+</table>
+<p>To calculate the off time ($$t_0$$) we can use:</p>
+<p>$$t_0 = 0.694 \cdot r_2 \cdot c$$</p>
+<p>And the on time ($$t_1$$):</p>
+<p>$$t_1 = 0.694 \cdot (r_1 + r_2) \cdot c$$</p>
+<p>We ideally want:</p>
+<p>$$t_0 = 59000\ ms$$,
+$$t_1 = 100\ ms$$</p>
+<p>But the above math highlights an issue with this, by default the above arrangement only allows a selection of duty cycles between 50% - 100%. Even making $$r_1$$ as small as possible ($$220\ \Omega$$) will result in around a 50% duty cycle:</p>
+<p align="center">
+    <img src="555_no_diode.gif" width="26%"/>
+    <img src="oscilloscope_no_diode.png" width="69%"/>
+</p>
+<p>The solution is to add a diode across $$r_2$$ which actually allows us to reach duty cycles between 0% and 50%:</p>
+<table style="width:100%; margin-left: auto; margin-right: auto">
+<tr><td style="width:50%; padding: 1px;">
+
+
+
+<div class="goat svg-container ">
+  
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      font-family="Menlo,Lucida Console,monospace"
+      
+        viewBox="0 0 336 393"
+      >
+      <g transform='translate(8,16)'>
+<path d='M 80,48 L 176,48' fill='none' stroke='currentColor'></path>
+<path d='M 176,48 L 224,48' fill='none' stroke='currentColor'></path>
+<path d='M 72,80 L 88,80' fill='none' stroke='currentColor'></path>
+<path d='M 72,112 L 88,112' fill='none' stroke='currentColor'></path>
+<path d='M 144,112 L 176,112' fill='none' stroke='currentColor'></path>
+<path d='M 176,112 L 224,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,112 L 256,112' fill='none' stroke='currentColor'></path>
+<path d='M 32,144 L 80,144' fill='none' stroke='currentColor'></path>
+<path d='M 80,144 L 144,144' fill='none' stroke='currentColor'></path>
+<path d='M 256,144 L 312,144' fill='none' stroke='currentColor'></path>
+<path d='M 72,176 L 88,176' fill='none' stroke='currentColor'></path>
+<path d='M 24,192 L 40,192' fill='none' stroke='currentColor'></path>
+<path d='M 72,208 L 88,208' fill='none' stroke='currentColor'></path>
+<path d='M 256,208 L 304,208' fill='none' stroke='currentColor'></path>
+<path d='M 32,240 L 80,240' fill='none' stroke='currentColor'></path>
+<path d='M 80,240 L 120,240' fill='none' stroke='currentColor'></path>
+<path d='M 120,240 L 144,240' fill='none' stroke='currentColor'></path>
+<path d='M 296,240 L 312,240' fill='none' stroke='currentColor'></path>
+<path d='M 144,256 L 168,256' fill='none' stroke='currentColor'></path>
+<path d='M 168,256 L 224,256' fill='none' stroke='currentColor'></path>
+<path d='M 224,256 L 256,256' fill='none' stroke='currentColor'></path>
+<path d='M 296,256 L 312,256' fill='none' stroke='currentColor'></path>
+<path d='M 72,272 L 88,272' fill='none' stroke='currentColor'></path>
+<path d='M 72,288 L 88,288' fill='none' stroke='currentColor'></path>
+<path d='M 120,288 L 168,288' fill='none' stroke='currentColor'></path>
+<path d='M 80,320 L 224,320' fill='none' stroke='currentColor'></path>
+<path d='M 224,320 L 304,320' fill='none' stroke='currentColor'></path>
+<path d='M 208,352 L 240,352' fill='none' stroke='currentColor'></path>
+<path d='M 216,368 L 232,368' fill='none' stroke='currentColor'></path>
+<path d='M 32,144 L 32,176' fill='none' stroke='currentColor'></path>
+<path d='M 32,208 L 32,240' fill='none' stroke='currentColor'></path>
+<path d='M 72,80 L 72,112' fill='none' stroke='currentColor'></path>
+<path d='M 72,176 L 72,208' fill='none' stroke='currentColor'></path>
+<path d='M 80,48 L 80,64' fill='none' stroke='currentColor'></path>
+<path d='M 80,128 L 80,144' fill='none' stroke='currentColor'></path>
+<path d='M 80,144 L 80,160' fill='none' stroke='currentColor'></path>
+<path d='M 80,224 L 80,240' fill='none' stroke='currentColor'></path>
+<path d='M 80,240 L 80,256' fill='none' stroke='currentColor'></path>
+<path d='M 80,304 L 80,320' fill='none' stroke='currentColor'></path>
+<path d='M 88,80 L 88,112' fill='none' stroke='currentColor'></path>
+<path d='M 88,176 L 88,208' fill='none' stroke='currentColor'></path>
+<path d='M 120,240 L 120,288' fill='none' stroke='currentColor'></path>
+<path d='M 144,112 L 144,144' fill='none' stroke='currentColor'></path>
+<path d='M 144,144 L 144,240' fill='none' stroke='currentColor'></path>
+<path d='M 144,240 L 144,256' fill='none' stroke='currentColor'></path>
+<path d='M 168,256 L 168,288' fill='none' stroke='currentColor'></path>
+<path d='M 176,48 L 176,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,16 L 224,48' fill='none' stroke='currentColor'></path>
+<path d='M 224,48 L 224,112' fill='none' stroke='currentColor'></path>
+<path d='M 224,256 L 224,320' fill='none' stroke='currentColor'></path>
+<path d='M 224,320 L 224,336' fill='none' stroke='currentColor'></path>
+<path d='M 256,112 L 256,144' fill='none' stroke='currentColor'></path>
+<path d='M 256,144 L 256,208' fill='none' stroke='currentColor'></path>
+<path d='M 256,208 L 256,256' fill='none' stroke='currentColor'></path>
+<path d='M 304,208 L 304,224' fill='none' stroke='currentColor'></path>
+<path d='M 304,272 L 304,320' fill='none' stroke='currentColor'></path>
+<path d='M 32,200 L 32,208' fill='none' stroke='currentColor'></path>
+<path d='M 80,64 L 80,72' fill='none' stroke='currentColor'></path>
+<path d='M 80,120 L 80,128' fill='none' stroke='currentColor'></path>
+<path d='M 80,160 L 80,168' fill='none' stroke='currentColor'></path>
+<path d='M 80,216 L 80,224' fill='none' stroke='currentColor'></path>
+<path d='M 80,256 L 80,264' fill='none' stroke='currentColor'></path>
+<path d='M 80,296 L 80,304' fill='none' stroke='currentColor'></path>
+<path d='M 224,336 L 224,344' fill='none' stroke='currentColor'></path>
+<path d='M 304,224 L 304,232' fill='none' stroke='currentColor'></path>
+<path d='M 304,264 L 304,272' fill='none' stroke='currentColor'></path>
+<path d='M 32,176 L 32,184' fill='none' stroke='currentColor'></path>
+<polygon points='48.000000,176.000000 36.000000,170.399994 36.000000,181.600006' fill='currentColor' transform='rotate(90.000000, 32.000000, 176.000000)'></polygon>
+<polygon points='232.000000,16.000000 220.000000,10.400000 220.000000,21.600000' fill='currentColor' transform='rotate(270.000000, 224.000000, 16.000000)'></polygon>
+<circle cx='312' cy='144' r='6' stroke='currentColor' fill='#fff'></circle>
+<text text-anchor='middle' x='96' y='260' fill='currentColor' style='font-size:1em'>c</text>
+<text text-anchor='middle' x='104' y='100' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='104' y='196' fill='currentColor' style='font-size:1em'>r</text>
+<text text-anchor='middle' x='112' y='100' fill='currentColor' style='font-size:1em'>1</text>
+<text text-anchor='middle' x='112' y='196' fill='currentColor' style='font-size:1em'>2</text>
+<text text-anchor='middle' x='240' y='20' fill='currentColor' style='font-size:1em'>V</text>
+<text text-anchor='middle' x='248' y='20' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='248' y='372' fill='currentColor' style='font-size:1em'>G</text>
+<text text-anchor='middle' x='256' y='20' fill='currentColor' style='font-size:1em'>C</text>
+<text text-anchor='middle' x='256' y='372' fill='currentColor' style='font-size:1em'>N</text>
+<text text-anchor='middle' x='264' y='372' fill='currentColor' style='font-size:1em'>D</text>
+<text text-anchor='middle' x='304' y='132' fill='currentColor' style='font-size:1em'>O</text>
+<text text-anchor='middle' x='312' y='132' fill='currentColor' style='font-size:1em'>U</text>
+<text text-anchor='middle' x='320' y='132' fill='currentColor' style='font-size:1em'>T</text>
+</g>
+
+    </svg>
+  
+</div>
+</td>
+<td style="width:50%; padding: 1px;"></td></tr>
+</table>
+<p align="center">
+    <img src="555_diode.gif" width="26%"/>
+    <img src="oscilloscope_diode.png" width="69%"/>
+</p>
+<p>Adding the diode changes the formula for calculating $$t_0$$ and $$t_1$$:</p>
+<p>$$t_0 = 0.694 \cdot r_2 \cdot c$$,
+$$t_1 = 0.694 \cdot r_1 \cdot c$$</p>
+<p>Notice that $$t_1$$ is no longer dependant on the value of $$r_2$$.</p>
+<p>The values for the resistors and capacitor I settled on were:</p>
+<p>$$r_1 = 220\ \Omega$$,
+$$r_2 = 300\ k\Omega$$,
+$$c = 220\ \mu F$$</p>
+<p>Plugging these values into the formula we get:</p>
+<p>$$t_0 = 0.694 \cdot 300000 \cdot 220 \cdot 10^{-6} = 45804\ ms$$</p>
+<p>$$t_1 = 0.694 \cdot 220 \cdot 220 \cdot 10^{-6} = 48\ ms$$</p>
+<p>This is pretty close to the what we were looking for, So I built a &lsquo;modchip&rsquo; using those same values of $$r_1$$, $$r_2$$ and $$c$$:</p>
+<p align="center">
+    <img src="modchip_hand.JPG" width="42%"/>
+    <img src="test_bench.JPG" width="56%"/>
+</p>
+<p>I then wrote a small script called <code>time-delta.py</code> to capture the real off time in a test circuit overnight. This actually got even closer to our desired time of around 59 seconds:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">&gt; python3 time-delta.py
+</span></span><span class="line"><span class="cl"><span class="nv">avg</span><span class="o">=</span>56.970      <span class="nv">min</span><span class="o">=</span>55.283      <span class="nv">max</span><span class="o">=</span>58.160
+</span></span></code></pre></div><p>Perfect! The only thing left to do now was wrap it in copious amounts of kapton tape and reinstall in the fridge:</p>
+<p align="center">
+    <img src="modchip_wired.JPG" width="49%"/>
+    <img src="modchip_wrapped.JPG" width="49%"/>
+</p>
+<p>Finally, here is a capture of the modchip breifly driving the magnetic sensor high when installed in the fridge:</p>
+<p><img  src="fridge_flash.gif"
+        alt/></p>
+<p>Great success. We learned how to converse with the fridge and told it to shut its gob.</p>
+</article>
+</div>
+<div class="article bottom"><section class="article navigation"><p><a class="link" href="/blog/posts/json/"><span class="iconfont icon-article"></span>Using JSON without understanding it</a></p></section><section class="article discussion"><script 
+            src="https://utteranc.es/client.js" 
+            repo="kennedn/blog-comments"
+            issue-term="pathname"
+            label=""
+            theme="photon-dark"
+            crossorigin="anonymous" async>
+        </script></section></div></section><section id="footer"><div class="footer-wrap">
+    <p class="copyright">© Joshua Kennedy 2024</p>
+    <p class="powerby">
+      Site code is open source 🔓︎ and can be found 
+      <a target="_blank" href="https://github.com/kennedn/kennedn.github.io">here</a></div>
+</section><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/&#43;DiW/UqRcLbRjq" crossorigin="anonymous"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l&#43;B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd&#43;qj&#43;o24G5ZU2zJz" crossorigin="anonymous"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);"></script>
+  
+
+</body>
+
+</html>
