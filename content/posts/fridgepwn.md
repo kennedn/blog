@@ -289,3 +289,7 @@ Finally, here is a capture of the modchip breifly driving the magnetic sensor hi
 ![](fridge_flash.gif)
 
 Great success. We learned how to converse with the fridge and told it to shut its gob.
+
+## Additional resources
+
+[Python Scripts](https://github.com/kennedn/fridgepwn)
