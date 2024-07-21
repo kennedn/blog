@@ -74,7 +74,7 @@ The connector is actually a serial interface which permits control of two 8 bit 
 </tr>
 </table>
 
-This setup allows the fridge control up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state. 
+This setup allows the fridge control of up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state. 
 
 Each button is directly wired up to the `OUT` pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on `OUT` unless its bit on the shift register is currently enabled:
 
@@ -113,7 +113,7 @@ The sequence for reading a button is therefor:
 - Read the state of the OUT pin
 - Repeat for each button
 
-I was able to prove this by having a Raspberry Pi dawn it's freon cap and pretend to be the fridge. I was able to control the lights:
+I was able to prove this by having a Raspberry Pi don its freon cap and pretend to be the fridge. I was able to control the lights:
 
 ![](pi_light_control.gif)
 
