@@ -11,14 +11,14 @@ I own a fridge that has a really cool 'feature'. It beeps if the door is open fo
 
 In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:
 
-<p>
-<img src=fridge_wires_close.JPG width=60%/>
+<p align="center">
+<img src=fridge_wires_close.JPG width=70%/>
 </p>
 
 Something I did have access to however was a daughter board that acts as the control panel for the fridge.
 
-<p>
-<img src=panel_on.JPG width=60%/>
+<p align="center">
+<img src=panel_on.JPG width=70%/>
 </p>
 
 ## Pwning the panel
@@ -30,8 +30,8 @@ To try and understand the attack surface and see if it was possible to somehow d
 
 Both of these features are acheived via 6 pin connector on the daughter board:
 
-<p>
-<img src=fridge_panel_connector.JPG width=60%/>
+<p align="center">
+<img src=fridge_panel_connector.JPG width=70%/>
 </p>
 
 The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:
@@ -79,7 +79,7 @@ This setup allows the fridge control of up to 16 bits on the daughter board, som
 Each button is directly wired up to the `OUT` pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on `OUT` unless its bit on the shift register is currently enabled:
 
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 ```goat
                            ^ 5v
@@ -104,7 +104,7 @@ Each button is directly wired up to the `OUT` pin. This was initially confusing 
                o
  ```
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 
 The sequence for reading a button is therefor:
@@ -146,7 +146,7 @@ A 555 timer in an astable mode is exactly what we require. Astable means that th
 
 
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 ```goat 
 
@@ -177,7 +177,7 @@ A 555 timer in an astable mode is exactly what we require. Astable means that th
 
 
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 
 To calculate the off time ($$t_0$$) we can use:
@@ -204,7 +204,7 @@ The solution is to add a diode across $$r_2$$ which actually allows us to reach 
 
 
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 ```goat 
 
@@ -234,7 +234,7 @@ The solution is to add a diode across $$r_2$$ which actually allows us to reach 
 ```
 
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 
 <p>

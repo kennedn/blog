@@ -19,12 +19,12 @@
       <guid>https://kennedn.com/blog/posts/fridgepwn/</guid>
       <description>&lt;p&gt;I own a fridge that has a really cool &amp;lsquo;feature&amp;rsquo;. It beeps if the door is open for more than 60 seconds. 95% of the time this is more annoying than it is helpful. In my opinion it should just shut up and trust that I know best.&lt;/p&gt;
 &lt;p&gt;In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:&lt;/p&gt;
-&lt;p&gt;
-&lt;img src=fridge_wires_close.JPG width=60%/&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;img src=fridge_wires_close.JPG width=70%/&gt;
 &lt;/p&gt;
 &lt;p&gt;Something I did have access to however was a daughter board that acts as the control panel for the fridge.&lt;/p&gt;
-&lt;p&gt;
-&lt;img src=panel_on.JPG width=60%/&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;img src=panel_on.JPG width=70%/&gt;
 &lt;/p&gt;
 &lt;h2 id=&#34;pwning-the-panel&#34;&gt;Pwning the panel&lt;/h2&gt;
 &lt;p&gt;To try and understand the attack surface and see if it was possible to somehow disable the alarm I reverse engineered the functionality of the control panel. It essentially has 2 features:&lt;/p&gt;
@@ -33,8 +33,8 @@
 &lt;li&gt;Light control&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Both of these features are acheived via 6 pin connector on the daughter board:&lt;/p&gt;
-&lt;p&gt;
-&lt;img src=fridge_panel_connector.JPG width=60%/&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;img src=fridge_panel_connector.JPG width=70%/&gt;
 &lt;/p&gt;
 &lt;p&gt;The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:&lt;/p&gt;
 &lt;table style=&#34;width:100%; margin-left: auto; margin-right: auto&#34;&gt;
@@ -146,7 +146,7 @@
 &lt;p&gt;This setup allows the fridge control of up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state.&lt;/p&gt;
 &lt;p&gt;Each button is directly wired up to the &lt;code&gt;OUT&lt;/code&gt; pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on &lt;code&gt;OUT&lt;/code&gt; unless its bit on the shift register is currently enabled:&lt;/p&gt;
 &lt;table style=&#34;width:100%; margin-left: auto; margin-right: auto&#34;&gt;
-&lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:60%; padding: 1px;&#34;&gt;
 
 
 
@@ -262,7 +262,7 @@
   
 &lt;/div&gt;
 &lt;/td&gt;
-&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;td style=&#34;width:40%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;The sequence for reading a button is therefor:&lt;/p&gt;
 &lt;ul&gt;
@@ -294,7 +294,7 @@
 &lt;h3 id=&#34;555-timer&#34;&gt;555 timer&lt;/h3&gt;
 &lt;p&gt;A 555 timer in an astable mode is exactly what we require. Astable means that the 555 oscillates between its on and off state on repeat. We can control the time spent in the on and off state with a couple of resistors ($$r_1$$ &amp;amp; $$r_2$$) and a capacitor ($$c$$).&lt;/p&gt;
 &lt;table style=&#34;width:100%; margin-left: auto; margin-right: auto&#34;&gt;
-&lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:60%; padding: 1px;&#34;&gt;
 
 
 
@@ -397,7 +397,7 @@
   
 &lt;/div&gt;
 &lt;/td&gt;
-&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;td style=&#34;width:40%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;To calculate the off time ($$t_0$$) we can use:&lt;/p&gt;
 &lt;p&gt;$$t_0 = 0.694 \cdot r_2 \cdot c$$&lt;/p&gt;
@@ -413,7 +413,7 @@ $$t_1 = 100\ ms$$&lt;/p&gt;
 &lt;/p&gt;
 &lt;p&gt;The solution is to add a diode across $$r_2$$ which actually allows us to reach duty cycles between 0% and 50%:&lt;/p&gt;
 &lt;table style=&#34;width:100%; margin-left: auto; margin-right: auto&#34;&gt;
-&lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
+&lt;tr&gt;&lt;td style=&#34;width:60%; padding: 1px;&#34;&gt;
 
 
 
@@ -524,7 +524,7 @@ $$t_1 = 100\ ms$$&lt;/p&gt;
   
 &lt;/div&gt;
 &lt;/td&gt;
-&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;td style=&#34;width:40%; padding: 1px;&#34;&gt;&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;
 &lt;p&gt;
     &lt;img src=&#34;555_diode.gif&#34; width=&#34;26%&#34;/&gt;

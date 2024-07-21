@@ -10,12 +10,12 @@
 <section id="content"><div class="article-container"><section class="article header">
     <h1 class="article title">Modchipping a fridge</h1><p class="article date">Saturday, July 20, 2024</p></section><article class="article markdown-body"><p>I own a fridge that has a really cool &lsquo;feature&rsquo;. It beeps if the door is open for more than 60 seconds. 95% of the time this is more annoying than it is helpful. In my opinion it should just shut up and trust that I know best.</p>
 <p>In pursuit of this behavioural change I first tried to get at the piezo speaker so that I could rip it out. This turned out to be rather fruitless as the main board is deeply embedded within the fridge. I am not really willing to rip it out of the wall to get at the main circuit board, although I did try to tunnel my way in behind the control panel without much success:</p>
-<p>
-<img src=fridge_wires_close.JPG width=60%/>
+<p align="center">
+<img src=fridge_wires_close.JPG width=70%/>
 </p>
 <p>Something I did have access to however was a daughter board that acts as the control panel for the fridge.</p>
-<p>
-<img src=panel_on.JPG width=60%/>
+<p align="center">
+<img src=panel_on.JPG width=70%/>
 </p>
 <h2 id="pwning-the-panel">Pwning the panel</h2>
 <p>To try and understand the attack surface and see if it was possible to somehow disable the alarm I reverse engineered the functionality of the control panel. It essentially has 2 features:</p>
@@ -24,8 +24,8 @@
 <li>Light control</li>
 </ul>
 <p>Both of these features are acheived via 6 pin connector on the daughter board:</p>
-<p>
-<img src=fridge_panel_connector.JPG width=60%/>
+<p align="center">
+<img src=fridge_panel_connector.JPG width=70%/>
 </p>
 <p>The connector is actually a serial interface which permits control of two 8 bit shift registers (74HC595) on the daughter board:</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
@@ -137,7 +137,7 @@
 <p>This setup allows the fridge control of up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state.</p>
 <p>Each button is directly wired up to the <code>OUT</code> pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on <code>OUT</code> unless its bit on the shift register is currently enabled:</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 
 
@@ -253,7 +253,7 @@
   
 </div>
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 <p>The sequence for reading a button is therefor:</p>
 <ul>
@@ -285,7 +285,7 @@
 <h3 id="555-timer">555 timer</h3>
 <p>A 555 timer in an astable mode is exactly what we require. Astable means that the 555 oscillates between its on and off state on repeat. We can control the time spent in the on and off state with a couple of resistors ($$r_1$$ &amp; $$r_2$$) and a capacitor ($$c$$).</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 
 
@@ -388,7 +388,7 @@
   
 </div>
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 <p>To calculate the off time ($$t_0$$) we can use:</p>
 <p>$$t_0 = 0.694 \cdot r_2 \cdot c$$</p>
@@ -404,7 +404,7 @@ $$t_1 = 100\ ms$$</p>
 </p>
 <p>The solution is to add a diode across $$r_2$$ which actually allows us to reach duty cycles between 0% and 50%:</p>
 <table style="width:100%; margin-left: auto; margin-right: auto">
-<tr><td style="width:50%; padding: 1px;">
+<tr><td style="width:60%; padding: 1px;">
 
 
 
@@ -515,7 +515,7 @@ $$t_1 = 100\ ms$$</p>
   
 </div>
 </td>
-<td style="width:50%; padding: 1px;"></td></tr>
+<td style="width:40%; padding: 1px;"></td></tr>
 </table>
 <p>
     <img src="555_diode.gif" width="26%"/>
