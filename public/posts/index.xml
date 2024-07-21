@@ -143,7 +143,7 @@
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/table&gt;
-&lt;p&gt;This setup allows the fridge control up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state.&lt;/p&gt;
+&lt;p&gt;This setup allows the fridge control of up to 16 bits on the daughter board, some of these bits are allocated to a specific LED on the board. Some are used to read button state.&lt;/p&gt;
 &lt;p&gt;Each button is directly wired up to the &lt;code&gt;OUT&lt;/code&gt; pin. This was initially confusing to me as it would mean the fridge would have no way of determining which button was actually pressed at a given point in time. But that is where the shift registers come in, the button will not produce a signal on &lt;code&gt;OUT&lt;/code&gt; unless its bit on the shift register is currently enabled:&lt;/p&gt;
 &lt;table style=&#34;width:100%; margin-left: auto; margin-right: auto&#34;&gt;
 &lt;tr&gt;&lt;td style=&#34;width:50%; padding: 1px;&#34;&gt;
@@ -270,7 +270,7 @@
 &lt;li&gt;Read the state of the OUT pin&lt;/li&gt;
 &lt;li&gt;Repeat for each button&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I was able to prove this by having a Raspberry Pi dawn it&amp;rsquo;s freon cap and pretend to be the fridge. I was able to control the lights:&lt;/p&gt;
+&lt;p&gt;I was able to prove this by having a Raspberry Pi don its freon cap and pretend to be the fridge. I was able to control the lights:&lt;/p&gt;
 &lt;p&gt;&lt;img  src=&#34;pi_light_control.gif&#34;
         alt/&gt;&lt;/p&gt;
 &lt;p&gt;And detect button state:&lt;/p&gt;
