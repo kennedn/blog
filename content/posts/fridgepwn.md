@@ -82,7 +82,7 @@ Each button is directly wired up to the `OUT` pin. This was initially confusing 
 <tr><td style="width:60%; padding: 1px;">
 
 ```goat
-                           ^ 5v
+                           ^ VCC
                            |
                     .------+
                     |      |
