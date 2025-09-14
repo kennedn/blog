@@ -12,6 +12,184 @@
     
     
     <item>
+      <title>Wanted to spy on my dog, ended up spying on TP-Link</title>
+      <link>https://kennedn.com/blog/posts/tapo/</link>
+      <pubDate>Sat, 13 Sep 2025 17:21:20 +0100</pubDate>
+      
+      <guid>https://kennedn.com/blog/posts/tapo/</guid>
+      <description>&lt;p&gt;&lt;img  src=&#34;./cover.png&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;I recently bought a cheap Tapo indoor camera to see what my dog gets up to when I am out of the house.&lt;/p&gt;
+&lt;p&gt;What actually followed? I ended up reverse-engineering onboarding flows, decompiling an APK, MITMing TLS sessions, and writing cryptographic scripts.&lt;/p&gt;
+&lt;p&gt;My main motivation for this project really stemmed from the fact that the camera annoyed me from day one. Setting the camera up in frigate was quite painful, no one really seemed to know how these cameras worked online.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NOTE: If you want 2 way audio to work in frigate you must use the &lt;code&gt;tapo://&lt;/code&gt; device configuration for your main stream instead of the usual &lt;code&gt;rtsp://&lt;/code&gt;. TP-Link are lazy and only implement 2 way audio on their own proprietary API.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;One undocumented behavior that tripped me up was that the device&amp;rsquo;s API is supposed to accept credentials &lt;code&gt;admin&lt;/code&gt;:&lt;code&gt;&amp;lt;your-tapo-cloud-password&amp;gt;&lt;/code&gt; after onboarding. However after banging my head against a wall for a few hours I later discovered that if you change your cloud password after onboarding, paired devices don&amp;rsquo;t get the memo 🙂.&lt;/p&gt;
+&lt;p&gt;This implied a few things to me that started the cogs turning:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;There must be a call made during on-boarding that syncs the device password with the cloud password&lt;/li&gt;
+&lt;li&gt;The device must either allow unauthenticated calls before this step or have some sort of default password.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So considering my onboarding woes and the fact that I was starting to recoil every time the tapo app tried to jam a &amp;ldquo;Tapo Care&amp;rdquo; subscription down my throat, a cloudless onboarding solution for the device was beginning to look more and more desirable.&lt;/p&gt;
+&lt;p&gt;The first step to cracking this egg was to be be able to snoop on what the app and the camera are saying to each other during onboarding. E.g, establish a man in the middle.&lt;/p&gt;
+&lt;h2 id=&#34;man-in-the-middle&#34;&gt;Man in the middle&lt;/h2&gt;
+&lt;p&gt;To man in the middle a phone app, you must be able to proxy all http(s) traffic via proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy&amp;rsquo;s self-signed certificate to the phone&amp;rsquo;s truststore, and configure the phone to point at the proxy.&lt;/p&gt;
+&lt;p&gt;However, modern phone apps can use a few nasty tricks to render this approach ineffective. Namely they will blatantly ignore proxies, throw the system truststore to the wind and make liberal use of certificate pinning.&lt;/p&gt;
+&lt;p&gt;The most full-proof technique for generically MITMing an app has therefore become dynamic instrumentation via tools like &lt;code&gt;frida&lt;/code&gt;. What this allows us to do is force an app to use the proxies and certificates that we tell it to whilst batting aside it&amp;rsquo;s attempts to do things like certificate pinning.&lt;/p&gt;
+&lt;p&gt;So the setup ended up looking like this (full setup guide &lt;a href=&#34;https://github.com/kennedn/tapo-onboarding?tab=readme-ov-file#capturing-onboarding-calls-from-tapo-app&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;
+):&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;
+  ---
+config:
+  theme: &amp;#39;base&amp;#39;
+  themeVariables:
+    primaryColor: &amp;#39;#00000000&amp;#39;
+    primaryTextColor: &amp;#39;#fff&amp;#39;
+    primaryBorderColor: &amp;#39;#ffffff8e&amp;#39;
+    lineColor: &amp;#39;#fff&amp;#39;
+    secondaryColor: &amp;#39;#fff&amp;#39;
+    tertiaryColor: &amp;#39;#fff&amp;#39;
+---
+sequenceDiagram
+    participant A as Tapo App &amp;lt;br&amp;gt;(with frida hooks)
+    participant L as Laptop &amp;lt;br&amp;gt;(mitmproxy)
+    participant C as Tapo Camera
+
+    A-&amp;gt;&amp;gt;L: Request
+    L-&amp;gt;&amp;gt;L: Record request
+    L-&amp;gt;&amp;gt;C: Forward request
+    C--&amp;gt;&amp;gt;L: Response
+    L-&amp;gt;&amp;gt;L: Record response
+    L--&amp;gt;&amp;gt;A: Forward response
+&lt;/pre&gt;
+
+&lt;p&gt;After spinning up &lt;code&gt;mitmproxy&lt;/code&gt;, injecting the &lt;a href=&#34;https://github.com/httptoolkit/frida-interception-and-unpinning&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;frida scripts&lt;/a&gt;
+, and onboarding the camera, we finally see an initial login flow — before the admin password ever gets changed:&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
+  &lt;source src=&#34;./mitmproxy-initial-auth.webm&#34;&gt;
+&lt;/video&gt; 
+&lt;/p&gt;
+&lt;p&gt;However, subsequent requests look like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;method&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;securePassthrough&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;params&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;request&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;bAhdgihJ9j6PrrknnbXWATBohGTZK5llv3MEzRcmoAmcxexmlVNz3OUX2r0h9a9EG/3X0tBpPi654T2+BjqVEOn2D178kokBpf8RQj01AvBZLYD5S5sFeaCXWiRXA7MgQUppROV4AbrU4f+GOM37KgPqT59qgLVja2slw6CzrKjPzOrG4Ho6Mu6wBa1xepcj&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And responses look like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;seq&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;584&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;result&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;response&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Gqz1wbXAig/3wL+kXzY2Ig3hq+JSYasYI7FXdMNZR5PyH8bpLX+GJqQbImUtby9IEj5HQDhxqcTa+dUqQjI0GaGCxuGHqmrgQ0FeyCTQjBiW5gslAPQG33wj44OOkAep&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;error_code&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So from this initial dive we have learned that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Tapo 100% has a default password because it performs a full login before it knows anything about the cloud password.&lt;/li&gt;
+&lt;li&gt;Tapo has an encrypted &lt;code&gt;securePassthrough&lt;/code&gt; channel for its API calls to prevent peeping toms such as myself from spilling the beans.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-jadx-dive&#34;&gt;The JADX dive&lt;/h2&gt;
+&lt;p&gt;The next logical step is to decompile the apk in JADX and start rummaging around for a default password.&lt;/p&gt;
+&lt;p&gt;The initial login call that we captured references an &lt;code&gt;admin&lt;/code&gt; username:&lt;/p&gt;
+&lt;div id=&#34;loginrequest&#34;&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;method&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;login&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;params&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;cnonce&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;AD0E189F6E1BA335&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;encrypt_type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;username&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;admin&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Searching for &lt;code&gt;&amp;quot;admin&amp;quot;&lt;/code&gt; in JADX gives us many hits but there are a few concentrated in a &lt;code&gt;CameraOnboardingViewModel&lt;/code&gt; class that look interesting:&lt;/p&gt;
+&lt;p&gt;&lt;img  src=&#34;./jadx1.png&#34;
+        alt/&gt;&lt;/p&gt;
+&lt;p&gt;The function &lt;code&gt;m98131y2&lt;/code&gt; appears to be returning a password that is then passed to the &lt;code&gt;new Account()&lt;/code&gt; call. Following this function up the chain, we hit gold:&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
+  &lt;source src=&#34;./jadx-password.webm&#34;&gt;
+&lt;/video&gt; 
+&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;#loginrequest&#34;&gt;We already know&lt;/a&gt;
+ that the device is using &lt;code&gt;encrypt_type: 3&lt;/code&gt;, so that means our default password is:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TPL075526460603&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;teaching-mitmproxy-new-tricks&#34;&gt;Teaching mitmproxy new tricks&lt;/h2&gt;
+&lt;p&gt;With the default password now revealed, we have the cards in our hand to derive session keys and decode the &lt;code&gt;securePassthrough&lt;/code&gt; messages.&lt;/p&gt;
+&lt;p&gt;The only thing that would help us further is if we had a reference implementation for the authentication flow. This is where &lt;a href=&#34;https://github.com/JurajNyiri/pytapo&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PyTapo&lt;/a&gt;
+ really came in handy.&lt;/p&gt;
+&lt;p&gt;We could dump the session state and encrypted messages from mitmproxy and do some static analysis to get the decrypted requests and responses, but a really cool feature of &lt;code&gt;mitmproxy&lt;/code&gt; is that it supports scripting.&lt;/p&gt;
+&lt;p&gt;What this means is that we can write a script that we feed the default password to, and have it decrypt request and response payloads in-line dynamically.&lt;/p&gt;
+&lt;p&gt;So I wrote &lt;code&gt;tapo_decrypt_pretty.py&lt;/code&gt; which:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Watches the login handshake (&lt;code&gt;cnonce&lt;/code&gt;, &lt;code&gt;nonce&lt;/code&gt;, &lt;code&gt;device_confirm&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Derives &lt;code&gt;lsk&lt;/code&gt;/&lt;code&gt;ivb&lt;/code&gt; session keys&lt;/li&gt;
+&lt;li&gt;Transparently decrypts subsequent API calls&lt;/li&gt;
+&lt;li&gt;Pretty-prints them inline in mitmproxy’s UI in &lt;code&gt;request_decrypted&lt;/code&gt; and &lt;code&gt;response_decrypted&lt;/code&gt; fields&lt;/li&gt;
+&lt;li&gt;Dumps them to JSON files for later analysis&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
+  &lt;source src=&#34;./mitmproxy-pretty.webm&#34;&gt;
+&lt;/video&gt; 
+&lt;/p&gt;
+&lt;h2 id=&#34;analysing-the-results&#34;&gt;Analysing the results&lt;/h2&gt;
+&lt;p&gt;The complete list of calls made by the Tapo app during onboarding were:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;getAppComponentList
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;setLanguage
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;scanApList
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;bindToCloud
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;changeAdminPassword
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;setTimezone
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;setRecordPlan
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;setDeviceLocation
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;connectAp
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;getConnectStatus
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;setAccountEnabled
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;changeThirdAccount
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This boiled down to just four important calls:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;scanApList&lt;/code&gt; — list Wi-Fi access points&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;setAccountEnabled&lt;/code&gt; + &lt;code&gt;changeThirdAccount&lt;/code&gt; — enable RTSP/ONVIF account&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;changeAdminPassword&lt;/code&gt; — change from default password to the cloud password&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;connectAp&lt;/code&gt; — join the selected Wi-Fi access point&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Everything else was fluff: timezones, record plans, binding to cloud.&lt;/p&gt;
+&lt;h2 id=&#34;final-thoughts&#34;&gt;Final thoughts&lt;/h2&gt;
+&lt;p&gt;In the end, the prize for all this nonsense was a scrappy little Bash script, &lt;a href=&#34;https://github.com/kennedn/tapo-onboarding/blob/main/tapo_onboard.sh&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;code&gt;tapo_onboard.sh&lt;/code&gt;&lt;/a&gt;
+, which:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Logs in with the default admin password,&lt;/li&gt;
+&lt;li&gt;Scans and selects a Wifi access point&lt;/li&gt;
+&lt;li&gt;Switches off the obnoxious OSD logo on the camera feed,&lt;/li&gt;
+&lt;li&gt;Enables RTSP/ONVIF capabilities&lt;/li&gt;
+&lt;li&gt;Changes the admin password,&lt;/li&gt;
+&lt;li&gt;And finally joins the Wi-Fi.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
+  &lt;source src=&#34;./onboard.webm&#34;&gt;
+&lt;/video&gt; 
+&lt;/p&gt;
+&lt;p&gt;Peeling this onion left me with a few observations on Tapo’s firmware.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some endpoints use SHA-256 for hashing, while others cling to MD5 like it’s 2003.&lt;/li&gt;
+&lt;li&gt;There are &lt;em&gt;two&lt;/em&gt; public keys used to send passwords to the device — one that is shared with the client and another super secret one that&amp;rsquo;s hardcoded in the app. The easiest way to figure out which one to use is to flip a coin.&lt;/li&gt;
+&lt;li&gt;Password syncing between the app and its managed devices is strictly vibe-based.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The whole thing feels like it was cobbled together by a consortium of couch-cryptographers. But then again, it was the cheapest indoor camera on amazon, so what did I expect?&lt;/p&gt;
+&lt;p&gt;And with all this said I did finally manage to figure out what the dog does when I am away.&lt;/p&gt;
+&lt;p&gt;She sleeps. On the sofa. Sometimes even in her bed.&lt;/p&gt;
+&lt;p align=&#34;center&#34;&gt;
+&lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
+  &lt;source src=&#34;./livingroom_camera.webm&#34;&gt;
+&lt;/video&gt; 
+&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Modchipping a fridge</title>
       <link>https://kennedn.com/blog/posts/fridgepwn/</link>
       <pubDate>Sat, 20 Jul 2024 09:43:48 +0100</pubDate>
