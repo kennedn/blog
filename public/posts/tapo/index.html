@@ -9,7 +9,7 @@
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">Wanted to spy on my dog, ended up spying on TP-Link</h1><p class="article date">Saturday, September 13, 2025</p></section><article class="article markdown-body"><p><img  src="./cover.png"
+    <h1 class="article title">Wanted to spy on my dog, ended up spying on TP-Link</h1><p class="article date">Saturday, September 13, 2025</p></section><article class="article markdown-body"><p><img  src="./cover.webp"
         alt/></p>
 <p>I recently bought a cheap Tapo indoor camera to see what my dog gets up to when I am out of the house.</p>
 <p>What actually followed? I ended up reverse-engineering onboarding flows, decompiling an APK, MITMing TLS sessions, and writing cryptographic scripts.</p>
@@ -96,7 +96,7 @@ sequenceDiagram
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Searching for <code>&quot;admin&quot;</code> in JADX gives us many hits but there are a few concentrated in a <code>CameraOnboardingViewModel</code> class that look interesting:</p>
-<p><img  src="./jadx1.png"
+<p><img  src="./jadx1.webp"
         alt/></p>
 <p>The function <code>m98131y2</code> appears to be returning a password that is then passed to the <code>new Account()</code> call. Following this function up the chain, we hit gold:</p>
 <p align="center">

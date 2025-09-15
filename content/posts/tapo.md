@@ -7,7 +7,7 @@ imgs:
   - tc702.webp
 ---
 
-![](./cover.png)
+![](./cover.webp)
 
 I recently bought a cheap Tapo indoor camera to see what my dog gets up to when I am out of the house. 
 
@@ -120,7 +120,7 @@ The initial login call that we captured references an `admin` username:
 
 Searching for `"admin"` in JADX gives us many hits but there are a few concentrated in a `CameraOnboardingViewModel` class that look interesting:
 
-![](./jadx1.png)
+![](./jadx1.webp)
 
 The function `m98131y2` appears to be returning a password that is then passed to the `new Account()` call. Following this function up the chain, we hit gold:
 

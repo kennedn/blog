@@ -17,7 +17,7 @@
       <pubDate>Sat, 13 Sep 2025 17:21:20 +0100</pubDate>
       
       <guid>https://kennedn.com/blog/posts/tapo/</guid>
-      <description>&lt;p&gt;&lt;img  src=&#34;./cover.png&#34;
+      <description>&lt;p&gt;&lt;img  src=&#34;./cover.webp&#34;
         alt/&gt;&lt;/p&gt;
 &lt;p&gt;I recently bought a cheap Tapo indoor camera to see what my dog gets up to when I am out of the house.&lt;/p&gt;
 &lt;p&gt;What actually followed? I ended up reverse-engineering onboarding flows, decompiling an APK, MITMing TLS sessions, and writing cryptographic scripts.&lt;/p&gt;
@@ -104,7 +104,7 @@ sequenceDiagram
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Searching for &lt;code&gt;&amp;quot;admin&amp;quot;&lt;/code&gt; in JADX gives us many hits but there are a few concentrated in a &lt;code&gt;CameraOnboardingViewModel&lt;/code&gt; class that look interesting:&lt;/p&gt;
-&lt;p&gt;&lt;img  src=&#34;./jadx1.png&#34;
+&lt;p&gt;&lt;img  src=&#34;./jadx1.webp&#34;
         alt/&gt;&lt;/p&gt;
 &lt;p&gt;The function &lt;code&gt;m98131y2&lt;/code&gt; appears to be returning a password that is then passed to the &lt;code&gt;new Account()&lt;/code&gt; call. Following this function up the chain, we hit gold:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
