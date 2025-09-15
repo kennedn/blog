@@ -15,7 +15,7 @@ What actually followed? I ended up reverse-engineering onboarding flows, decompi
 
 My main motivation for this project really stemmed from the fact that the camera annoyed me from day one. Setting the camera up in frigate was quite painful, no one really seemed to know how these cameras worked online.
 
-> NOTE: If you want 2 way audio to work in frigate you must use the `tapo://` device configuration for your main stream instead of the usual `rtsp://`. TP-Link are lazy and only implement 2 way audio on their own proprietary API.
+> SIDENOTE: If you want 2 way audio to work in frigate you must use the `tapo://` go2rtc configuration for your main stream instead of the usual `rtsp://`. TP-Link are lazy and only implement 2 way audio on their own proprietary API.
 
 One undocumented behavior that tripped me up was that the device's API is supposed to accept credentials `admin`:`<your-tapo-cloud-password>` after onboarding. However after banging my head against a wall for a few hours I later discovered that if you change your cloud password after onboarding, paired devices don't get the memo 🙂.
 
@@ -140,14 +140,14 @@ With the default password now revealed, we have the cards in our hand to derive 
 
 The only thing that would help us further is if we had a reference implementation for the authentication flow. This is where [PyTapo](https://github.com/JurajNyiri/pytapo) really came in handy.
 
-We could dump the session state and encrypted messages from mitmproxy and do some static analysis to get the decrypted requests and responses, but a really cool feature of `mitmproxy` is that it supports scripting.
+Using PyTapo as a reference, we could dump the session state and encrypted messages from mitmproxy and write a script to do some static analysis on the decrypted requests and responses, but a really cool feature of `mitmproxy` is that it supports scripting itself.
 
-What this means is that we can write a script that we feed the default password to, and have it decrypt request and response payloads in-line dynamically.
+What this means is that we can pass a python script to mitmproxy, and have it directly decrypt request and response payloads inline whilst running a capture.
 
 So I wrote `tapo_decrypt_pretty.py` which:
 
-* Watches the login handshake (`cnonce`, `nonce`, `device_confirm`)
-* Derives `lsk`/`ivb` session keys
+* Watches for the login handshake (`cnonce`, `nonce`, `device_confirm`)
+* Derives `lsk`/`ivb` session keys from it
 * Transparently decrypts subsequent API calls
 * Pretty-prints them inline in mitmproxy’s UI in `request_decrypted` and `response_decrypted` fields
 * Dumps them to JSON files for later analysis

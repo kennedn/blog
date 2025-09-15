@@ -15,7 +15,7 @@
 <p>What actually followed? I ended up reverse-engineering onboarding flows, decompiling an APK, MITMing TLS sessions, and writing cryptographic scripts.</p>
 <p>My main motivation for this project really stemmed from the fact that the camera annoyed me from day one. Setting the camera up in frigate was quite painful, no one really seemed to know how these cameras worked online.</p>
 <blockquote>
-<p>NOTE: If you want 2 way audio to work in frigate you must use the <code>tapo://</code> device configuration for your main stream instead of the usual <code>rtsp://</code>. TP-Link are lazy and only implement 2 way audio on their own proprietary API.</p>
+<p>SIDENOTE: If you want 2 way audio to work in frigate you must use the <code>tapo://</code> go2rtc configuration for your main stream instead of the usual <code>rtsp://</code>. TP-Link are lazy and only implement 2 way audio on their own proprietary API.</p>
 </blockquote>
 <p>One undocumented behavior that tripped me up was that the device&rsquo;s API is supposed to accept credentials <code>admin</code>:<code>&lt;your-tapo-cloud-password&gt;</code> after onboarding. However after banging my head against a wall for a few hours I later discovered that if you change your cloud password after onboarding, paired devices don&rsquo;t get the memo 🙂.</p>
 <p>This implied a few things to me that started the cogs turning:</p>
@@ -111,12 +111,12 @@ sequenceDiagram
 <p>With the default password now revealed, we have the cards in our hand to derive session keys and decode the <code>securePassthrough</code> messages.</p>
 <p>The only thing that would help us further is if we had a reference implementation for the authentication flow. This is where <a href="https://github.com/JurajNyiri/pytapo"target="_blank" rel="noopener noreferrer">PyTapo</a>
  really came in handy.</p>
-<p>We could dump the session state and encrypted messages from mitmproxy and do some static analysis to get the decrypted requests and responses, but a really cool feature of <code>mitmproxy</code> is that it supports scripting.</p>
-<p>What this means is that we can write a script that we feed the default password to, and have it decrypt request and response payloads in-line dynamically.</p>
+<p>Using PyTapo as a reference, we could dump the session state and encrypted messages from mitmproxy and write a script to do some static analysis on the decrypted requests and responses, but a really cool feature of <code>mitmproxy</code> is that it supports scripting itself.</p>
+<p>What this means is that we can pass a python script to mitmproxy, and have it directly decrypt request and response payloads inline whilst running a capture.</p>
 <p>So I wrote <code>tapo_decrypt_pretty.py</code> which:</p>
 <ul>
-<li>Watches the login handshake (<code>cnonce</code>, <code>nonce</code>, <code>device_confirm</code>)</li>
-<li>Derives <code>lsk</code>/<code>ivb</code> session keys</li>
+<li>Watches for the login handshake (<code>cnonce</code>, <code>nonce</code>, <code>device_confirm</code>)</li>
+<li>Derives <code>lsk</code>/<code>ivb</code> session keys from it</li>
 <li>Transparently decrypts subsequent API calls</li>
 <li>Pretty-prints them inline in mitmproxy’s UI in <code>request_decrypted</code> and <code>response_decrypted</code> fields</li>
 <li>Dumps them to JSON files for later analysis</li>
