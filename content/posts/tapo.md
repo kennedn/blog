@@ -67,7 +67,7 @@ After spinning up `mitmproxy`, injecting the [frida scripts](https://github.com/
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/mitmproxy-initial-auth.webm">
+  <source src="./mitmproxy-initial-auth.webm">
 </video> 
 </p>
 
@@ -126,7 +126,7 @@ The function `m98131y2` appears to be returning a password that is then passed t
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/jadx-password.webm">
+  <source src="./jadx-password.webm">
 </video> 
 </p>
 
@@ -154,7 +154,7 @@ So I wrote `tapo_decrypt_pretty.py` which:
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/mitmproxy-pretty.webm">
+  <source src="./mitmproxy-pretty.webm">
 </video> 
 </p>
 
@@ -198,7 +198,7 @@ In the end, the prize for all this nonsense was a scrappy little Bash script, [`
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/onboard.webm">
+  <source src="./onboard.webm">
 </video> 
 </p>
 
@@ -216,6 +216,6 @@ She sleeps. On the sofa. Sometimes even in her bed.
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/livingroom_camera.webm">
+  <source src="./livingroom_camera.webm">
 </video> 
 </p>

@@ -60,7 +60,7 @@ sequenceDiagram
 , and onboarding the camera, we finally see an initial login flow — before the admin password ever gets changed:</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/mitmproxy-initial-auth.webm">
+  <source src="./mitmproxy-initial-auth.webm">
 </video> 
 </p>
 <p>However, subsequent requests look like this:</p>
@@ -101,7 +101,7 @@ sequenceDiagram
 <p>The function <code>m98131y2</code> appears to be returning a password that is then passed to the <code>new Account()</code> call. Following this function up the chain, we hit gold:</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/jadx-password.webm">
+  <source src="./jadx-password.webm">
 </video> 
 </p>
 <p><a href="#loginrequest">We already know</a>
@@ -123,7 +123,7 @@ sequenceDiagram
 </ul>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/mitmproxy-pretty.webm">
+  <source src="./mitmproxy-pretty.webm">
 </video> 
 </p>
 <h2 id="analysing-the-results">Analysing the results</h2>
@@ -161,7 +161,7 @@ sequenceDiagram
 </ul>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/onboard.webm">
+  <source src="./onboard.webm">
 </video> 
 </p>
 <p>Peeling this onion left me with a few observations on Tapo’s firmware.</p>
@@ -175,7 +175,7 @@ sequenceDiagram
 <p>She sleeps. On the sofa. Sometimes even in her bed.</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./rounded/livingroom_camera.webm">
+  <source src="./livingroom_camera.webm">
 </video> 
 </p>
 </article>

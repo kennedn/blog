@@ -68,7 +68,7 @@ sequenceDiagram
 , and onboarding the camera, we finally see an initial login flow — before the admin password ever gets changed:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./rounded/mitmproxy-initial-auth.webm&#34;&gt;
+  &lt;source src=&#34;./mitmproxy-initial-auth.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;However, subsequent requests look like this:&lt;/p&gt;
@@ -109,7 +109,7 @@ sequenceDiagram
 &lt;p&gt;The function &lt;code&gt;m98131y2&lt;/code&gt; appears to be returning a password that is then passed to the &lt;code&gt;new Account()&lt;/code&gt; call. Following this function up the chain, we hit gold:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./rounded/jadx-password.webm&#34;&gt;
+  &lt;source src=&#34;./jadx-password.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;#loginrequest&#34;&gt;We already know&lt;/a&gt;
@@ -131,7 +131,7 @@ sequenceDiagram
 &lt;/ul&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./rounded/mitmproxy-pretty.webm&#34;&gt;
+  &lt;source src=&#34;./mitmproxy-pretty.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;h2 id=&#34;analysing-the-results&#34;&gt;Analysing the results&lt;/h2&gt;
@@ -169,7 +169,7 @@ sequenceDiagram
 &lt;/ul&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./rounded/onboard.webm&#34;&gt;
+  &lt;source src=&#34;./onboard.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;Peeling this onion left me with a few observations on Tapo’s firmware.&lt;/p&gt;
@@ -183,7 +183,7 @@ sequenceDiagram
 &lt;p&gt;She sleeps. On the sofa. Sometimes even in her bed.&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./rounded/livingroom_camera.webm&#34;&gt;
+  &lt;source src=&#34;./livingroom_camera.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 </description>
