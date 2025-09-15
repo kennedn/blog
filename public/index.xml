@@ -34,7 +34,7 @@
 &lt;p&gt;So considering my onboarding woes and the fact that I was starting to recoil every time the tapo app tried to jam a &amp;ldquo;Tapo Care&amp;rdquo; subscription down my throat, a cloudless onboarding solution for the device was beginning to look more and more desirable.&lt;/p&gt;
 &lt;p&gt;The first step to cracking this egg was to be be able to snoop on what the app and the camera are saying to each other during onboarding. E.g, establish a man in the middle.&lt;/p&gt;
 &lt;h2 id=&#34;man-in-the-middle&#34;&gt;Man in the middle&lt;/h2&gt;
-&lt;p&gt;To man in the middle a phone app, you must be able to proxy all http(s) traffic via proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy&amp;rsquo;s self-signed certificate to the phone&amp;rsquo;s truststore, and configure the phone to point at the proxy.&lt;/p&gt;
+&lt;p&gt;To man in the middle a phone app, you must be able to route all http(s) traffic via a proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy&amp;rsquo;s self-signed certificate to the phone&amp;rsquo;s truststore, and configure the phone to point at the proxy.&lt;/p&gt;
 &lt;p&gt;However, modern phone apps can use a few nasty tricks to render this approach ineffective. Namely they will blatantly ignore proxies, throw the system truststore to the wind and make liberal use of certificate pinning.&lt;/p&gt;
 &lt;p&gt;The most full-proof technique for generically MITMing an app has therefore become dynamic instrumentation via tools like &lt;code&gt;frida&lt;/code&gt;. What this allows us to do is force an app to use the proxies and certificates that we tell it to whilst batting aside it&amp;rsquo;s attempts to do things like certificate pinning.&lt;/p&gt;
 &lt;p&gt;So the setup ended up looking like this (full setup guide &lt;a href=&#34;https://github.com/kennedn/tapo-onboarding?tab=readme-ov-file#capturing-onboarding-calls-from-tapo-app&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;
@@ -68,7 +68,7 @@ sequenceDiagram
 , and onboarding the camera, we finally see an initial login flow — before the admin password ever gets changed:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./mitmproxy-initial-auth.webm&#34;&gt;
+  &lt;source src=&#34;./rounded/mitmproxy-initial-auth.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;However, subsequent requests look like this:&lt;/p&gt;
@@ -88,7 +88,7 @@ sequenceDiagram
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So from this initial dive we have learned that:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Tapo 100% has a default password because it performs a full login before it knows anything about the cloud password.&lt;/li&gt;
+&lt;li&gt;Tapo 100% has a default password due to the fact that it performs a full login before it knows anything about the cloud password.&lt;/li&gt;
 &lt;li&gt;Tapo has an encrypted &lt;code&gt;securePassthrough&lt;/code&gt; channel for its API calls to prevent peeping toms such as myself from spilling the beans.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;the-jadx-dive&#34;&gt;The JADX dive&lt;/h2&gt;
@@ -109,7 +109,7 @@ sequenceDiagram
 &lt;p&gt;The function &lt;code&gt;m98131y2&lt;/code&gt; appears to be returning a password that is then passed to the &lt;code&gt;new Account()&lt;/code&gt; call. Following this function up the chain, we hit gold:&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./jadx-password.webm&#34;&gt;
+  &lt;source src=&#34;./rounded/jadx-password.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;#loginrequest&#34;&gt;We already know&lt;/a&gt;
@@ -131,7 +131,7 @@ sequenceDiagram
 &lt;/ul&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./mitmproxy-pretty.webm&#34;&gt;
+  &lt;source src=&#34;./rounded/mitmproxy-pretty.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;h2 id=&#34;analysing-the-results&#34;&gt;Analysing the results&lt;/h2&gt;
@@ -169,7 +169,7 @@ sequenceDiagram
 &lt;/ul&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./onboard.webm&#34;&gt;
+  &lt;source src=&#34;./rounded/onboard.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 &lt;p&gt;Peeling this onion left me with a few observations on Tapo’s firmware.&lt;/p&gt;
@@ -183,7 +183,7 @@ sequenceDiagram
 &lt;p&gt;She sleeps. On the sofa. Sometimes even in her bed.&lt;/p&gt;
 &lt;p align=&#34;center&#34;&gt;
 &lt;video width=&#34;100%&#34; autoplay loop muted playsinline&gt;
-  &lt;source src=&#34;./livingroom_camera.webm&#34;&gt;
+  &lt;source src=&#34;./rounded/livingroom_camera.webm&#34;&gt;
 &lt;/video&gt; 
 &lt;/p&gt;
 </description>

@@ -30,7 +30,7 @@ The first step to cracking this egg was to be be able to snoop on what the app a
 
 ## Man in the middle
 
-To man in the middle a phone app, you must be able to proxy all http(s) traffic via proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy's self-signed certificate to the phone's truststore, and configure the phone to point at the proxy. 
+To man in the middle a phone app, you must be able to route all http(s) traffic via a proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy's self-signed certificate to the phone's truststore, and configure the phone to point at the proxy. 
 
 However, modern phone apps can use a few nasty tricks to render this approach ineffective. Namely they will blatantly ignore proxies, throw the system truststore to the wind and make liberal use of certificate pinning.
 
@@ -67,7 +67,7 @@ After spinning up `mitmproxy`, injecting the [frida scripts](https://github.com/
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./mitmproxy-initial-auth.webm">
+  <source src="./rounded/mitmproxy-initial-auth.webm">
 </video> 
 </p>
 
@@ -96,7 +96,7 @@ And responses look like this:
 
 So from this initial dive we have learned that:
 
-- Tapo 100% has a default password because it performs a full login before it knows anything about the cloud password.
+- Tapo 100% has a default password due to the fact that it performs a full login before it knows anything about the cloud password.
 - Tapo has an encrypted `securePassthrough` channel for its API calls to prevent peeping toms such as myself from spilling the beans.
 
 ## The JADX dive  
@@ -126,7 +126,7 @@ The function `m98131y2` appears to be returning a password that is then passed t
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./jadx-password.webm">
+  <source src="./rounded/jadx-password.webm">
 </video> 
 </p>
 
@@ -154,7 +154,7 @@ So I wrote `tapo_decrypt_pretty.py` which:
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./mitmproxy-pretty.webm">
+  <source src="./rounded/mitmproxy-pretty.webm">
 </video> 
 </p>
 
@@ -198,7 +198,7 @@ In the end, the prize for all this nonsense was a scrappy little Bash script, [`
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./onboard.webm">
+  <source src="./rounded/onboard.webm">
 </video> 
 </p>
 
@@ -216,6 +216,6 @@ She sleeps. On the sofa. Sometimes even in her bed.
 
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./livingroom_camera.webm">
+  <source src="./rounded/livingroom_camera.webm">
 </video> 
 </p>

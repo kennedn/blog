@@ -26,7 +26,7 @@
 <p>So considering my onboarding woes and the fact that I was starting to recoil every time the tapo app tried to jam a &ldquo;Tapo Care&rdquo; subscription down my throat, a cloudless onboarding solution for the device was beginning to look more and more desirable.</p>
 <p>The first step to cracking this egg was to be be able to snoop on what the app and the camera are saying to each other during onboarding. E.g, establish a man in the middle.</p>
 <h2 id="man-in-the-middle">Man in the middle</h2>
-<p>To man in the middle a phone app, you must be able to proxy all http(s) traffic via proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy&rsquo;s self-signed certificate to the phone&rsquo;s truststore, and configure the phone to point at the proxy.</p>
+<p>To man in the middle a phone app, you must be able to route all http(s) traffic via a proxy server you control. Historically this has been quite simple to achieve, simply spin up a proxy on a computer, add the proxy&rsquo;s self-signed certificate to the phone&rsquo;s truststore, and configure the phone to point at the proxy.</p>
 <p>However, modern phone apps can use a few nasty tricks to render this approach ineffective. Namely they will blatantly ignore proxies, throw the system truststore to the wind and make liberal use of certificate pinning.</p>
 <p>The most full-proof technique for generically MITMing an app has therefore become dynamic instrumentation via tools like <code>frida</code>. What this allows us to do is force an app to use the proxies and certificates that we tell it to whilst batting aside it&rsquo;s attempts to do things like certificate pinning.</p>
 <p>So the setup ended up looking like this (full setup guide <a href="https://github.com/kennedn/tapo-onboarding?tab=readme-ov-file#capturing-onboarding-calls-from-tapo-app"target="_blank" rel="noopener noreferrer">here</a>
@@ -60,7 +60,7 @@ sequenceDiagram
 , and onboarding the camera, we finally see an initial login flow — before the admin password ever gets changed:</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./mitmproxy-initial-auth.webm">
+  <source src="./rounded/mitmproxy-initial-auth.webm">
 </video> 
 </p>
 <p>However, subsequent requests look like this:</p>
@@ -80,7 +80,7 @@ sequenceDiagram
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>So from this initial dive we have learned that:</p>
 <ul>
-<li>Tapo 100% has a default password because it performs a full login before it knows anything about the cloud password.</li>
+<li>Tapo 100% has a default password due to the fact that it performs a full login before it knows anything about the cloud password.</li>
 <li>Tapo has an encrypted <code>securePassthrough</code> channel for its API calls to prevent peeping toms such as myself from spilling the beans.</li>
 </ul>
 <h2 id="the-jadx-dive">The JADX dive</h2>
@@ -101,7 +101,7 @@ sequenceDiagram
 <p>The function <code>m98131y2</code> appears to be returning a password that is then passed to the <code>new Account()</code> call. Following this function up the chain, we hit gold:</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./jadx-password.webm">
+  <source src="./rounded/jadx-password.webm">
 </video> 
 </p>
 <p><a href="#loginrequest">We already know</a>
@@ -123,7 +123,7 @@ sequenceDiagram
 </ul>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./mitmproxy-pretty.webm">
+  <source src="./rounded/mitmproxy-pretty.webm">
 </video> 
 </p>
 <h2 id="analysing-the-results">Analysing the results</h2>
@@ -161,7 +161,7 @@ sequenceDiagram
 </ul>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./onboard.webm">
+  <source src="./rounded/onboard.webm">
 </video> 
 </p>
 <p>Peeling this onion left me with a few observations on Tapo’s firmware.</p>
@@ -175,7 +175,7 @@ sequenceDiagram
 <p>She sleeps. On the sofa. Sometimes even in her bed.</p>
 <p align="center">
 <video width="100%" autoplay loop muted playsinline>
-  <source src="./livingroom_camera.webm">
+  <source src="./rounded/livingroom_camera.webm">
 </video> 
 </p>
 </article>
