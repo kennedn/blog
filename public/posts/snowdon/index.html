@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.123.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset="utf-8"><meta name="generator" content="Hugo 0.164.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Hijacking infrared to make a dumb device smart&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.c4975773f968ec15513d5cf6bc21063f66b0e9a1308ff193030c49d18b16531a74d3f967609b8d12224563d615f393ae.css" integrity="sha384-xJdXc/lo7BVRPVz2vCEGP2aw6aEwj/GTAwxJ0YsWUxp00/lnYJuNEiJFY9YV85Ou"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Hijacking infrared to make a dumb device smart" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/snowdon/cover.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<meta name="supported-color-schemes" content="light dark"><title>Hijacking infrared to make a dumb device smart&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.46e8acd02d693f65176e9cf520ae41d42de72ac193556a4fe1cafc54e05ba72c216b14d638e98fa7cd21dfb066f397fc.css" integrity="sha384-Ruis0C1pP2UXbpz1IK5B1C3nKsGTVWpP4cr8VOBbpywhaxTWOOmPp80h37Bm85f8"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Hijacking infrared to make a dumb device smart" /><meta name="twitter:image" content="http://localhost:1313/blog/posts/snowdon/cover.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 <section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
@@ -121,38 +121,38 @@
 <h1 id="decoding-the-indicator-led">Decoding the Indicator LED</h1>
 <p>The daughter board has a 4 pin RGB indicator LED that can display a number of colors. The LED is common anode which means it is active low. Each of the 3 color pins are broken out on a connection jack on the mainboard. The user manual actually tells us the possible colors and their meaning too:</p>
 <table>
-<thead>
-<tr>
-<th>State</th>
-<th>LED Indicator Light</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Power Off</td>
-<td>Red</td>
-</tr>
-<tr>
-<td>AUX Mode</td>
-<td>White</td>
-</tr>
-<tr>
-<td>Line In Mode</td>
-<td>Green</td>
-</tr>
-<tr>
-<td>Optical Mode</td>
-<td>Yellow</td>
-</tr>
-<tr>
-<td>Bluetooth Ready</td>
-<td>Flashing Blue</td>
-</tr>
-<tr>
-<td>Bluetooth Connected</td>
-<td>Blue</td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>State</th>
+					<th>LED Indicator Light</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Power Off</td>
+					<td>Red</td>
+			</tr>
+			<tr>
+					<td>AUX Mode</td>
+					<td>White</td>
+			</tr>
+			<tr>
+					<td>Line In Mode</td>
+					<td>Green</td>
+			</tr>
+			<tr>
+					<td>Optical Mode</td>
+					<td>Yellow</td>
+			</tr>
+			<tr>
+					<td>Bluetooth Ready</td>
+					<td>Flashing Blue</td>
+			</tr>
+			<tr>
+					<td>Bluetooth Connected</td>
+					<td>Blue</td>
+			</tr>
+	</tbody>
 </table>
 <p>This is enough information for us to decode which color is currently being displayed on the LED and infer a state from it.</p>
 <p>We can achieve this easily by wiring 3 consecutive GPIO pins to the mainboard.</p>
@@ -163,14 +163,14 @@
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 137"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 216 137"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
 <path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
 <path d='M 88,32 L 120,32' fill='none' stroke='currentColor'></path>
@@ -262,8 +262,8 @@
 <text text-anchor='middle' x='184' y='84' fill='currentColor' style='font-size:1em'>7</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:70%; padding 1px;">
@@ -273,34 +273,34 @@
 <h2 id="code">Code</h2>
 <p>Since we are only concerned with 3 pins (17,18 &amp; 19), we can create a 32 bit bit-mask that will select only these pins:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define RGB_BASE_PIN 17
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>     <span class="c1">// Pin 17
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span> <span class="c1">// Pin 18
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// Pin 19
+</span></span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>     <span class="c1">// Pin 17
+</span></span></span><span class="line"><span class="cl">                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span> <span class="c1">// Pin 18
+</span></span></span><span class="line"><span class="cl">                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>  <span class="c1">// Pin 19
 </span></span></span></code></pre></div><p>Then in our main loop we can initialise the pins as input with our mask:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
 </span></span></code></pre></div><p>And then get the current value of each of the 3 pins by ANDing the value of the GPIO register with our mask. We then shift this to the right to clear out the left over zeros from our AND operation and end up with a 3 bit value representing our 3 color lines:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
 </span></span></span><span class="line"><span class="cl"><span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">uint32_t</span> <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="nf">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="nf">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
 </span></span></code></pre></div><p>Finally, we can pass this value into a switch statement and based on the value of the 3 color bits, we can print a different message:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">default</span><span class="o">:</span>
 </span></span><span class="line"><span class="cl">        <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
@@ -309,40 +309,40 @@
   <summary>Full code</summary>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;pico/stdlib.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cp">#define RGB_BASE_PIN 17
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>        <span class="c1">// Pin 17
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span>    <span class="c1">// Pin 18
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>     <span class="c1">// Pin 19
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">uint32_t</span> <span class="n">RGB_MASK</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">|</span>        <span class="c1">// Pin 17
+</span></span></span><span class="line"><span class="cl">                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">|</span>    <span class="c1">// Pin 18
+</span></span></span><span class="line"><span class="cl">                          <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">RGB_BASE_PIN</span> <span class="o">+</span> <span class="mi">2</span><span class="p">;</span>     <span class="c1">// Pin 19
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="nf">stdio_init_all</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// Enable pins 17, 18 &amp; 19 as input 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">gpio_init_mask</span><span class="p">(</span><span class="n">RGB_MASK</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">gpio</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// Extract desired bits from GPIO with RGB_MASK and shift right
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="nf">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">        <span class="c1">// This gives us a 3 bit value in the form 0b&lt;b&gt;&lt;g&gt;&lt;r&gt;
+</span></span></span><span class="line"><span class="cl">        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="nf">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// Perform comparisons on the 3 bits to determine the state of the RGB LED
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;off</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;optical</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;aux</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;line-in</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;bluetooth</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;none</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">default</span><span class="o">:</span>
 </span></span><span class="line"><span class="cl">                <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;unknown</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
@@ -408,14 +408,14 @@ Each bit in the message starts with a LOW pulse for 562.5us, followed by:
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 105"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 216 105"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 48,16' fill='none' stroke='currentColor'></path>
 <path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
 <path d='M 48,32 L 64,32' fill='none' stroke='currentColor'></path>
@@ -478,8 +478,8 @@ Each bit in the message starts with a LOW pulse for 562.5us, followed by:
 <text text-anchor='middle' x='184' y='36' fill='currentColor' style='font-size:1em'>6</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:65%; padding 1px;">
@@ -514,13 +514,13 @@ In our init function we also need to perform some setup to assosiate the variabl
 </span></span></code></pre></div><br/>
 We also need to perform some setup functions to enable our pin as output and give it an initial value:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">pio_gpio_init</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">pin</span><span class="p">);</span>                                <span class="c1">// Set pin function to GPIO
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">pio_sm_set_consecutive_pindirs</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>  <span class="c1">// Set the pin direction to output 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">pio_sm_set_pins_with_mask</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="mi">1u</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>       <span class="c1">// Set the initial value of the pin to 1 (HIGH)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">gpio_pull_up</span><span class="p">(</span><span class="n">pin</span><span class="p">);</span>                                      <span class="c1">// Set the default value of the pin to 1 (HIGH)
+</span></span></span><span class="line"><span class="cl"><span class="nf">pio_sm_set_consecutive_pindirs</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>  <span class="c1">// Set the pin direction to output 
+</span></span></span><span class="line"><span class="cl"><span class="nf">pio_sm_set_pins_with_mask</span><span class="p">(</span><span class="n">pio</span><span class="p">,</span> <span class="n">sm</span><span class="p">,</span> <span class="mi">1u</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>       <span class="c1">// Set the initial value of the pin to 1 (HIGH)
+</span></span></span><span class="line"><span class="cl"><span class="nf">gpio_pull_up</span><span class="p">(</span><span class="n">pin</span><span class="p">);</span>                                      <span class="c1">// Set the default value of the pin to 1 (HIGH)
 </span></span></span></code></pre></div><br/>
 Lastly, we need to configure the clock. Looking at the timing diagram, our first instinct may be to set the clock to ~560us. so that each PIO instruction takes ~560us to execute. However, as will become evident later on, we actually need the flexibility to perform 2 instructions per ~560us window. So that is what we will set the clock to:
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 2 ticks per 560us window 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="n">div</span> <span class="o">=</span> <span class="nf">clock_get_hz</span><span class="p">(</span><span class="n">clk_sys</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">562.5e-6</span><span class="n">f</span><span class="p">));</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">div</span> <span class="o">=</span> <span class="nf">clock_get_hz</span><span class="p">(</span><span class="n">clk_sys</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">562.5e-6</span><span class="n">f</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl"><span class="nf">sm_config_set_clkdiv</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="n">div</span><span class="p">);</span>
 </span></span></code></pre></div><br/>
 <p>The body of the PIO program looks like this:</p>
@@ -675,29 +675,29 @@ However, when the switch is toggled to the right, we see that our PIO program is
 <summary>Code</summary>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="p">...</span> 
 </span></span><span class="line"><span class="cl"><span class="cp">#define TX_PIN 16
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="p">...</span>
+</span></span></span><span class="line"><span class="cl"><span class="p">...</span>
 </span></span><span class="line"><span class="cl"><span class="kt">uint32_t</span> <span class="n">remote_codes</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="mh">0x5da2ff00</span><span class="p">,</span>  <span class="c1">//POWER                                                            
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xdd22ff00</span><span class="p">,</span>  <span class="c1">//TEST                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xfd02ff00</span><span class="p">,</span>  <span class="c1">//PLUS                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x3dc2ff00</span><span class="p">,</span>  <span class="c1">//BACK                                                             
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x1de2ff00</span><span class="p">,</span>  <span class="c1">//MENU
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x6f90ff00</span><span class="p">,</span>  <span class="c1">//NEXT
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x57a8ff00</span><span class="p">,</span>  <span class="c1">//PLAY
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x1fe0ff00</span><span class="p">,</span>  <span class="c1">//PREV
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x9768ff00</span><span class="p">,</span>  <span class="c1">//0
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x6798ff00</span><span class="p">,</span>  <span class="c1">//MINUS
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x4fb0ff00</span><span class="p">,</span>  <span class="c1">//C
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0x857aff00</span><span class="p">,</span>  <span class="c1">//3
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xe718ff00</span><span class="p">,</span>  <span class="c1">//2
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xcf30ff00</span><span class="p">,</span>  <span class="c1">//1
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xef10ff00</span><span class="p">,</span>  <span class="c1">//4
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xc738ff00</span><span class="p">,</span>  <span class="c1">//5
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xa55aff00</span><span class="p">,</span>  <span class="c1">//6
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xad52ff00</span><span class="p">,</span>  <span class="c1">//9
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xb54aff00</span><span class="p">,</span>  <span class="c1">//8
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="mh">0xbd42ff00</span><span class="p">,</span>  <span class="c1">//7
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xdd22ff00</span><span class="p">,</span>  <span class="c1">//TEST                                                             
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xfd02ff00</span><span class="p">,</span>  <span class="c1">//PLUS                                                             
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x3dc2ff00</span><span class="p">,</span>  <span class="c1">//BACK                                                             
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x1de2ff00</span><span class="p">,</span>  <span class="c1">//MENU
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x6f90ff00</span><span class="p">,</span>  <span class="c1">//NEXT
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x57a8ff00</span><span class="p">,</span>  <span class="c1">//PLAY
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x1fe0ff00</span><span class="p">,</span>  <span class="c1">//PREV
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x9768ff00</span><span class="p">,</span>  <span class="c1">//0
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x6798ff00</span><span class="p">,</span>  <span class="c1">//MINUS
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x4fb0ff00</span><span class="p">,</span>  <span class="c1">//C
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0x857aff00</span><span class="p">,</span>  <span class="c1">//3
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xe718ff00</span><span class="p">,</span>  <span class="c1">//2
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xcf30ff00</span><span class="p">,</span>  <span class="c1">//1
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xef10ff00</span><span class="p">,</span>  <span class="c1">//4
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xc738ff00</span><span class="p">,</span>  <span class="c1">//5
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xa55aff00</span><span class="p">,</span>  <span class="c1">//6
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xad52ff00</span><span class="p">,</span>  <span class="c1">//9
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xb54aff00</span><span class="p">,</span>  <span class="c1">//8
+</span></span></span><span class="line"><span class="cl">    <span class="mh">0xbd42ff00</span><span class="p">,</span>  <span class="c1">//7
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl"><span class="p">...</span>
 </span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="nf">pio_sm_put_blocking</span><span class="p">(</span><span class="n">PIO_INSTANCE</span><span class="p">,</span> <span class="n">tx_sm</span><span class="p">,</span> 
@@ -741,30 +741,30 @@ Let&rsquo;s send a standard HTTP PUT request via the cli tool <code>curl</code> 
 </span></span></code></pre></div><br/>
 <p>Let&rsquo;s disect this. The first line specifies a few things:</p>
 <table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Method</td>
-<td>GET</td>
-<td>The method of  the call, common methods are GET, POST, PUT, HEAD</td>
-</tr>
-<tr>
-<td>Target</td>
-<td>/api/v1.0/pc?code=status</td>
-<td>Specifies the sub-path target of the call, this allows routing in a HTTP server that hosts many different endpoints. key/value pairs can also be specified in this line</td>
-</tr>
-<tr>
-<td>Version</td>
-<td>HTTP/1.1</td>
-<td>This is the HTTP version of the call, for our purposes it will always be HTTP/1.1</td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>Parameter</th>
+					<th>Value</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Method</td>
+					<td>GET</td>
+					<td>The method of  the call, common methods are GET, POST, PUT, HEAD</td>
+			</tr>
+			<tr>
+					<td>Target</td>
+					<td>/api/v1.0/pc?code=status</td>
+					<td>Specifies the sub-path target of the call, this allows routing in a HTTP server that hosts many different endpoints. key/value pairs can also be specified in this line</td>
+			</tr>
+			<tr>
+					<td>Version</td>
+					<td>HTTP/1.1</td>
+					<td>This is the HTTP version of the call, for our purposes it will always be HTTP/1.1</td>
+			</tr>
+	</tbody>
 </table>
 <ul>
 <li>Each line end is denoted with a carriage return <code>\r</code> and line feed <code>\n</code>.</li>
@@ -784,31 +784,31 @@ Let&rsquo;s send a standard HTTP PUT request via the cli tool <code>curl</code> 
 </span></span></code></pre></div><br/>
 It follows a very similar format, the first line again specifies a few things:
 <table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Version</td>
-<td>HTTP/1.1</td>
-<td>This is the HTTP version of the call, for our purposes it will always be HTTP/1.1</td>
-</tr>
-<tr>
-<td>Status Code</td>
-<td>200</td>
-<td>A numeric representation of the response status, must be a valid HTTP status code as documented <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"target="_blank" rel="noopener noreferrer">here</a>
+	<thead>
+			<tr>
+					<th>Parameter</th>
+					<th>Value</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Version</td>
+					<td>HTTP/1.1</td>
+					<td>This is the HTTP version of the call, for our purposes it will always be HTTP/1.1</td>
+			</tr>
+			<tr>
+					<td>Status Code</td>
+					<td>200</td>
+					<td>A numeric representation of the response status, must be a valid HTTP status code as documented <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"target="_blank" rel="noopener noreferrer">here</a>
 </td>
-</tr>
-<tr>
-<td>Status Text</td>
-<td>OK</td>
-<td>A textual representation of the response status, must be paired up with the status code</td>
-</tr>
-</tbody>
+			</tr>
+			<tr>
+					<td>Status Text</td>
+					<td>OK</td>
+					<td>A textual representation of the response status, must be paired up with the status code</td>
+			</tr>
+	</tbody>
 </table>
 <p>Again each preceding line is a key/value header variable. However it is worth noting that the HTTP server chose to send a JSON response.
 <br/>
@@ -866,7 +866,7 @@ RETURN VALUE
   <summary>Full code</summary>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">http_message</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
@@ -878,8 +878,8 @@ RETURN VALUE
 </span></span><span class="line"><span class="cl">  <span class="p">};</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  <span class="c1">// Process HTTP message body, example: &#34;PUT /api/v1.0/pc?code=status HTTP/1.1&#34;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// char *message_body = http_message;
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">char</span> <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">  <span class="c1">// char *message_body = http_message;
+</span></span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">message_body</span> <span class="o">=</span> <span class="n">http_message</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="o">*</span><span class="n">delim</span> <span class="o">=</span> <span class="s">&#34; ?=&amp;</span><span class="se">\r</span><span class="s">&#34;</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">next_delim</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">  <span class="kt">char</span> <span class="n">current_delim</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
@@ -915,7 +915,7 @@ RETURN VALUE
 </span></span><span class="line"><span class="cl">    <span class="n">current_delim</span> <span class="o">=</span> <span class="n">next_delim</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="n">message_body</span><span class="o">++</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// Carriage return indicates we have reached the end of the first line of message body
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">current_delim</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">current_delim</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -951,14 +951,14 @@ RETURN VALUE
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 216 121"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 216 121"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
 <path d='M 120,16 L 200,16' fill='none' stroke='currentColor'></path>
 <path d='M 88,32 L 120,32' fill='none' stroke='currentColor'></path>
@@ -1027,8 +1027,8 @@ RETURN VALUE
 <text text-anchor='middle' x='184' y='4' fill='currentColor' style='font-size:1em'>i</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:70%; padding 1px;">
@@ -1078,22 +1078,22 @@ RETURN VALUE
 </span></span><span class="line"><span class="cl">        <span class="n">gpio</span> <span class="o">=</span> <span class="p">(</span><span class="nf">gpio_get_all</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">RGB_MASK</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">RGB_BASE_PIN</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="k">switch</span><span class="p">(</span><span class="n">gpio</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b110</span><span class="p">:</span> <span class="c1">// red
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">off</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b100</span><span class="p">:</span> <span class="c1">// yellow
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">optical</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">optical</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b000</span><span class="p">:</span> <span class="c1">// white
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">aux</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">aux</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b101</span><span class="p">:</span> <span class="c1">// green
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">line-in</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">line-in</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b011</span><span class="p">:</span> <span class="c1">// blue
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">bluetooth</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">http_generate_response</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s">&#34;{</span><span class="se">\&#34;</span><span class="s">onoff</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">on</span><span class="se">\&#34;</span><span class="s">, </span><span class="se">\&#34;</span><span class="s">input</span><span class="se">\&#34;</span><span class="s">: </span><span class="se">\&#34;</span><span class="s">bluetooth</span><span class="se">\&#34;</span><span class="s">}</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;200 OK&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="k">case</span> <span class="mi">0</span><span class="nl">b111</span><span class="p">:</span> <span class="c1">// off (likely in a transitioning state)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nf">busy_wait_ms</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">                <span class="nf">busy_wait_ms</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">                <span class="k">continue</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">gpio</span> <span class="o">==</span> <span class="mi">0</span><span class="n">b111</span><span class="p">);</span>
@@ -1115,14 +1115,14 @@ RETURN VALUE
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 248 185"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 248 185"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 88,16' fill='none' stroke='currentColor'></path>
 <path d='M 152,16 L 232,16' fill='none' stroke='currentColor'></path>
 <path d='M 88,32 L 96,32' fill='none' stroke='currentColor'></path>
@@ -1268,8 +1268,8 @@ RETURN VALUE
 <text text-anchor='middle' x='216' y='84' fill='currentColor' style='font-size:1em'>7</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:70%; padding 1px;">
@@ -1327,148 +1327,148 @@ RETURN VALUE
 </span></span></code></pre></div><br/>
 <p>And this is the full list of available code values:</p>
 <table>
-<thead>
-<tr>
-<th>Value</th>
-<th>Description</th>
-<th>JSON response</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>power</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>input</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>mute</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>volume_up</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>volume_down</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>previous</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>next</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>play_pause</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>treble_up</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>treble_down</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>bass_up</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>bass_down</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>pair</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>flat</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>music</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>dialog</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>movie</td>
-<td>Infrared Code</td>
-<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
-</tr>
-<tr>
-<td>status</td>
-<td>RGB LED Query</td>
-<td><code>{&quot;onoff&quot;: power_state, &quot;input&quot;: input_state}</code></td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>Value</th>
+					<th>Description</th>
+					<th>JSON response</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>power</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>input</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>mute</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>volume_up</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>volume_down</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>previous</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>next</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>play_pause</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>treble_up</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>treble_down</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>bass_up</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>bass_down</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>pair</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>flat</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>music</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>dialog</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>movie</td>
+					<td>Infrared Code</td>
+					<td><code>{&quot;status&quot;: &quot;ok&quot;}</code></td>
+			</tr>
+			<tr>
+					<td>status</td>
+					<td>RGB LED Query</td>
+					<td><code>{&quot;onoff&quot;: power_state, &quot;input&quot;: input_state}</code></td>
+			</tr>
+	</tbody>
 </table>
 <br/>
 <p><code>power_state</code> has the following possible values:</p>
 <table>
-<thead>
-<tr>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>on</td>
-</tr>
-<tr>
-<td>off</td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>Value</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>on</td>
+			</tr>
+			<tr>
+					<td>off</td>
+			</tr>
+	</tbody>
 </table>
 <br/>
 <p><code>input_state</code> has the following possible values:</p>
 <table>
-<thead>
-<tr>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>off</td>
-</tr>
-<tr>
-<td>optical</td>
-</tr>
-<tr>
-<td>aux</td>
-</tr>
-<tr>
-<td>line-in</td>
-</tr>
-<tr>
-<td>bluetooth</td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>Value</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>off</td>
+			</tr>
+			<tr>
+					<td>optical</td>
+			</tr>
+			<tr>
+					<td>aux</td>
+			</tr>
+			<tr>
+					<td>line-in</td>
+			</tr>
+			<tr>
+					<td>bluetooth</td>
+			</tr>
+	</tbody>
 </table>
 <h1 id="finish">Finish</h1>
 <p>With that we can now send HTTP commands to our Pico:</p>

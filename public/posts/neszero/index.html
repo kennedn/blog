@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 
-<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.123.7"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset="utf-8"><meta name="generator" content="Hugo 0.164.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>Embedding a Pi Zero in a NES controller&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.c4975773f968ec15513d5cf6bc21063f66b0e9a1308ff193030c49d18b16531a74d3f967609b8d12224563d615f393ae.css" integrity="sha384-xJdXc/lo7BVRPVz2vCEGP2aw6aEwj/GTAwxJ0YsWUxp00/lnYJuNEiJFY9YV85Ou"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Embedding a Pi Zero in a NES controller" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/neszero/full_wiring_carpet.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<meta name="supported-color-schemes" content="light dark"><title>Embedding a Pi Zero in a NES controller&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.46e8acd02d693f65176e9cf520ae41d42de72ac193556a4fe1cafc54e05ba72c216b14d638e98fa7cd21dfb066f397fc.css" integrity="sha384-Ruis0C1pP2UXbpz1IK5B1C3nKsGTVWpP4cr8VOBbpywhaxTWOOmPp80h37Bm85f8"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Embedding a Pi Zero in a NES controller" /><meta name="twitter:image" content="http://localhost:1313/blog/posts/neszero/full_wiring_carpet.jpg" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 <section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
@@ -100,93 +100,93 @@
 <details>
 <summary>Parts List</summary>
 <table>
-<thead>
-<tr>
-<th>Part</th>
-<th>Amount</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Raspberry Pi Zero W</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>Raspberry Pi (Any model)</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>ATtiny45 Microcontroller</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>NES-004 Controller</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>MicroSD Card (8GB+)</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>Strip Board</td>
-<td>x3</td>
-</tr>
-<tr>
-<td><a href="https://www.ebay.co.uk/itm/261117837121"target="_blank" rel="noopener noreferrer">4 Pole Jack to RCA Cable</a>
+	<thead>
+			<tr>
+					<th>Part</th>
+					<th>Amount</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td>Raspberry Pi Zero W</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>Raspberry Pi (Any model)</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>ATtiny45 Microcontroller</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>NES-004 Controller</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>MicroSD Card (8GB+)</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>Strip Board</td>
+					<td>x3</td>
+			</tr>
+			<tr>
+					<td><a href="https://www.ebay.co.uk/itm/261117837121"target="_blank" rel="noopener noreferrer">4 Pole Jack to RCA Cable</a>
 </td>
-<td>x1</td>
-</tr>
-<tr>
-<td>Micro USB cable</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>M3 x 5mm mounting screws</td>
-<td>x4</td>
-</tr>
-<tr>
-<td>5mm Red LED</td>
-<td>x1</td>
-</tr>
-<tr>
-<td><a href="https://www.ebay.co.uk/itm/362819442997"target="_blank" rel="noopener noreferrer">TRRS Breakout Board</a>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>Micro USB cable</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>M3 x 5mm mounting screws</td>
+					<td>x4</td>
+			</tr>
+			<tr>
+					<td>5mm Red LED</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td><a href="https://www.ebay.co.uk/itm/362819442997"target="_blank" rel="noopener noreferrer">TRRS Breakout Board</a>
 </td>
-<td>x1</td>
-</tr>
-<tr>
-<td>270Ω Resistor</td>
-<td>x3</td>
-</tr>
-<tr>
-<td>150Ω Resistor</td>
-<td>x2</td>
-</tr>
-<tr>
-<td>22nF Capacitor</td>
-<td>x2</td>
-</tr>
-<tr>
-<td>10uF Capacitor</td>
-<td>x2</td>
-</tr>
-<tr>
-<td>3d Printer or Printing Service</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>Wire (<a href="https://www.ebay.co.uk/itm/203450617670?var=503793076451"target="_blank" rel="noopener noreferrer">22AWG Single Core</a>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>270Ω Resistor</td>
+					<td>x3</td>
+			</tr>
+			<tr>
+					<td>150Ω Resistor</td>
+					<td>x2</td>
+			</tr>
+			<tr>
+					<td>22nF Capacitor</td>
+					<td>x2</td>
+			</tr>
+			<tr>
+					<td>10uF Capacitor</td>
+					<td>x2</td>
+			</tr>
+			<tr>
+					<td>3d Printer or Printing Service</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>Wire (<a href="https://www.ebay.co.uk/itm/203450617670?var=503793076451"target="_blank" rel="noopener noreferrer">22AWG Single Core</a>
 )</td>
-<td>x1 roll</td>
-</tr>
-<tr>
-<td>Soldering Iron</td>
-<td>x1</td>
-</tr>
-<tr>
-<td>Solder</td>
-<td>x1 roll</td>
-</tr>
-</tbody>
+					<td>x1 roll</td>
+			</tr>
+			<tr>
+					<td>Soldering Iron</td>
+					<td>x1</td>
+			</tr>
+			<tr>
+					<td>Solder</td>
+					<td>x1 roll</td>
+			</tr>
+	</tbody>
 </table>
 </details>
 <h1 id="wiretapping-the-nes-controller">Wiretapping the NES controller</h1>
@@ -249,30 +249,30 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 </p>
 <p>The other pins of note here are <code>CK</code> <code>P/S</code>, <code>DS</code> and <code>O8</code>.</p>
 <table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CK</code></td>
-<td>Clock pin</td>
-</tr>
-<tr>
-<td><code>P/S</code></td>
-<td>Parallel or Serial select pin</td>
-</tr>
-<tr>
-<td><code>O8</code></td>
-<td>Serial Output</td>
-</tr>
-<tr>
-<td><code>DS</code></td>
-<td>Serial input, tied LOW</td>
-</tr>
-</tbody>
+	<thead>
+			<tr>
+					<th>Name</th>
+					<th>Description</th>
+			</tr>
+	</thead>
+	<tbody>
+			<tr>
+					<td><code>CK</code></td>
+					<td>Clock pin</td>
+			</tr>
+			<tr>
+					<td><code>P/S</code></td>
+					<td>Parallel or Serial select pin</td>
+			</tr>
+			<tr>
+					<td><code>O8</code></td>
+					<td>Serial Output</td>
+			</tr>
+			<tr>
+					<td><code>DS</code></td>
+					<td>Serial input, tied LOW</td>
+			</tr>
+	</tbody>
 </table>
 <p>When the Console want&rsquo;s to know which buttons are are being pressed, it will do the following:</p>
 <ul>
@@ -337,14 +337,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 264 265"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 264 265"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 32,32 L 56,32' fill='none' stroke='currentColor'></path>
 <path d='M 88,32 L 112,32' fill='none' stroke='currentColor'></path>
 <path d='M 24,64 L 32,64' fill='none' stroke='currentColor'></path>
@@ -451,8 +451,8 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <text text-anchor='middle' x='232' y='180' fill='currentColor' style='font-size:1em'>2</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
     </tr>
@@ -477,14 +477,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 280 185"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 280 185"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 96,0 L 112,0' fill='none' stroke='currentColor'></path>
 <path d='M 144,0 L 160,0' fill='none' stroke='currentColor'></path>
 <path d='M 88,16 L 96,16' fill='none' stroke='currentColor'></path>
@@ -640,8 +640,8 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <text text-anchor='middle' x='264' y='132' fill='currentColor' style='font-size:1em'>r</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:50%;">
@@ -649,14 +649,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 160 121"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 160 121"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 40,0 L 56,0' fill='none' stroke='currentColor'></path>
 <path d='M 88,0 L 104,0' fill='none' stroke='currentColor'></path>
 <path d='M 32,16 L 40,16' fill='none' stroke='currentColor'></path>
@@ -714,8 +714,8 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <text text-anchor='middle' x='144' y='68' fill='currentColor' style='font-size:1em'>0</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td><tr>
 </table>
@@ -738,14 +738,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 344 201"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 344 201"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 24,16 L 40,16' fill='none' stroke='currentColor'></path>
 <path d='M 72,16 L 88,16' fill='none' stroke='currentColor'></path>
 <path d='M 136,16 L 264,16' fill='none' stroke='currentColor'></path>
@@ -903,8 +903,8 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <text text-anchor='middle' x='320' y='36' fill='currentColor' style='font-size:1em'>D</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
    </td>
     </tr>
@@ -942,14 +942,14 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 248 153"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 248 153"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 72,16' fill='none' stroke='currentColor'></path>
 <path d='M 128,16 L 208,16' fill='none' stroke='currentColor'></path>
 <path d='M 72,32 L 128,32' fill='none' stroke='currentColor'></path>
@@ -1049,8 +1049,8 @@ Params: gpio_pin                GPIO pin to trigger on (default 3)
 <text text-anchor='middle' x='192' y='84' fill='currentColor' style='font-size:1em'>T</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td><tr>
 </table>
@@ -1204,14 +1204,14 @@ As seen in the picture, you can optionally connect `RST` (reset pin) to an addit
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 400 201"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 400 201"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 24,16 L 40,16' fill='none' stroke='currentColor'></path>
 <path d='M 72,16 L 88,16' fill='none' stroke='currentColor'></path>
 <path d='M 136,16 L 264,16' fill='none' stroke='currentColor'></path>
@@ -1378,8 +1378,8 @@ As seen in the picture, you can optionally connect `RST` (reset pin) to an addit
 <text text-anchor='middle' x='368' y='164' fill='currentColor' style='font-size:1em'>i</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 <p align="center">
 <img src="attiny_circuit.png" width="80%"/>
@@ -1453,14 +1453,14 @@ $$f = 26,793.761463282048$$</p>
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 280 153"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 280 153"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 48,16' fill='none' stroke='currentColor'></path>
 <path d='M 96,16 L 112,16' fill='none' stroke='currentColor'></path>
 <path d='M 112,16 L 144,16' fill='none' stroke='currentColor'></path>
@@ -1530,8 +1530,8 @@ $$f = 26,793.761463282048$$</p>
 <text text-anchor='middle' x='256' y='4' fill='currentColor' style='font-size:1em'>t</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td>
 <td style="width:50%; padding: 1px;">
@@ -1563,14 +1563,14 @@ $$V_{out} = 1.1785714285714286V$$</p>
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 520 297"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 520 297"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 88,16 L 152,16' fill='none' stroke='currentColor'></path>
 <path d='M 200,16 L 216,16' fill='none' stroke='currentColor'></path>
 <path d='M 216,16 L 248,16' fill='none' stroke='currentColor'></path>
@@ -1792,8 +1792,8 @@ $$V_{out} = 1.1785714285714286V$$</p>
 <text text-anchor='middle' x='432' y='100' fill='currentColor' style='font-size:1em'>e</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </td></tr>
 </table>
@@ -1817,14 +1817,14 @@ $$V_{out} = 1.1785714285714286V$$</p>
 
 
 <div class="goat svg-container ">
-  
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      font-family="Menlo,Lucida Console,monospace"
-      
-        viewBox="0 0 200 121"
-      >
-      <g transform='translate(8,16)'>
+	
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			font-family="Menlo,Lucida Console,monospace"
+			
+				viewBox="0 0 200 121"
+			>
+			<g transform='translate(8,16)'>
 <path d='M 0,16 L 72,16' fill='none' stroke='currentColor'></path>
 <path d='M 72,32 L 128,32' fill='none' stroke='currentColor'></path>
 <path d='M 160,32 L 176,32' fill='none' stroke='currentColor'></path>
@@ -1872,8 +1872,8 @@ $$V_{out} = 1.1785714285714286V$$</p>
 <text text-anchor='middle' x='152' y='4' fill='currentColor' style='font-size:1em'>D</text>
 </g>
 
-    </svg>
-  
+		</svg>
+	
 </div>
 </p>
 </td>
