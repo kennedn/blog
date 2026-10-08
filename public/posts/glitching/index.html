@@ -1,76 +1,89 @@
 <!DOCTYPE html>
 
-<html lang="en"><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset="utf-8"><meta name="generator" content="Hugo 0.165.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="en"><meta charset="utf-8"><meta name="generator" content="Hugo 0.165.0"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark"><title>The future of glitching&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.6ee390e8ae3be0aeb9094b489a913367a5a8679b5c26c3151fd46487f10ec2500552169e88911edf5c9fb947e9775877.css" integrity="sha384-buOQ6K474K65CUtImpEzZ6WoZ5tcJsMVH9Rkh/EOwlAFUhaeiJEe31yfuUfpd1h3"><meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="The future of glitching" /><meta name="twitter:image" content="http://localhost:1313/blog/posts/glitching/coolrunner_closeup.webp" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
+<meta name="supported-color-schemes" content="light dark"><title>The future is glitching&nbsp;&ndash;&nbsp;Kennedn&#39;s Blog</title><link rel="stylesheet" href="/blog/css/core.min.521aae6892d273a334b08ce625f34814a9c5658821dd890e561fff7f857146dfcd51d89a12d1599fbe385a8d4541d680.css" integrity="sha384-UhquaJLSc6M0sIzmJfNIFKnFZYgh3YkOVh//f4VxRt/NUdiaEtFZn744Wo1FQdaA"><meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="The future is glitching" /><meta name="twitter:image" content="https://kennedn.com/blog/posts/glitching/coolrunner_closeup.webp" /><body><script defer language="javascript" type="text/javascript"  src="/blog/js/getPersistance.js"></script>
 <section id="header">
     <div class="header wrap"><span class="header left-side"><a class="site home" href="/blog"><img class="site logo" src="/blog/img/logo.png" alt /><span class="site name">Kennedn's Blog</span></a></span>
         <span class="header right-side"><div class="nav wrap"><nav class="nav"><a class="nav item" href="/">Home</a></nav></div></span></div></section>
 
 <section id="content"><div class="article-container"><section class="article header">
-    <h1 class="article title">The future of glitching</h1><p class="article date">Tuesday, October 6, 2026</p></section><article class="article markdown-body"><p>I purchased a Matrix Coolrunner Rev D back in 2017. This little chip is called a glitcher and it&rsquo;s a type of modchip. It&rsquo;s sole purpose, the reason it was designed, is to deliver a short pulse of energy (~ 100 nanoseconds) to an Xbox 360 Console.</p>
+    <h1 class="article title">The future is glitching</h1><p class="article date">Thursday, October 8, 2026</p></section><article class="article markdown-body"><p>I purchased a Matrix CoolRunner Rev D back in 2017. This little chip is called a glitcher and it&rsquo;s a type of modchip. Its sole purpose, the reason it was designed, is to deliver a short pulse of energy (~ 100 nanoseconds) to an Xbox 360 Console.</p>
 <p align="center">
 <img src=coolrunner_in_xbox.webp width=70%/>
 </p>
 <p>You might ask yourself, &ldquo;What&rsquo;s the point in that?&rdquo;. The answer is quite interesting.</p>
 <h1 id="microsoft-are-good-at-security">Microsoft are good at security</h1>
-<p>It boils down to the simple fact that Microsoft learned from the mistakes of their previous console (the original xbox) and designed security well on their successor.</p>
-<p>So well, that it was deemed essentially unhackable by software based approaches:</p>
+<p>It boils down to the simple fact that Microsoft learned from the mistakes of their previous console (the original Xbox) and designed security well on their successor.</p>
+<p>So well in fact, that it was deemed essentially unhackable by conventional approaches:</p>
 <blockquote>
-<p>tmbinc said it himself, software based approaches of running unsigned code on the 360 mostly don&rsquo;t work, it was designed to be secure from a software point of view.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>tmbinc said it himself, software based approaches of running unsigned code on the 360 mostly don&rsquo;t work, it was designed to be secure from a software point of view. <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 </blockquote>
-<p>The entry point for the system, dubbed 1BL, is physically baked into the silicon of the Xbox 360&rsquo;s CPU<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>. The job of 1BL is to load the next phase of the bootloader, called CB from flash storage, and verify that it was signed by microsoft.</p>
+<p>The entry point for the system, dubbed 1BL, is physically baked into the silicon of the Xbox 360&rsquo;s CPU <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>. The job of 1BL is to load the next phase of the bootloader, called CB from flash storage, and verify that it was signed by Microsoft.</p>
 <p>So without Microsoft&rsquo;s signing keys, there was no real way to hijack control of the system during the boot process. And it only becomes harder as the console boots up through its different phases. Additional security features are turned on as it cascades up the boot chain. And they would all need individually circumvented to get any code running on the console that Microsoft haven&rsquo;t been over with a fine toothed comb.</p>
-<p>So if the door to the castle is locked, and the guards, who are wise to equine ploys, are checking ID at the door, how does one get in? Well you don&rsquo;t use a key. You inform the guard that his shoelaces are untied and clobber him over the head with a club.</p>
+<p>So if the door to the castle is locked, and the guards, who are wise to equine ploys, are checking ID at the door, how does one get in? Well you don&rsquo;t use a key. You inform the guard that his shoelaces are untied and hit him over the head with a club.</p>
 <h1 id="finding-the-weak-link">Finding the weak link</h1>
-<p>The point is that if the lock itself is secure, and the procedures surrounding entry are sound, sometimes the weakest link becomes something more fundimental. In our metaphor this is a person, but in the case of the xbox 360, it is the fact that computation relies on stable energy conditions to behave in a predicatable manner.</p>
-<p>And this is the idea that glitching subverts. In the case of the Xbox 360, researchers found that by very quickly toggling a reset signal on the CPU (<code>CPU_RESET</code>), a signal that is usually supposed to reset the CPU, something far much more interesting happened. Instead of resetting, the CPU executed the current instruction incorrectly.</p>
-<p>This gave the researchers a very useful primative. They found that an instruction integral to the signiture verification process, the <code>mr</code> (move register) instruction, could be glitched into ignoring a value it was about to move and instead move a 0 into its destination register.</p>
-<p>So by simply knowing when, and toggling the lights on and off, they gained arbitrary code execution.</p>
-<h1 id="the-future-of-glitching">The future of glitching</h1>
-<p>It is astounding to me that this kind of esoteric side channel exists at all. But I think the larger point is that it&rsquo;s becoming more common.</p>
-<p>The sort of trust chains that made the Xbox 360 hard to hack 10 years ago have now become common place in the world of computing hardware. Microsoft themselves began enforcing hardware backed secure boot for their Operating Systems back in 2021 <a href="https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security"target="_blank" rel="noopener noreferrer">x</a>
+<p>The point is that if the lock itself is secure, and the procedures surrounding entry are sound, sometimes the weakest link becomes something more fundamental. In our metaphor this is a person, but in the case of the Xbox 360, it is the fact that computation relies on stable energy conditions to behave in a predictable manner.</p>
+<p>And this is the idea that fault injection subverts. In the case of the Xbox 360, researchers found that by very quickly toggling a reset signal on the CPU (<code>CPU_RESET</code>), a signal that is usually supposed to reinitialise the CPU, something far more interesting happened. Instead of resetting, the CPU executed the current instruction incorrectly.</p>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+  <img src="fault_injection.webp" width="70%"/>
 </p>
-<p>More recently in 2024, the security features of an ESP32 v3 (secure boot and flash encrpytion) were bypassed using a fault injection attack <a href="https://www.usenix.org/conference/woot24/presentation/delvaux"target="_blank" rel="noopener noreferrer">y</a>
-.</p>
-<p>And there are recent examples specifically leveraging the Raspberry Pi Pico Microcontroller to perform similar fault injection attacks:</p>
-<ul>
-<li>Apple airtags being hacked within 2 weeks of their release in 2021 by stacksmashing using a <a href="https://www.youtube.com/watch?v=_E0PWQvW-14"target="_blank" rel="noopener noreferrer">Raspberry Pi Pico to fault inject the boot process</a>
-</li>
-<li><a href="https://github.com/Ansem-SoD/Picofly"target="_blank" rel="noopener noreferrer">The PicoFly modchip</a>
-, released in 2023 for the Nintendo Switch console, useing fault injection to defeat secure boot</li>
-</ul>
-<p>To me, this suggests that as fault injection has become a more attractive attack vector (due to a hardened security ecosystem), it has in turn also become more accessible than ever in recent years, with the advent of cheap and accurate microcontrollers such as the Pi Pico.</p>
+<p>Graph demonstrating glitching as voltage over time <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.</p>
+<p>This gave the researchers a very useful primitive. They found that an instruction integral to the signature verification process, the <code>mr</code> (move register) instruction, could be glitched into ignoring a value it was about to move and instead move a 0 into its destination register <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>.</p>
+<p>So by simply knowing when, and toggling the lights on and off, they gained arbitrary code execution.</p>
+<h1 id="the-future-is-glitching">The future is glitching</h1>
+<p>It is astounding to me that this kind of esoteric side channel exists at all. But I think the larger point is that it&rsquo;s becoming more common.</p>
+<p>The sort of trust chains that made the Xbox 360 hard to hack 10 years ago have now become commonplace in the world of computing hardware. Microsoft themselves began enforcing hardware backed secure boot for their Operating Systems back in 2021<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>.</p>
+<p>More recently in 2024, the security features of an ESP32 v3 (secure boot and flash encryption) were bypassed using a fault injection attack <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>.</p>
+<p>And there are recent examples specifically leveraging the Raspberry Pi Pico Microcontroller to perform similar fault injection attacks</p>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+  <img src="apple_airtag.webp" width="70%"/>
+</p>
+<p>Apple AirTag&rsquo;s firmware was dumped in 2021 by stacksmashing using a Raspberry Pi Pico and fault injection <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>.</p>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+  <img src="picofly.webp" width="70%"/>
+</p>
+<p>The PicoFly modchip, released in 2023 for the Nintendo Switch, uses fault injection to defeat secure boot on the console <sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>.</p>
+<p>To me, this suggests that fault injection has become a more attractive attack vector in recent years due to a security ecosystem that has hardened over time. But I think it has in turn also become more accessible than ever, with the advent of cheap and accurate microcontrollers such as the Pi Pico.</p>
 <h1 id="a-love-letter-to-the-pico">A love letter to the Pico</h1>
-<p>The pico itself is versatile because it allows for very precise timing via its PIO blocks. These specialised blocks come with enough primatives to implement many standard protocols and have an effective timing resolution of ~7.5ns due to the 133 Mhz clock ($$\frac{1}{133\text{ MHz}} \approx 7.52\text{ns}$$).</p>
-<p>I have seen this versatility myself first hand when I finally dusted off the Matrix Coolrunner in 2026 and decided to take another crack at modchipping my xbox 360.</p>
-<p>Back in 2017, when I bought the thing, it was quite expensive to modchip an Xbox 360 (for a broke student). You needed a number of tools to successfully mod one:</p>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+  <img src="pico.webp" width="70%"/>
+</p>
+<p>The Raspberry Pi Pico microcontroller, released in 2021 for £5 by the Raspberry Pi Foundation <sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup>.</p>
+<p>The Pico itself is versatile because it allows for very precise timing via its PIO blocks. These specialised blocks come with enough primitives to implement many standard protocols and have an effective timing resolution of ~7.5 nanoseconds due to the 133 MHz clock <sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>:</p>
+<p>$$\frac{1}{133\text{ MHz}} \approx 7.52\text{ns}$$</p>
+<p>I have seen this versatility myself first hand when I finally dusted off the Matrix CoolRunner in 2026 and decided to take another crack at modchipping my Xbox 360.</p>
+<p>Back in 2017, when I bought the thing, it was quite expensive to modchip an Xbox 360. You needed a number of tools and skills to successfully mod one:</p>
 <ul>
 <li>A glitching chip</li>
 <li>Solder and an iron</li>
 <li>A NAND programmer</li>
 <li>A JTAG programmer</li>
 </ul>
-<p>I tried to save some money by building my own NAND / JTAG programmer using the printer port (LPT port) on a very old PC that I had in reserve for the specific purpose. If I had ever got this working it would have taken over 30 minutes to dump the NAND. I no longer remember why, but I eventually gave up and shelfed the project.</p>
-<p align="center">
-<img src=LPT_port.webp width=70%/></br>
- <small>Line Print Terminal (LPT) Wiring Diagram: Superben51, Instructables</small>
+<p>I tried to save some money by building my own NAND / JTAG programmer using the printer port (LPT port) on a very old PC that I had in reserve for the specific purpose. If I had ever got this working it would have taken over 30 minutes to dump the NAND. I do not recall the reason but I did not manage to pull this off in 2017 and the project was shelved.</p>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+  <img src="LPT_port.webp" width="70%"/>
 </p>
+<p>LPT NAND dumper wiring diagram <sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup>.</p>
 <p>Reattempting this same procedure in 2026 was a breeze by comparison. I was able to flash <a href="https://github.com/X360Tools/PicoFlasher"target="_blank" rel="noopener noreferrer">PicoFlasher</a>
  onto a Pi Pico and solder it to the correct pads on my Xbox 360. The dump operation then only took a handful of seconds to run.</p>
-<p align="center">
-<img src=nand_dump_console.webp width=70%/></br>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+ <img src=nand_dump_console.webp width=70%/>
 </p>
+<p>Raspberry Pi Pico wired to the NAND interface header on the Xbox 360.</p>
 <p>Similarly I flashed <a href="https://github.com/phdussud/pico-dirtyJtag"target="_blank" rel="noopener noreferrer">Pico-dirtyJTAG</a>
- onto a Pi Pico and was able to program the coolrunners timing files using <a href="https://github.com/Octal450/Timing-Files/releases"target="_blank" rel="noopener noreferrer">Octal450&rsquo;s Timing Files</a>
+ onto a Pi Pico and was able to program the CoolRunner&rsquo;s timing files using <a href="https://github.com/Octal450/Timing-Files/releases"target="_blank" rel="noopener noreferrer">Octal450&rsquo;s Timing Files</a>
  and installing the <a href="https://git.code.sf.net/p/urjtag/git"target="_blank" rel="noopener noreferrer"><code>urjtag</code></a>
  project from source.</p>
-<p align="center">
-<img src=coolrunner_programming_closeup.webp width=70%/></br>
+<p class="figure-image" align="center" style="margin-bottom:0;">
+<img src=coolrunner_programming_closeup.webp width=70%/>
 </p>
+<p>Raspberry Pi Pico wired to Matrix CoolRunner JTAG interface.</p>
 <h1 id="summary">Summary</h1>
-<p>In summary, the future seems bright for</p>
+<p>So, even the most carefully crafted tower can collapse under the weight of its own fundamental assumptions. Like many aspects of computer security, fault injection has become a game of cat and mouse, with increasingly sophisticated defences being met by new tools and methods of circumventing them.</p>
+<p>But I think we have now reached a point where DIY tooling has really begun to shine, making light work of challenges that, just a decade ago, required expensive, specialised equipment.</p>
+<p>And I have seen this first hand, a project that defeated me in 2017 was made trivial in 2026 by a £5 microcontroller.</p>
 <h1 id="references">References</h1>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -84,6 +97,51 @@
 <p>Free60Project, <em>Boot_Process</em>, Free60, accessed 7 October 2026.
 <a href="https://free60.org/System-Software/Boot_Process/"target="_blank" rel="noopener noreferrer">https://free60.org/System-Software/Boot_Process/</a>
 &#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>Fault Injection Library, <em>Overview – Voltage Glitching</em>, accessed 8 October 2026.
+<a href="https://fault-injection-library.readthedocs.io/en/latest/overview/"target="_blank" rel="noopener noreferrer">https://fault-injection-library.readthedocs.io/en/latest/overview/</a>
+&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>Rodrigo Copetti, <em>Xbox 360 Architecture – The Glitcher</em>, A Practical Analysis, accessed 8 October 2026.
+<a href="https://www.copetti.org/writings/consoles/xbox-360/#tab-13-1-the-glitcher"target="_blank" rel="noopener noreferrer">https://www.copetti.org/writings/consoles/xbox-360/#tab-13-1-the-glitcher</a>
+&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p>Tom Warren, <em>Microsoft&rsquo;s Windows 11 will require TPM chips for security</em>, The Verge, 25 June 2021, accessed 8 October 2026.
+<a href="https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security"target="_blank" rel="noopener noreferrer">https://www.theverge.com/2021/6/25/22550376/microsoft-windows-11-tpm-chips-requirement-security</a>
+&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p>Delvaux et al., <em>Fault Injection Attacks on the ESP32</em>, USENIX WOOT 2024, accessed 8 October 2026.
+<a href="https://www.usenix.org/conference/woot24/presentation/delvaux"target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/woot24/presentation/delvaux</a>
+&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p>stacksmashing, <em>Hacking Apple AirTags</em>, YouTube, 2021, accessed 8 October 2026.
+<a href="https://www.youtube.com/watch?v=_E0PWQvW-14"target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=_E0PWQvW-14</a>
+&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p>Ansem-SoD, <em>Picofly</em>, GitHub, 2023, accessed 8 October 2026.
+<a href="https://github.com/Ansem-SoD/Picofly"target="_blank" rel="noopener noreferrer">https://github.com/Ansem-SoD/Picofly</a>
+&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9">
+<p>Raspberry Pi Foundation, <em>Getting started with Raspberry Pi Pico</em>, Raspberry Pi Projects, accessed 8 October 2026.
+<a href="https://projects.raspberrypi.org/en/projects/get-started-pico-w/1"target="_blank" rel="noopener noreferrer">https://projects.raspberrypi.org/en/projects/get-started-pico-w/1</a>
+&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10">
+<p>Raspberry Pi Foundation, <em>RP2040 Datasheet</em>, accessed 8 October 2026.
+<a href="https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf"target="_blank" rel="noopener noreferrer">https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf</a>
+&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11">
+<p>Superben51, <em>How to hack (RGH) your Xbox 360</em>, Instructables, accessed 8 October 2026.
+<a href="https://www.instructables.com/How-to-hackRHG-your-Xbox-360/"target="_blank" rel="noopener noreferrer">https://www.instructables.com/How-to-hackRHG-your-Xbox-360/</a>
+&#160;<a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
