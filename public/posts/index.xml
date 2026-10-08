@@ -24,7 +24,7 @@
 &lt;p&gt;You might ask yourself, &amp;ldquo;What&amp;rsquo;s the point in that?&amp;rdquo;. The answer is quite interesting.&lt;/p&gt;
 &lt;h1 id=&#34;microsoft-are-good-at-security&#34;&gt;Microsoft are good at security&lt;/h1&gt;
 &lt;p&gt;It boils down to the simple fact that Microsoft learned from the mistakes of their previous console (the original xbox) and designed security well on their successor.&lt;/p&gt;
-&lt;p&gt;So well, that it was deemed essentially unhackable by software based approaches:&lt;/p&gt;
+&lt;p&gt;So well in fact, that it was deemed essentially unhackable by conventional approaches:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;tmbinc said it himself, software based approaches of running unsigned code on the 360 mostly don&amp;rsquo;t work, it was designed to be secure from a software point of view.&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -33,7 +33,13 @@
 &lt;p&gt;So if the door to the castle is locked, and the guards, who are wise to equine ploys, are checking ID at the door, how does one get in? Well you don&amp;rsquo;t use a key. You inform the guard that his shoelaces are untied and clobber him over the head with a club.&lt;/p&gt;
 &lt;h1 id=&#34;finding-the-weak-link&#34;&gt;Finding the weak link&lt;/h1&gt;
 &lt;p&gt;The point is that if the lock itself is secure, and the procedures surrounding entry are sound, sometimes the weakest link becomes something more fundimental. In our metaphor this is a person, but in the case of the xbox 360, it is the fact that computation relies on stable energy conditions to behave in a predicatable manner.&lt;/p&gt;
-&lt;p&gt;And this is the idea that glitching subverts. In the case of the Xbox 360, researchers found that by very quickly toggling a reset signal on the CPU (&lt;code&gt;CPU_RESET&lt;/code&gt;), a signal that is usually supposed to reset the CPU, something far much more interesting happened. Instead of resetting, the CPU executed the current instruction incorrectly.&lt;/p&gt;
+&lt;p&gt;And this is the idea that fault injection subverts. In the case of the Xbox 360, researchers found that by very quickly toggling a reset signal on the CPU (&lt;code&gt;CPU_RESET&lt;/code&gt;), a signal that is usually supposed to reinitialise the CPU, something far much more interesting happened. Instead of resetting, the CPU executed the current instruction incorrectly.&lt;/p&gt;
+&lt;p align=&#34;center&#34; style=&#34;margin-bottom:0;&#34;&gt;
+  &lt;img src=&#34;fault_injection.webp&#34; width=&#34;70%&#34;/&gt;
+&lt;/p&gt;
+&lt;div align=&#34;center&#34; style=&#34;margin-top:0;&#34;&gt;
+&lt;p&gt;Graph demonstrating glitching as voltage over time&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/div&gt;
 &lt;p&gt;This gave the researchers a very useful primative. They found that an instruction integral to the signiture verification process, the &lt;code&gt;mr&lt;/code&gt; (move register) instruction, could be glitched into ignoring a value it was about to move and instead move a 0 into its destination register.&lt;/p&gt;
 &lt;p&gt;So by simply knowing when, and toggling the lights on and off, they gained arbitrary code execution.&lt;/p&gt;
 &lt;h1 id=&#34;the-future-of-glitching&#34;&gt;The future of glitching&lt;/h1&gt;
@@ -42,15 +48,22 @@
 &lt;/p&gt;
 &lt;p&gt;More recently in 2024, the security features of an ESP32 v3 (secure boot and flash encrpytion) were bypassed using a fault injection attack &lt;a href=&#34;https://www.usenix.org/conference/woot24/presentation/delvaux&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;y&lt;/a&gt;
 .&lt;/p&gt;
-&lt;p&gt;And there are recent examples specifically leveraging the Raspberry Pi Pico Microcontroller to perform similar fault injection attacks:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Apple airtags being hacked within 2 weeks of their release in 2021 by stacksmashing using a &lt;a href=&#34;https://www.youtube.com/watch?v=_E0PWQvW-14&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Raspberry Pi Pico to fault inject the boot process&lt;/a&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/Ansem-SoD/Picofly&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;The PicoFly modchip&lt;/a&gt;
-, released in 2023 for the Nintendo Switch console, useing fault injection to defeat secure boot&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;To me, this suggests that as fault injection has become a more attractive attack vector (due to a hardened security ecosystem), it has in turn also become more accessible than ever in recent years, with the advent of cheap and accurate microcontrollers such as the Pi Pico.&lt;/p&gt;
+&lt;p&gt;And there are recent examples specifically leveraging the Raspberry Pi Pico Microcontroller to perform similar fault injection attacks&lt;/p&gt;
+&lt;p align=&#34;center&#34; style=&#34;margin-bottom:0;&#34;&gt;
+  &lt;img src=&#34;apple_airtag.webp&#34; width=&#34;70%&#34;/&gt;
+&lt;/p&gt;
+&lt;div align=&#34;center&#34; style=&#34;margin-top:0;&#34;&gt;
+&lt;p&gt;Apple AirTags were hacked within two weeks of their release in 2021 by stacksmashing using a Raspberry Pi Pico to fault inject the boot process&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p align=&#34;center&#34; style=&#34;margin-bottom:0;&#34;&gt;
+  &lt;img src=&#34;picofly.webp&#34; width=&#34;70%&#34;/&gt;
+&lt;/p&gt;
+&lt;div align=&#34;center&#34; style=&#34;margin-top:0;&#34;&gt;
+&lt;p&gt;The PicoFly modchip, released in 2023 for the Nintendo Switch, uses fault injection to defeat secure boot on the console&lt;sup id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;5&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;To me, this suggests that fault injection has become a more attractive attack vector in recent years due to a security ecosystem that has hardened over time. But I think it has in turn also become more accessible than ever in recent years, with the advent of cheap and accurate microcontrollers such as the Pi Pico.&lt;/p&gt;
 &lt;h1 id=&#34;a-love-letter-to-the-pico&#34;&gt;A love letter to the Pico&lt;/h1&gt;
+&lt;img src=&#34;pico.webp&#34; width=&#34;70%&#34;/&gt;
 &lt;p&gt;The pico itself is versatile because it allows for very precise timing via its PIO blocks. These specialised blocks come with enough primatives to implement many standard protocols and have an effective timing resolution of ~7.5ns due to the 133 Mhz clock ($$\frac{1}{133\text{ MHz}} \approx 7.52\text{ns}$$).&lt;/p&gt;
 &lt;p&gt;I have seen this versatility myself first hand when I finally dusted off the Matrix Coolrunner in 2026 and decided to take another crack at modchipping my xbox 360.&lt;/p&gt;
 &lt;p&gt;Back in 2017, when I bought the thing, it was quite expensive to modchip an Xbox 360 (for a broke student). You needed a number of tools to successfully mod one:&lt;/p&gt;
@@ -78,7 +91,7 @@
 &lt;img src=coolrunner_programming_closeup.webp width=70%/&gt;&lt;/br&gt;
 &lt;/p&gt;
 &lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
-&lt;p&gt;In summary, the future seems bright for&lt;/p&gt;
+&lt;p&gt;In summary, the future seems bright for dsfasdf&lt;/p&gt;
 &lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
@@ -92,6 +105,21 @@
 &lt;p&gt;Free60Project, &lt;em&gt;Boot_Process&lt;/em&gt;, Free60, accessed 7 October 2026.
 &lt;a href=&#34;https://free60.org/System-Software/Boot_Process/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://free60.org/System-Software/Boot_Process/&lt;/a&gt;
 &amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;Fault Injection Library, &lt;em&gt;Overview – Voltage Glitching&lt;/em&gt;, accessed 8 October 2026.
+&lt;a href=&#34;https://fault-injection-library.readthedocs.io/en/latest/overview/&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://fault-injection-library.readthedocs.io/en/latest/overview/&lt;/a&gt;
+&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;stacksmashing, &lt;em&gt;Hacking Apple AirTags&lt;/em&gt;, YouTube, 2021, accessed 8 October 2026.
+&lt;a href=&#34;https://www.youtube.com/watch?v=_E0PWQvW-14&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://www.youtube.com/watch?v=_E0PWQvW-14&lt;/a&gt;
+&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:5&#34;&gt;
+&lt;p&gt;Ansem-SoD, &lt;em&gt;Picofly&lt;/em&gt;, GitHub, 2023, accessed 8 October 2026.
+&lt;a href=&#34;https://github.com/Ansem-SoD/Picofly&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://github.com/Ansem-SoD/Picofly&lt;/a&gt;
+&amp;#160;&lt;a href=&#34;#fnref:5&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
