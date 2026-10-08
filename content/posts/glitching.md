@@ -1,7 +1,7 @@
 ---
 title: "The future is glitching"
-date: 2026-10-06T21:08:58+01:00
-draft: true
+date: 2026-10-08T19:10:58+01:00
+draft: false
 math: true
 imgs: 
     - coolrunner_closeup.webp
