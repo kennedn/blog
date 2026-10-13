@@ -1,5 +1,5 @@
 ---
-title: "The future is glitching"
+title: "It took me nine years to hack my Xbox 360"
 date: 2026-10-08T19:10:58+01:00
 draft: false
 math: true
@@ -123,11 +123,14 @@ Raspberry Pi Pico wired to Matrix CoolRunner JTAG interface.
 
 # Summary
 
+
 So, even the most carefully crafted tower can collapse under the weight of its own fundamental assumptions. Like many aspects of computer security, fault injection has become a game of cat and mouse, with increasingly sophisticated defences being met by new tools and methods of circumventing them.
 
 But I think we have now reached a point where DIY tooling has really begun to shine, making light work of challenges that, just a decade ago, required expensive, specialised equipment.
 
 And I have seen this first hand, a project that defeated me in 2017 was made trivial in 2026 by a £5 microcontroller.
+
+> Funnily enough, a software-only exploit for the Xbox 360 dropped just [last week](https://github.com/grimdoomer/Xbox360PeerPressure/wiki/Installation), rendering my years of effort somewhat moot. Nevertheless, it was a fascinating deep dive into the inner workings of the console and the security mechanisms designed to protect it.
 
 # References
 

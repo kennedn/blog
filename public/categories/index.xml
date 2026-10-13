@@ -10,7 +10,7 @@
     
     
     <item>
-      <title>The future is glitching</title>
+      <title>It took me nine years to hack my Xbox 360</title>
       <link>https://kennedn.com/blog/posts/glitching/</link>
       <pubDate>Thu, 08 Oct 2026 19:10:58 +0100</pubDate>
       
@@ -90,6 +90,10 @@
 &lt;p&gt;So, even the most carefully crafted tower can collapse under the weight of its own fundamental assumptions. Like many aspects of computer security, fault injection has become a game of cat and mouse, with increasingly sophisticated defences being met by new tools and methods of circumventing them.&lt;/p&gt;
 &lt;p&gt;But I think we have now reached a point where DIY tooling has really begun to shine, making light work of challenges that, just a decade ago, required expensive, specialised equipment.&lt;/p&gt;
 &lt;p&gt;And I have seen this first hand, a project that defeated me in 2017 was made trivial in 2026 by a £5 microcontroller.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Funnily enough, a software-only exploit for the Xbox 360 dropped just &lt;a href=&#34;https://github.com/grimdoomer/Xbox360PeerPressure/wiki/Installation&#34;target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;last week&lt;/a&gt;
+, rendering my years of effort somewhat moot. Nevertheless, it was a fascinating deep dive into the inner workings of the console and the security mechanisms designed to protect it.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
